@@ -9,8 +9,11 @@ import { AdminSidebar } from "@/components/AdminSidebar";
 import { AdminHeader } from "@/components/AdminHeader";
 import Index from "./pages/Index";
 import Users from "./pages/Users";
+import AddEmployee from "./pages/users/AddEmployee";
+import BulkEnrollment from "./pages/users/BulkEnrollment";
 import Organization from "./pages/Organization";
 import Programs from "./pages/Programs";
+import CreateProgram from "./pages/programs/CreateProgram";
 import Assessments from "./pages/Assessments";
 import NotFound from "./pages/NotFound";
 
@@ -31,8 +34,11 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/users" element={<Users />} />
+                  <Route path="/users/add" element={<AddEmployee />} />
+                  <Route path="/users/bulk" element={<BulkEnrollment />} />
                   <Route path="/organization/*" element={<Organization />} />
                   <Route path="/programs" element={<Programs />} />
+                  <Route path="/programs/create" element={<CreateProgram />} />
                   <Route path="/assessments" element={<Assessments />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

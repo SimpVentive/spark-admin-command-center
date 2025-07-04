@@ -46,6 +46,8 @@ const navigationItems = [
     icon: Users,
     subItems: [
       { title: "All Users", url: "/users" },
+      { title: "Add Employee", url: "/users/add" },
+      { title: "Bulk Enrollment", url: "/users/bulk" },
       { title: "User Roles", url: "/users/roles" },
       { title: "User Groups", url: "/users/groups" },
       { title: "Access Control", url: "/users/access" }
@@ -177,7 +179,7 @@ export function AdminSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="p-2">
+      <SidebarContent className="p-2 overflow-y-auto">
         <SidebarGroup>
           <SidebarGroupLabel className={isCollapsed ? "sr-only" : ""}>
             Navigation
