@@ -9,6 +9,9 @@ import { AdminSidebar } from "@/components/AdminSidebar";
 import { AdminHeader } from "@/components/AdminHeader";
 import Index from "./pages/Index";
 import Users from "./pages/Users";
+import Organization from "./pages/Organization";
+import Programs from "./pages/Programs";
+import Assessments from "./pages/Assessments";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +31,9 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/users" element={<Users />} />
+                  <Route path="/organization/*" element={<Organization />} />
+                  <Route path="/programs" element={<Programs />} />
+                  <Route path="/assessments" element={<Assessments />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

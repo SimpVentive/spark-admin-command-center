@@ -11,7 +11,18 @@ import {
   Calendar,
   Bell,
   Menu,
-  X
+  X,
+  Building2,
+  GraduationCap,
+  FileText,
+  Video,
+  DollarSign,
+  Library,
+  Globe,
+  Lock,
+  Monitor,
+  ChevronDown,
+  ChevronRight
 } from "lucide-react";
 
 import {
@@ -26,15 +37,101 @@ import {
   SidebarHeader,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
-  { title: "Users", url: "/users", icon: Users },
-  { title: "Courses", url: "/courses", icon: BookOpen },
-  { title: "Skills", url: "/skills", icon: Award },
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
-  { title: "Schedule", url: "/schedule", icon: Calendar },
-  { title: "Notifications", url: "/notifications", icon: Bell },
+  { 
+    title: "User Management", 
+    icon: Users,
+    subItems: [
+      { title: "All Users", url: "/users" },
+      { title: "User Roles", url: "/users/roles" },
+      { title: "User Groups", url: "/users/groups" },
+      { title: "Access Control", url: "/users/access" }
+    ]
+  },
+  { 
+    title: "Organization", 
+    icon: Building2,
+    subItems: [
+      { title: "Departments", url: "/organization/departments" },
+      { title: "Reporting Structure", url: "/organization/hierarchy" },
+      { title: "Plants & Locations", url: "/organization/locations" },
+      { title: "Job Roles", url: "/organization/roles" }
+    ]
+  },
+  { 
+    title: "Programs", 
+    icon: GraduationCap,
+    subItems: [
+      { title: "All Programs", url: "/programs" },
+      { title: "Create Program", url: "/programs/create" },
+      { title: "Program Sessions", url: "/programs/sessions" },
+      { title: "Trainers", url: "/programs/trainers" },
+      { title: "Venues", url: "/programs/venues" }
+    ]
+  },
+  { 
+    title: "Assessments", 
+    icon: FileText,
+    subItems: [
+      { title: "All Assessments", url: "/assessments" },
+      { title: "Create Assessment", url: "/assessments/create" },
+      { title: "Question Bank", url: "/assessments/questions" },
+      { title: "Results", url: "/assessments/results" }
+    ]
+  },
+  { 
+    title: "Content", 
+    icon: Video,
+    subItems: [
+      { title: "Content Library", url: "/content" },
+      { title: "Content Tools", url: "/content/tools" },
+      { title: "Upload Content", url: "/content/upload" },
+      { title: "Content Categories", url: "/content/categories" }
+    ]
+  },
+  { 
+    title: "ROI & Analytics", 
+    icon: DollarSign,
+    subItems: [
+      { title: "ROI Dashboard", url: "/roi" },
+      { title: "Computation Models", url: "/roi/models" },
+      { title: "Cost Analysis", url: "/roi/costs" },
+      { title: "Impact Reports", url: "/roi/impact" }
+    ]
+  },
+  { 
+    title: "Library", 
+    icon: Library,
+    subItems: [
+      { title: "Resources", url: "/library" },
+      { title: "Check In/Out", url: "/library/checkout" },
+      { title: "Reservations", url: "/library/reservations" },
+      { title: "Catalog", url: "/library/catalog" }
+    ]
+  },
+  { 
+    title: "MOOC Integration", 
+    icon: Globe,
+    subItems: [
+      { title: "Connected Platforms", url: "/mooc" },
+      { title: "Course Sync", url: "/mooc/sync" },
+      { title: "Certificates", url: "/mooc/certificates" },
+      { title: "Integrations", url: "/mooc/integrations" }
+    ]
+  },
+  { 
+    title: "LTI Tools", 
+    icon: Monitor,
+    subItems: [
+      { title: "LTI Providers", url: "/lti/providers" },
+      { title: "Tools", url: "/lti/tools" },
+      { title: "Launches", url: "/lti/launches" },
+      { title: "Grade Passback", url: "/lti/grades" }
+    ]
+  },
   { title: "Security", url: "/security", icon: Shield },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
@@ -44,8 +141,19 @@ export function AdminSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed";
+  const [openGroups, setOpenGroups] = useState<string[]>([]);
 
   const isActive = (path: string) => currentPath === path;
+  const isGroupActive = (subItems: any[]) => subItems.some(item => currentPath.startsWith(item.url));
+  
+  const toggleGroup = (title: string) => {
+    setOpenGroups(prev => 
+      prev.includes(title) 
+        ? prev.filter(g => g !== title)
+        : [...prev, title]
+    );
+  };
+
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
       isActive 
@@ -78,17 +186,56 @@ export function AdminSidebar() {
             <SidebarMenu className="space-y-1">
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className={getNavClass}
-                      title={isCollapsed ? item.title : undefined}
+                  {item.subItems ? (
+                    <Collapsible 
+                      open={openGroups.includes(item.title)} 
+                      onOpenChange={() => toggleGroup(item.title)}
                     >
-                      <item.icon className="w-4 h-4 flex-shrink-0" />
-                      {!isCollapsed && <span>{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton 
+                          className={`w-full justify-between ${isGroupActive(item.subItems) ? 'bg-accent' : ''}`}
+                          title={isCollapsed ? item.title : undefined}
+                        >
+                          <div className="flex items-center gap-3">
+                            <item.icon className="w-4 h-4 flex-shrink-0" />
+                            {!isCollapsed && <span>{item.title}</span>}
+                          </div>
+                          {!isCollapsed && (
+                            openGroups.includes(item.title) ? 
+                            <ChevronDown className="w-4 h-4" /> : 
+                            <ChevronRight className="w-4 h-4" />
+                          )}
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      {!isCollapsed && (
+                        <CollapsibleContent className="ml-6 mt-1 space-y-1">
+                          {item.subItems.map(subItem => (
+                            <SidebarMenuButton key={subItem.url} asChild>
+                              <NavLink 
+                                to={subItem.url} 
+                                end 
+                                className={getNavClass}
+                              >
+                                <span className="text-sm">{subItem.title}</span>
+                              </NavLink>
+                            </SidebarMenuButton>
+                          ))}
+                        </CollapsibleContent>
+                      )}
+                    </Collapsible>
+                  ) : (
+                    <SidebarMenuButton asChild>
+                      <NavLink 
+                        to={item.url} 
+                        end 
+                        className={getNavClass}
+                        title={isCollapsed ? item.title : undefined}
+                      >
+                        <item.icon className="w-4 h-4 flex-shrink-0" />
+                        {!isCollapsed && <span>{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
