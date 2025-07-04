@@ -62,18 +62,19 @@ const AddEmployee = () => {
     setIsLoading(true);
 
     try {
-      // For now, we'll just create a basic profile
-      // Later this should be expanded to include all HRIS fields
+      // Generate a UUID for the profile since we don't have auth yet
       const { data, error } = await supabase
         .from('profiles')
         .insert([
           {
+            id: crypto.randomUUID(),
             full_name: `${formData.firstName} ${formData.middleName} ${formData.lastName}`.trim(),
             email: formData.email,
             department: formData.department,
             position: formData.designation,
           }
-        ]);
+        ])
+        .select();
 
       if (error) throw error;
 
@@ -84,6 +85,7 @@ const AddEmployee = () => {
 
       navigate('/users');
     } catch (error: any) {
+      console.error('Error adding employee:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to add employee",
