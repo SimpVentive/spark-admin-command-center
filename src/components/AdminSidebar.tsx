@@ -157,7 +157,7 @@ export function AdminSidebar() {
   };
 
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+    `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors w-full text-left ${
       isActive 
         ? "bg-primary text-primary-foreground font-medium" 
         : "hover:bg-accent hover:text-accent-foreground"
@@ -195,7 +195,7 @@ export function AdminSidebar() {
                     >
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton 
-                          className={`w-full justify-between ${isGroupActive(item.subItems) ? 'bg-accent' : ''}`}
+                          className={`w-full justify-between hover:bg-accent hover:text-accent-foreground ${isGroupActive(item.subItems) ? 'bg-accent' : ''}`}
                           title={isCollapsed ? item.title : undefined}
                         >
                           <div className="flex items-center gap-3">
@@ -203,16 +203,19 @@ export function AdminSidebar() {
                             {!isCollapsed && <span>{item.title}</span>}
                           </div>
                           {!isCollapsed && (
-                            openGroups.includes(item.title) ? 
-                            <ChevronDown className="w-4 h-4" /> : 
-                            <ChevronRight className="w-4 h-4" />
+                            <div className="flex-shrink-0">
+                              {openGroups.includes(item.title) ? 
+                                <ChevronDown className="w-4 h-4" /> : 
+                                <ChevronRight className="w-4 h-4" />
+                              }
+                            </div>
                           )}
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                       {!isCollapsed && (
-                        <CollapsibleContent className="ml-6 mt-1 space-y-1">
+                        <CollapsibleContent className="ml-6 mt-1 space-y-1 border-l border-border pl-4">
                           {item.subItems.map(subItem => (
-                            <SidebarMenuButton key={subItem.url} asChild>
+                            <div key={subItem.url}>
                               <NavLink 
                                 to={subItem.url} 
                                 end 
@@ -220,7 +223,7 @@ export function AdminSidebar() {
                               >
                                 <span className="text-sm">{subItem.title}</span>
                               </NavLink>
-                            </SidebarMenuButton>
+                            </div>
                           ))}
                         </CollapsibleContent>
                       )}
