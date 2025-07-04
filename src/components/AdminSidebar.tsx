@@ -40,9 +40,10 @@ const navigationItems = [
 ];
 
 export function AdminSidebar() {
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
+  const isCollapsed = state === "collapsed";
 
   const isActive = (path: string) => currentPath === path;
   const getNavClass = ({ isActive }: { isActive: boolean }) =>
@@ -53,13 +54,13 @@ export function AdminSidebar() {
     }`;
 
   return (
-    <Sidebar className={collapsed ? "w-16" : "w-64"} collapsible>
+    <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
       <SidebarHeader className="border-b border-border p-4">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Shield className="w-4 h-4 text-primary-foreground" />
           </div>
-          {!collapsed && (
+          {!isCollapsed && (
             <div>
               <h1 className="font-bold text-lg">LMSAdmin</h1>
               <p className="text-xs text-muted-foreground">Skill Spark Manager</p>
@@ -70,7 +71,7 @@ export function AdminSidebar() {
 
       <SidebarContent className="p-2">
         <SidebarGroup>
-          <SidebarGroupLabel className={collapsed ? "sr-only" : ""}>
+          <SidebarGroupLabel className={isCollapsed ? "sr-only" : ""}>
             Navigation
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -82,10 +83,10 @@ export function AdminSidebar() {
                       to={item.url} 
                       end 
                       className={getNavClass}
-                      title={collapsed ? item.title : undefined}
+                      title={isCollapsed ? item.title : undefined}
                     >
                       <item.icon className="w-4 h-4 flex-shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
+                      {!isCollapsed && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
