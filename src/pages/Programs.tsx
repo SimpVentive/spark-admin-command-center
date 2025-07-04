@@ -1,11 +1,13 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Calendar, Users, MapPin, Monitor, BookOpen, Video } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Programs = () => {
+  const navigate = useNavigate();
+  
   const programs = [
     {
       id: 1,
@@ -70,7 +72,7 @@ const Programs = () => {
           <h1 className="text-2xl font-bold">Program Management</h1>
           <p className="text-muted-foreground">Create and manage training programs</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => navigate('/programs/create')}>
           <Plus className="h-4 w-4" />
           Create Program
         </Button>
@@ -140,7 +142,7 @@ const Programs = () => {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Button variant="outline" className="h-20 flex-col gap-2">
+          <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/programs/create')}>
             <Plus className="h-6 w-6" />
             <span>New Program</span>
           </Button>
@@ -148,7 +150,7 @@ const Programs = () => {
             <Calendar className="h-6 w-6" />
             <span>Schedule Session</span>
           </Button>
-          <Button variant="outline" className="h-20 flex-col gap-2">
+          <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => window.open('https://www.SimplifyMyTraining.com', '_blank')}>
             <Users className="h-6 w-6" />
             <span>Manage Trainers</span>
           </Button>

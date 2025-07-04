@@ -17,6 +17,7 @@ import Locations from "./pages/organization/Locations";
 import Roles from "./pages/organization/Roles";
 import Programs from "./pages/Programs";
 import CreateProgram from "./pages/programs/CreateProgram";
+import Trainers from "./pages/programs/Trainers";
 import Assessments from "./pages/Assessments";
 import NotFound from "./pages/NotFound";
 
@@ -45,6 +46,7 @@ const App = () => (
                   <Route path="/organization/roles" element={<Roles />} />
                   <Route path="/programs" element={<Programs />} />
                   <Route path="/programs/create" element={<CreateProgram />} />
+                  <Route path="/programs/trainers" element={<Trainers />} />
                   <Route path="/assessments" element={<Assessments />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
