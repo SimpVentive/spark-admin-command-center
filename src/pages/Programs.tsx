@@ -154,9 +154,9 @@ const Programs = () => {
             <Users className="h-6 w-6" />
             <span>Manage Trainers</span>
           </Button>
-          <Button variant="outline" className="h-20 flex-col gap-2">
+          <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => navigate('/programs/categories')}>
             <MapPin className="h-6 w-6" />
-            <span>Venue Setup</span>
+            <span>Manage Categories</span>
           </Button>
         </CardContent>
       </Card>

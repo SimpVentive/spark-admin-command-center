@@ -18,12 +18,15 @@ import Roles from "./pages/organization/Roles";
 import Programs from "./pages/Programs";
 import CreateProgram from "./pages/programs/CreateProgram";
 import Trainers from "./pages/programs/Trainers";
+import CategoryManagement from "./pages/programs/CategoryManagement";
 import LearningPaths from "./pages/LearningPaths";
 import CreateLearningPath from "./pages/learning-paths/CreateLearningPath";
 import ContentManagement from "./pages/learning-paths/ContentManagement";
 import EnrollmentManagement from "./pages/learning-paths/EnrollmentManagement";
 import AnalyticsDashboard from "./pages/learning-paths/AnalyticsDashboard";
 import StatusTracking from "./pages/learning-paths/StatusTracking";
+import LearningPathDetails from "./pages/learning-paths/LearningPathDetails";
+import LearningPathManagement from "./pages/learning-paths/LearningPathManagement";
 import Assessments from "./pages/Assessments";
 import NotFound from "./pages/NotFound";
 
@@ -51,14 +54,17 @@ const App = () => (
                   <Route path="/organization/locations" element={<Locations />} />
                   <Route path="/organization/roles" element={<Roles />} />
                   <Route path="/programs" element={<Programs />} />
-                  <Route path="/programs/create" element={<CreateProgram />} />
-                  <Route path="/programs/trainers" element={<Trainers />} />
+          <Route path="/programs/create" element={<CreateProgram />} />
+          <Route path="/programs/trainers" element={<Trainers />} />
+          <Route path="/programs/categories" element={<CategoryManagement />} />
                   <Route path="/learning-paths" element={<LearningPaths />} />
                   <Route path="/learning-paths/create" element={<CreateLearningPath />} />
                   <Route path="/learning-paths/content" element={<ContentManagement />} />
-                  <Route path="/learning-paths/enrollment" element={<EnrollmentManagement />} />
-                  <Route path="/learning-paths/analytics" element={<AnalyticsDashboard />} />
-                  <Route path="/learning-paths/status" element={<StatusTracking />} />
+          <Route path="/learning-paths/enrollment" element={<EnrollmentManagement />} />
+          <Route path="/learning-paths/analytics" element={<AnalyticsDashboard />} />
+          <Route path="/learning-paths/status" element={<StatusTracking />} />
+          <Route path="/learning-paths/:id/details" element={<LearningPathDetails />} />
+          <Route path="/learning-paths/:id/manage" element={<LearningPathManagement />} />
                   <Route path="/assessments" element={<Assessments />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />

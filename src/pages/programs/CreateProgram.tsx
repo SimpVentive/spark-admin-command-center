@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import ProgramCategoryManagement from "@/components/ProgramCategoryManagement";
 
 const CreateProgram = () => {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ const CreateProgram = () => {
   
   const [formData, setFormData] = useState({
     title: "",
+    category: "",
+    subcategory: "",
     programType: "",
     level: "",
     outline: "",
@@ -119,6 +122,19 @@ const CreateProgram = () => {
                   onChange={(e) => handleInputChange('title', e.target.value)}
                   placeholder="Enter program title"
                   required
+                />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="category">Program Category *</Label>
+                <ProgramCategoryManagement
+                  selectedCategory={formData.category}
+                  selectedSubcategory={formData.subcategory}
+                  onCategoryChange={(category, subcategory) => {
+                    handleInputChange('category', category);
+                    if (subcategory) {
+                      handleInputChange('subcategory', subcategory);
+                    }
+                  }}
                 />
               </div>
               <div className="space-y-2">
