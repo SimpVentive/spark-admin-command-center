@@ -75,6 +75,18 @@ const navigationItems = [
     ]
   },
   { 
+    title: "Learning Paths", 
+    icon: BookOpen,
+    subItems: [
+      { title: "All Learning Paths", url: "/learning-paths" },
+      { title: "Create Learning Path", url: "/learning-paths/create" },
+      { title: "Content Management", url: "/learning-paths/content" },
+      { title: "Enrollment Management", url: "/learning-paths/enrollment" },
+      { title: "Analytics Dashboard", url: "/learning-paths/analytics" },
+      { title: "Status Tracking", url: "/learning-paths/status" }
+    ]
+  },
+  { 
     title: "Assessments", 
     icon: FileText,
     subItems: [
