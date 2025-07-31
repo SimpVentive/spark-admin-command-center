@@ -1,16 +1,66 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Building2, Users, MapPin, Plus, Edit, Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Departments = () => {
-  const departments = [
+  const { toast } = useToast();
+  const [departments, setDepartments] = useState([
     { id: 1, name: "Engineering", manager: "John Smith", employees: 45, location: "Building A" },
     { id: 2, name: "Marketing", manager: "Sarah Johnson", employees: 23, location: "Building B" },
     { id: 3, name: "Human Resources", manager: "Mike Davis", employees: 12, location: "Building A" },
     { id: 4, name: "Sales", manager: "Lisa Chen", employees: 34, location: "Building C" },
-  ];
+  ]);
+
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [newDepartment, setNewDepartment] = useState({
+    name: "",
+    manager: "",
+    location: ""
+  });
+
+  const handleAddDepartment = () => {
+    if (!newDepartment.name || !newDepartment.manager || !newDepartment.location) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const department = {
+      id: Date.now(),
+      name: newDepartment.name,
+      manager: newDepartment.manager,
+      employees: 0,
+      location: newDepartment.location
+    };
+
+    setDepartments([...departments, department]);
+    setNewDepartment({ name: "", manager: "", location: "" });
+    setIsAddDialogOpen(false);
+    
+    toast({
+      title: "Success",
+      description: "Department added successfully"
+    });
+  };
+
+  const handleDeleteDepartment = (id: number) => {
+    setDepartments(departments.filter(dept => dept.id !== id));
+    toast({
+      title: "Success",
+      description: "Department deleted successfully"
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -19,10 +69,61 @@ const Departments = () => {
           <h1 className="text-2xl font-bold">Departments</h1>
           <p className="text-muted-foreground">Manage organizational departments</p>
         </div>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Department
-        </Button>
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Department
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Department</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Department Name</Label>
+                <Input
+                  id="name"
+                  value={newDepartment.name}
+                  onChange={(e) => setNewDepartment({...newDepartment, name: e.target.value})}
+                  placeholder="Enter department name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="manager">Manager</Label>
+                <Input
+                  id="manager"
+                  value={newDepartment.manager}
+                  onChange={(e) => setNewDepartment({...newDepartment, manager: e.target.value})}
+                  placeholder="Enter manager name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <Select value={newDepartment.location} onValueChange={(value) => setNewDepartment({...newDepartment, location: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Building A">Building A</SelectItem>
+                    <SelectItem value="Building B">Building B</SelectItem>
+                    <SelectItem value="Building C">Building C</SelectItem>
+                    <SelectItem value="Building D">Building D</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleAddDepartment}>
+                  Add Department
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-4">
@@ -48,7 +149,7 @@ const Departments = () => {
                   <Button variant="ghost" size="icon">
                     <Edit className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" onClick={() => handleDeleteDepartment(dept.id)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
