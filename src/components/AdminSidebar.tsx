@@ -47,15 +47,23 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
   { 
+    title: "Processes", 
+    icon: Workflow,
+    subItems: [
+      { title: "Workflow Management", url: "/processes/workflow", icon: Workflow },
+      { title: "User and Role Management", url: "/processes/user-roles", icon: UserCog },
+      { title: "Approval Framework", url: "/processes/approval", icon: CheckCircle },
+      { title: "Business Rules", url: "/processes/business-rules", icon: Brain },
+      { title: "Security & Access Control", url: "/processes/security", icon: ShieldCheck }
+    ]
+  },
+  { 
     title: "User Management", 
     icon: Users,
     subItems: [
       { title: "All Users", url: "/users" },
       { title: "Add Employee", url: "/users/add" },
-      { title: "Bulk Enrollment", url: "/users/bulk" },
-      { title: "User Roles", url: "/users/roles" },
-      { title: "User Groups", url: "/users/groups" },
-      { title: "Access Control", url: "/users/access" }
+      { title: "Bulk Enrollment", url: "/users/bulk" }
     ]
   },
   { 
@@ -149,17 +157,6 @@ const navigationItems = [
       { title: "Tools", url: "/lti/tools" },
       { title: "Launches", url: "/lti/launches" },
       { title: "Grade Passback", url: "/lti/grades" }
-    ]
-  },
-  { 
-    title: "Processes", 
-    icon: Workflow,
-    subItems: [
-      { title: "Workflow Management", url: "/processes/workflow", icon: Workflow },
-      { title: "User and Role Management", url: "/processes/user-roles", icon: UserCog },
-      { title: "Approval Framework", url: "/processes/approval", icon: CheckCircle },
-      { title: "Business Rules", url: "/processes/business-rules", icon: Brain },
-      { title: "Security & Access Control", url: "/processes/security", icon: ShieldCheck }
     ]
   },
   { title: "Security", url: "/security", icon: Shield },
