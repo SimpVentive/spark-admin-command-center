@@ -31,7 +31,9 @@ const Departments = () => {
   });
 
   const handleAddDepartment = () => {
+    console.log("handleAddDepartment called", newDepartment);
     if (!newDepartment.name || !newDepartment.manager || !newDepartment.location) {
+      console.log("Missing fields validation failed");
       toast({
         title: "Error",
         description: "Please fill in all fields",
@@ -59,6 +61,7 @@ const Departments = () => {
   };
 
   const handleEditDepartment = (dept: any) => {
+    console.log("handleEditDepartment called", dept);
     setEditingDepartment(dept);
     setIsEditDialogOpen(true);
   };
