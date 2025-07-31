@@ -95,29 +95,31 @@ function SortableItem({ id, position, onEdit, onDelete, onAddSubordinate }: Sort
             </div>
             <div className="flex items-center gap-2">
               <Button 
-                variant="ghost" 
+                variant="secondary" 
                 size="sm" 
                 onClick={() => onAddSubordinate(position.id)}
-                className="opacity-75 hover:opacity-100"
+                className="opacity-90 hover:opacity-100 bg-white/20 hover:bg-white/30"
               >
                 <Plus className="h-3 w-3" />
                 Add
               </Button>
               <Button 
-                variant="ghost" 
-                size="icon" 
+                variant="secondary" 
+                size="sm" 
                 onClick={() => onEdit(position)}
-                className="opacity-75 hover:opacity-100"
+                className="opacity-90 hover:opacity-100 bg-white/20 hover:bg-white/30"
               >
                 <Edit className="h-3 w-3" />
+                Edit
               </Button>
               <Button 
-                variant="ghost" 
-                size="icon" 
+                variant="secondary" 
+                size="sm" 
                 onClick={() => onDelete(position.id)}
-                className="opacity-75 hover:opacity-100"
+                className="opacity-90 hover:opacity-100 bg-red-500/20 hover:bg-red-500/30"
               >
                 <Trash2 className="h-3 w-3" />
+                Delete
               </Button>
             </div>
           </div>
