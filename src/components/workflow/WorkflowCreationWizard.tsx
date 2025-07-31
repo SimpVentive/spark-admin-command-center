@@ -240,35 +240,26 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
       case 1: // Template Selection
         return (
           <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-semibold">Choose Your Starting Point</h3>
-              <p className="text-muted-foreground">Select a template or start from scratch</p>
-            </div>
-
-            <div className="relative">
+            <div className="relative mb-6">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search templates..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 h-12 text-base bg-muted/30"
               />
             </div>
 
-            <Tabs defaultValue="templates" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="templates">Templates</TabsTrigger>
-                <TabsTrigger value="popular">Most Popular</TabsTrigger>
-                <TabsTrigger value="custom">Start from Scratch</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="templates" className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+            <div className="grid grid-cols-3 gap-8 min-h-[400px]">
+              {/* Templates Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-muted-foreground text-center">Templates</h3>
+                <div className="space-y-4 max-h-96 overflow-y-auto">
                   {filteredTemplates.map((template) => (
                     <Card 
                       key={template.id} 
                       className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
-                        selectedTemplate === template.id ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                        selectedTemplate === template.id ? 'ring-2 ring-primary bg-primary/5' : ''
                       }`}
                       onClick={() => {
                         setSelectedTemplate(template.id);
@@ -278,103 +269,88 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
                           <div>
-                            <CardTitle className="text-lg">{template.name}</CardTitle>
-                            <CardDescription className="mt-1">{template.description}</CardDescription>
+                            <CardTitle className="text-base">{template.name}</CardTitle>
+                            <CardDescription className="mt-1 text-sm">{template.description}</CardDescription>
                           </div>
                           <div className="flex items-center gap-1 text-yellow-500">
-                            <Star className="w-4 h-4 fill-current" />
+                            <Star className="w-3 h-3 fill-current" />
                             <span className="text-xs">{template.popularity}</span>
                           </div>
                         </div>
                       </CardHeader>
-                      <CardContent className="space-y-3">
+                      <CardContent className="pt-0">
                         <div className="flex items-center justify-between text-sm">
-                          <Badge variant="outline">{template.category}</Badge>
-                          <Badge className={getComplexityColor(template.complexity)}>
+                          <Badge variant="outline" className="text-xs">{template.category}</Badge>
+                          <Badge className={`text-xs ${getComplexityColor(template.complexity)}`}>
                             {template.complexity}
                           </Badge>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            {template.duration}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Settings className="w-4 h-4" />
-                            {template.steps} steps
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <p className="text-xs font-medium text-muted-foreground">Preview:</p>
-                          <div className="flex flex-wrap gap-1">
-                            {template.preview.slice(0, 3).map((step, idx) => (
-                              <Badge key={idx} variant="secondary" className="text-xs">
-                                {step}
-                              </Badge>
-                            ))}
-                            {template.preview.length > 3 && (
-                              <Badge variant="secondary" className="text-xs">
-                                +{template.preview.length - 3} more
-                              </Badge>
-                            )}
-                          </div>
                         </div>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
-              </TabsContent>
+              </div>
 
-              <TabsContent value="popular" className="space-y-4">
-                <div className="grid grid-cols-1 gap-4">
+              {/* Most Popular Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-muted-foreground text-center">Most Popular</h3>
+                <div className="space-y-4">
                   {workflowTemplates
                     .sort((a, b) => b.popularity - a.popularity)
                     .slice(0, 3)
                     .map((template) => (
-                      <Card key={template.id} className="cursor-pointer hover:shadow-lg transition-all duration-300">
+                      <Card 
+                        key={`popular-${template.id}`} 
+                        className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
+                          selectedTemplate === template.id ? 'ring-2 ring-primary bg-primary/5' : ''
+                        }`}
+                        onClick={() => {
+                          setSelectedTemplate(template.id);
+                          setWorkflowData(prev => ({ ...prev, template: template.id, type: "template" }));
+                        }}
+                      >
                         <CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h4 className="font-semibold">{template.name}</h4>
-                              <p className="text-sm text-muted-foreground">{template.description}</p>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <h4 className="font-medium text-base">{template.name}</h4>
+                              <p className="text-sm text-muted-foreground mt-1">{template.description}</p>
                             </div>
-                            <div className="text-right">
-                              <div className="flex items-center gap-1 text-yellow-500 mb-1">
-                                <Star className="w-4 h-4 fill-current" />
-                                <span className="text-sm font-semibold">{template.popularity}%</span>
-                              </div>
-                              <Badge variant="outline">{template.category}</Badge>
+                            <div className="flex items-center gap-1 text-yellow-500 ml-2">
+                              <Star className="w-4 h-4 fill-current" />
+                              <span className="text-sm font-medium">{template.popularity}%</span>
                             </div>
                           </div>
                         </CardContent>
                       </Card>
                     ))}
                 </div>
-              </TabsContent>
+              </div>
 
-              <TabsContent value="custom" className="space-y-4">
-                <Card className="border-dashed border-2 cursor-pointer hover:border-blue-400 transition-colors">
-                  <CardContent className="p-8 text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Sparkles className="w-8 h-8 text-white" />
-                    </div>
-                    <h3 className="text-lg font-semibold mb-2">Start from Scratch</h3>
-                    <p className="text-muted-foreground mb-4">
+              {/* Start from Scratch Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-foreground text-center">Start from Scratch</h3>
+                <div className="flex flex-col items-center justify-center h-80 space-y-6">
+                  <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <Sparkles className="w-10 h-10 text-white" />
+                  </div>
+                  <div className="text-center space-y-3">
+                    <h4 className="text-xl font-semibold">Start from Scratch</h4>
+                    <p className="text-muted-foreground max-w-sm">
                       Build a completely custom workflow tailored to your specific needs
                     </p>
-                    <Button 
-                      onClick={() => {
-                        setSelectedTemplate("custom");
-                        setWorkflowData(prev => ({ ...prev, template: "custom", type: "custom" }));
-                      }}
-                      variant="outline"
-                    >
-                      Create Custom Workflow
-                    </Button>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                  </div>
+                  <Button 
+                    onClick={() => {
+                      setSelectedTemplate("custom");
+                      setWorkflowData(prev => ({ ...prev, template: "custom", type: "custom" }));
+                    }}
+                    className="mt-4 bg-foreground text-background hover:bg-foreground/90"
+                  >
+                    Create Custom Workflow
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         );
 
