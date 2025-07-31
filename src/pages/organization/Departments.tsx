@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,9 +11,17 @@ import { Building2, Users, MapPin, Plus, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { OrganizationalHierarchy } from "@/components/OrganizationalHierarchy";
 
+interface Department {
+  id: number;
+  name: string;
+  manager: string;
+  employees: number;
+  location: string;
+}
+
 const Departments = () => {
   const { toast } = useToast();
-  const [departments, setDepartments] = useState([
+  const [departments, setDepartments] = useState<Department[]>([
     { id: 1, name: "Engineering", manager: "John Smith", employees: 45, location: "Building A" },
     { id: 2, name: "Marketing", manager: "Sarah Johnson", employees: 23, location: "Building B" },
     { id: 3, name: "Human Resources", manager: "Mike Davis", employees: 12, location: "Building A" },
@@ -23,7 +30,7 @@ const Departments = () => {
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingDepartment, setEditingDepartment] = useState<any>(null);
+  const [editingDepartment, setEditingDepartment] = useState<Department | null>(null);
   const [newDepartment, setNewDepartment] = useState({
     name: "",
     manager: "",
@@ -31,9 +38,7 @@ const Departments = () => {
   });
 
   const handleAddDepartment = () => {
-    console.log("handleAddDepartment called", newDepartment);
-    if (!newDepartment.name || !newDepartment.manager || !newDepartment.location) {
-      console.log("Missing fields validation failed");
+    if (!newDepartment.name.trim() || !newDepartment.manager.trim() || !newDepartment.location.trim()) {
       toast({
         title: "Error",
         description: "Please fill in all fields",
@@ -42,15 +47,15 @@ const Departments = () => {
       return;
     }
 
-    const department = {
+    const department: Department = {
       id: Date.now(),
-      name: newDepartment.name,
-      manager: newDepartment.manager,
+      name: newDepartment.name.trim(),
+      manager: newDepartment.manager.trim(),
       employees: 0,
       location: newDepartment.location
     };
 
-    setDepartments([...departments, department]);
+    setDepartments(prev => [...prev, department]);
     setNewDepartment({ name: "", manager: "", location: "" });
     setIsAddDialogOpen(false);
     
@@ -60,14 +65,15 @@ const Departments = () => {
     });
   };
 
-  const handleEditDepartment = (dept: any) => {
-    console.log("handleEditDepartment called", dept);
-    setEditingDepartment(dept);
+  const handleEditDepartment = (dept: Department) => {
+    setEditingDepartment({ ...dept });
     setIsEditDialogOpen(true);
   };
 
   const handleUpdateDepartment = () => {
-    if (!editingDepartment.name || !editingDepartment.manager || !editingDepartment.location) {
+    if (!editingDepartment) return;
+    
+    if (!editingDepartment.name.trim() || !editingDepartment.manager.trim() || !editingDepartment.location.trim()) {
       toast({
         title: "Error",
         description: "Please fill in all fields",
@@ -76,7 +82,7 @@ const Departments = () => {
       return;
     }
 
-    setDepartments(departments.map(dept => 
+    setDepartments(prev => prev.map(dept => 
       dept.id === editingDepartment.id ? editingDepartment : dept
     ));
     setIsEditDialogOpen(false);
@@ -89,7 +95,7 @@ const Departments = () => {
   };
 
   const handleDeleteDepartment = (id: number) => {
-    setDepartments(departments.filter(dept => dept.id !== id));
+    setDepartments(prev => prev.filter(dept => dept.id !== id));
     toast({
       title: "Success",
       description: "Department deleted successfully"
@@ -120,7 +126,7 @@ const Departments = () => {
                 <Input
                   id="name"
                   value={newDepartment.name}
-                  onChange={(e) => setNewDepartment({...newDepartment, name: e.target.value})}
+                  onChange={(e) => setNewDepartment(prev => ({...prev, name: e.target.value}))}
                   placeholder="Enter department name"
                 />
               </div>
@@ -129,13 +135,13 @@ const Departments = () => {
                 <Input
                   id="manager"
                   value={newDepartment.manager}
-                  onChange={(e) => setNewDepartment({...newDepartment, manager: e.target.value})}
+                  onChange={(e) => setNewDepartment(prev => ({...prev, manager: e.target.value}))}
                   placeholder="Enter manager name"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="location">Location</Label>
-                <Select value={newDepartment.location} onValueChange={(value) => setNewDepartment({...newDepartment, location: value})}>
+                <Select value={newDepartment.location} onValueChange={(value) => setNewDepartment(prev => ({...prev, location: value}))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select location" />
                   </SelectTrigger>
@@ -180,11 +186,23 @@ const Departments = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" onClick={() => handleEditDepartment(dept)}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleEditDepartment(dept)}
+                    className="gap-1"
+                  >
                     <Edit className="h-4 w-4" />
+                    Edit
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => handleDeleteDepartment(dept.id)}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleDeleteDepartment(dept.id)}
+                    className="gap-1 text-destructive hover:text-destructive"
+                  >
                     <Trash2 className="h-4 w-4" />
+                    Delete
                   </Button>
                 </div>
               </div>
@@ -206,7 +224,7 @@ const Departments = () => {
                 <Input
                   id="edit-name"
                   value={editingDepartment.name}
-                  onChange={(e) => setEditingDepartment({...editingDepartment, name: e.target.value})}
+                  onChange={(e) => setEditingDepartment(prev => prev ? {...prev, name: e.target.value} : null)}
                   placeholder="Enter department name"
                 />
               </div>
@@ -215,13 +233,16 @@ const Departments = () => {
                 <Input
                   id="edit-manager"
                   value={editingDepartment.manager}
-                  onChange={(e) => setEditingDepartment({...editingDepartment, manager: e.target.value})}
+                  onChange={(e) => setEditingDepartment(prev => prev ? {...prev, manager: e.target.value} : null)}
                   placeholder="Enter manager name"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-location">Location</Label>
-                <Select value={editingDepartment.location} onValueChange={(value) => setEditingDepartment({...editingDepartment, location: value})}>
+                <Select 
+                  value={editingDepartment.location} 
+                  onValueChange={(value) => setEditingDepartment(prev => prev ? {...prev, location: value} : null)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select location" />
                   </SelectTrigger>
