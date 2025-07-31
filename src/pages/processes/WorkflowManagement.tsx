@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Play, 
@@ -68,6 +69,41 @@ const WorkflowManagement = () => {
     { id: 3, name: "Equipment Request", category: "IT", usage: 28 },
     { id: 4, name: "Leave Approval", category: "HR", usage: 67 }
   ]);
+
+  // Detailed stats data for modals
+  const statsDetails = {
+    "Active Workflows": {
+      data: [
+        { name: "Employee Onboarding", status: "Running", department: "HR", startDate: "2024-01-28", assignee: "Sarah Johnson" },
+        { name: "Training Approval", status: "Running", department: "Learning", startDate: "2024-01-29", assignee: "Mike Chen" },
+        { name: "Equipment Request", status: "Running", department: "IT", startDate: "2024-01-30", assignee: "Alex Rodriguez" },
+        { name: "Performance Review", status: "Running", department: "HR", startDate: "2024-01-31", assignee: "Jessica Lee" },
+        { name: "Leave Approval", status: "Running", department: "HR", startDate: "2024-02-01", assignee: "David Kim" }
+      ]
+    },
+    "Completed Today": {
+      data: [
+        { name: "Security Training", status: "Completed", department: "Security", completedAt: "14:30", assignee: "Tom Wilson" },
+        { name: "Vendor Approval", status: "Completed", department: "Finance", completedAt: "13:15", assignee: "Lisa Parker" },
+        { name: "Project Review", status: "Completed", department: "Operations", completedAt: "11:45", assignee: "James Brown" },
+        { name: "Code Review", status: "Completed", department: "Engineering", completedAt: "10:20", assignee: "Emma Davis" }
+      ]
+    },
+    "Pending Approval": {
+      data: [
+        { name: "Budget Request", status: "Pending", department: "Finance", waitingFor: "CFO Approval", submittedBy: "John Smith" },
+        { name: "Policy Update", status: "Pending", department: "Legal", waitingFor: "Legal Review", submittedBy: "Mary Jones" },
+        { name: "System Upgrade", status: "Pending", department: "IT", waitingFor: "IT Director", submittedBy: "Robert Chen" }
+      ]
+    },
+    "Error Rate": {
+      data: [
+        { workflow: "Data Migration", error: "Connection timeout", timestamp: "15:42", severity: "Medium" },
+        { workflow: "Email Notification", error: "SMTP failure", timestamp: "14:18", severity: "Low" },
+        { workflow: "File Processing", error: "Invalid format", timestamp: "13:55", severity: "High" }
+      ]
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -134,20 +170,150 @@ const WorkflowManagement = () => {
           { title: "Pending Approval", value: "7", change: "-5%", icon: Clock, color: "from-yellow-500 to-yellow-600" },
           { title: "Error Rate", value: "2.1%", change: "-15%", icon: AlertTriangle, color: "from-red-500 to-red-600" }
         ].map((stat, index) => (
-          <Card key={index} className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 group">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                  <p className="text-2xl font-bold mt-1">{stat.value}</p>
-                  <p className="text-xs text-green-600 mt-1">{stat.change}</p>
-                </div>
-                <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${stat.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                  <stat.icon className="w-6 h-6 text-white" />
-                </div>
+          <Dialog key={index}>
+            <DialogTrigger asChild>
+              <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
+                      <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                      <p className="text-xs text-green-600 mt-1">{stat.change}</p>
+                    </div>
+                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${stat.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                      <stat.icon className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </DialogTrigger>
+            <DialogContent className="bg-white/95 backdrop-blur-sm border-white/20 max-w-4xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <stat.icon className="w-5 h-5" />
+                  {stat.title} Details
+                </DialogTitle>
+                <DialogDescription>
+                  Detailed breakdown of {stat.title.toLowerCase()}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="mt-4">
+                {stat.title === "Active Workflows" && (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Workflow Name</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Department</TableHead>
+                        <TableHead>Start Date</TableHead>
+                        <TableHead>Assignee</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {statsDetails["Active Workflows"].data.map((workflow, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell className="font-medium">{workflow.name}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                              {workflow.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{workflow.department}</TableCell>
+                          <TableCell>{workflow.startDate}</TableCell>
+                          <TableCell>{workflow.assignee}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+                
+                {stat.title === "Completed Today" && (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Workflow Name</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Department</TableHead>
+                        <TableHead>Completed At</TableHead>
+                        <TableHead>Assignee</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {statsDetails["Completed Today"].data.map((workflow, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell className="font-medium">{workflow.name}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="bg-green-50 text-green-700">
+                              {workflow.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{workflow.department}</TableCell>
+                          <TableCell>{workflow.completedAt}</TableCell>
+                          <TableCell>{workflow.assignee}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+                
+                {stat.title === "Pending Approval" && (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Workflow Name</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Department</TableHead>
+                        <TableHead>Waiting For</TableHead>
+                        <TableHead>Submitted By</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {statsDetails["Pending Approval"].data.map((workflow, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell className="font-medium">{workflow.name}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="bg-yellow-50 text-yellow-700">
+                              {workflow.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{workflow.department}</TableCell>
+                          <TableCell>{workflow.waitingFor}</TableCell>
+                          <TableCell>{workflow.submittedBy}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+                
+                {stat.title === "Error Rate" && (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Workflow</TableHead>
+                        <TableHead>Error</TableHead>
+                        <TableHead>Timestamp</TableHead>
+                        <TableHead>Severity</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {statsDetails["Error Rate"].data.map((error, idx) => (
+                        <TableRow key={idx}>
+                          <TableCell className="font-medium">{error.workflow}</TableCell>
+                          <TableCell>{error.error}</TableCell>
+                          <TableCell>{error.timestamp}</TableCell>
+                          <TableCell>
+                            <Badge variant={error.severity === "High" ? "destructive" : error.severity === "Medium" ? "default" : "secondary"}>
+                              {error.severity}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </div>
-            </CardContent>
-          </Card>
+            </DialogContent>
+          </Dialog>
         ))}
       </div>
 
