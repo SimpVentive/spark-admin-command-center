@@ -22,8 +22,10 @@ import {
   MoreHorizontal
 } from "lucide-react";
 import { toast } from "sonner";
+import WorkflowCreationWizard from "@/components/workflow/WorkflowCreationWizard";
 
 const WorkflowManagement = () => {
+  const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [activeWorkflows, setActiveWorkflows] = useState([
     {
       id: 1,
@@ -114,6 +116,7 @@ const WorkflowManagement = () => {
               Settings
             </Button>
             <Button 
+              onClick={() => setIsWizardOpen(true)}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -346,6 +349,12 @@ const WorkflowManagement = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Workflow Creation Wizard */}
+      <WorkflowCreationWizard 
+        open={isWizardOpen} 
+        onOpenChange={setIsWizardOpen} 
+      />
     </div>
   );
 };
