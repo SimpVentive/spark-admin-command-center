@@ -7,8 +7,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Building2, Users, MapPin, Plus, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { OrganizationalHierarchy } from "@/components/OrganizationalHierarchy";
 
 const Departments = () => {
   const { toast } = useToast();
@@ -20,6 +22,8 @@ const Departments = () => {
   ]);
 
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingDepartment, setEditingDepartment] = useState<any>(null);
   const [newDepartment, setNewDepartment] = useState({
     name: "",
     manager: "",
@@ -51,6 +55,33 @@ const Departments = () => {
     toast({
       title: "Success",
       description: "Department added successfully"
+    });
+  };
+
+  const handleEditDepartment = (dept: any) => {
+    setEditingDepartment(dept);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateDepartment = () => {
+    if (!editingDepartment.name || !editingDepartment.manager || !editingDepartment.location) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setDepartments(departments.map(dept => 
+      dept.id === editingDepartment.id ? editingDepartment : dept
+    ));
+    setIsEditDialogOpen(false);
+    setEditingDepartment(null);
+    
+    toast({
+      title: "Success",
+      description: "Department updated successfully"
     });
   };
 
@@ -146,7 +177,7 @@ const Departments = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" onClick={() => handleEditDepartment(dept)}>
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" onClick={() => handleDeleteDepartment(dept.id)}>
@@ -158,6 +189,63 @@ const Departments = () => {
           </Card>
         ))}
       </div>
+
+      {/* Edit Department Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Department</DialogTitle>
+          </DialogHeader>
+          {editingDepartment && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-name">Department Name</Label>
+                <Input
+                  id="edit-name"
+                  value={editingDepartment.name}
+                  onChange={(e) => setEditingDepartment({...editingDepartment, name: e.target.value})}
+                  placeholder="Enter department name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-manager">Manager</Label>
+                <Input
+                  id="edit-manager"
+                  value={editingDepartment.manager}
+                  onChange={(e) => setEditingDepartment({...editingDepartment, manager: e.target.value})}
+                  placeholder="Enter manager name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-location">Location</Label>
+                <Select value={editingDepartment.location} onValueChange={(value) => setEditingDepartment({...editingDepartment, location: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Building A">Building A</SelectItem>
+                    <SelectItem value="Building B">Building B</SelectItem>
+                    <SelectItem value="Building C">Building C</SelectItem>
+                    <SelectItem value="Building D">Building D</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleUpdateDepartment}>
+                  Update Department
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Separator className="my-8" />
+
+      <OrganizationalHierarchy />
     </div>
   );
 };
