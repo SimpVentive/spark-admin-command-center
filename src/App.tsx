@@ -30,6 +30,7 @@ import LearningPathManagement from "./pages/learning-paths/LearningPathManagemen
 import Assessments from "./pages/Assessments";
 import Processes from "./pages/Processes";
 import WorkflowManagement from "./pages/processes/WorkflowManagement";
+import UserRoleManagement from "./pages/processes/UserRoleManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,7 +70,8 @@ const App = () => (
           <Route path="/learning-paths/:id/manage" element={<LearningPathManagement />} />
                   <Route path="/assessments" element={<Assessments />} />
                   <Route path="/processes" element={<Processes />} />
-                  <Route path="/processes/workflow" element={<WorkflowManagement />} />
+          <Route path="/processes/workflow" element={<WorkflowManagement />} />
+          <Route path="/processes/user-roles" element={<UserRoleManagement />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

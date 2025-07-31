@@ -23,7 +23,11 @@ import {
   Monitor,
   ChevronDown,
   ChevronRight,
-  Workflow
+  Workflow,
+  UserCog,
+  CheckCircle,
+  Brain,
+  ShieldCheck
 } from "lucide-react";
 
 import {
@@ -151,11 +155,11 @@ const navigationItems = [
     title: "Processes", 
     icon: Workflow,
     subItems: [
-      { title: "Workflow Management", url: "/processes/workflow" },
-      { title: "User and Role Management", url: "/processes/user-roles" },
-      { title: "Approval Framework", url: "/processes/approval" },
-      { title: "Business Rules", url: "/processes/business-rules" },
-      { title: "Security & Access Control", url: "/processes/security" }
+      { title: "Workflow Management", url: "/processes/workflow", icon: Workflow },
+      { title: "User and Role Management", url: "/processes/user-roles", icon: UserCog },
+      { title: "Approval Framework", url: "/processes/approval", icon: CheckCircle },
+      { title: "Business Rules", url: "/processes/business-rules", icon: Brain },
+      { title: "Security & Access Control", url: "/processes/security", icon: ShieldCheck }
     ]
   },
   { title: "Security", url: "/security", icon: Shield },
