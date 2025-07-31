@@ -9,6 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   ArrowLeft, 
   ArrowRight, 
@@ -29,7 +32,19 @@ import {
   Save,
   Eye,
   TestTube,
-  Sparkles
+  Sparkles,
+  Plus,
+  Trash2,
+  GripVertical,
+  Mail,
+  Bell,
+  Smartphone,
+  MessageSquare,
+  Timer,
+  UserPlus,
+  Shield,
+  Target,
+  Hash
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -49,32 +64,83 @@ interface WorkflowCreationWizardProps {
   onOpenChange: (open: boolean) => void;
 }
 
-interface WorkflowData {
-  type: string;
-  template: string;
+interface WorkflowStep {
+  id: string;
   name: string;
   description: string;
-  department: string[];
-  priority: string;
-  duration: string;
-  steps: any[];
-  participants: any[];
-  settings: any;
+  type: 'task' | 'approval' | 'notification' | 'decision';
+  timeLimit: number;
+  timeLimitUnit: 'hours' | 'days';
+}
+
+interface WorkflowParticipant {
+  id: string;
+  name: string;
+  role: string;
+  type: 'initiator' | 'approver' | 'reviewer' | 'recipient';
+}
+
+interface WorkflowData {
+  // Basic Info
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  
+  // Trigger Config
+  triggerType: 'manual' | 'form' | 'scheduled' | 'email';
+  scheduleFrequency?: 'daily' | 'weekly' | 'monthly';
+  scheduleTime?: string;
+  
+  // Steps
+  steps: WorkflowStep[];
+  
+  // Participants
+  participants: WorkflowParticipant[];
+  
+  // Rules
+  globalTimeLimit: number;
+  globalTimeLimitUnit: 'hours' | 'days';
+  escalationType: 'reminder' | 'auto-approve' | 'reassign';
+  completionCriteria: string[];
+  
+  // Notifications
+  notifications: {
+    sendStart: boolean;
+    sendReminders: boolean;
+    reminderFrequency: 'hourly' | 'daily' | 'weekly';
+    sendCompletion: boolean;
+  };
+  
+  // Legacy fields for template mode
+  type?: string;
+  template?: string;
+  department?: string[];
+  priority?: string;
+  duration?: string;
+  settings?: any;
 }
 
 const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [workflowData, setWorkflowData] = useState<WorkflowData>({
-    type: "",
-    template: "",
+    id: `workflow-${Date.now()}`,
     name: "",
+    category: "",
     description: "",
-    department: [],
-    priority: "",
-    duration: "",
+    triggerType: 'manual',
     steps: [],
     participants: [],
-    settings: {}
+    globalTimeLimit: 7,
+    globalTimeLimitUnit: 'days',
+    escalationType: 'reminder',
+    completionCriteria: [],
+    notifications: {
+      sendStart: true,
+      sendReminders: true,
+      reminderFrequency: 'daily',
+      sendCompletion: true
+    }
   });
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -141,13 +207,26 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
-  const steps = [
+  // Different step flows for template vs custom workflows
+  const templateSteps = [
     { number: 1, title: "Template Selection", icon: Star },
     { number: 2, title: "Basic Information", icon: FileText },
     { number: 3, title: "Workflow Builder", icon: Settings },
     { number: 4, title: "Participants", icon: Users },
     { number: 5, title: "Review & Launch", icon: Rocket }
   ];
+
+  const customSteps = [
+    { number: 1, title: "Workflow Basics", icon: FileText },
+    { number: 2, title: "Trigger Configuration", icon: Zap },
+    { number: 3, title: "Workflow Steps", icon: Settings },
+    { number: 4, title: "Participants", icon: Users },
+    { number: 5, title: "Basic Rules", icon: Shield },
+    { number: 6, title: "Notifications", icon: Bell }
+  ];
+
+  const steps = workflowData.type === "custom" ? customSteps : templateSteps;
+  const maxSteps = steps.length;
 
   const filteredTemplates = workflowTemplates.filter(template =>
     template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -164,7 +243,7 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
   };
 
   const handleNext = () => {
-    if (currentStep < 5) {
+    if (currentStep < maxSteps) {
       setCurrentStep(currentStep + 1);
       toast("Step completed!", { 
         description: `Moving to ${steps[currentStep].title}`,
@@ -195,16 +274,23 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
     // Reset wizard
     setCurrentStep(1);
     setWorkflowData({
-      type: "",
-      template: "",
+      id: `workflow-${Date.now()}`,
       name: "",
+      category: "",
       description: "",
-      department: [],
-      priority: "",
-      duration: "",
+      triggerType: 'manual',
       steps: [],
       participants: [],
-      settings: {}
+      globalTimeLimit: 7,
+      globalTimeLimitUnit: 'days',
+      escalationType: 'reminder',
+      completionCriteria: [],
+      notifications: {
+        sendStart: true,
+        sendReminders: true,
+        reminderFrequency: 'daily',
+        sendCompletion: true
+      }
     });
   };
 
@@ -235,7 +321,659 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
     }
   };
 
+  // Helper functions for custom workflow
+  const addWorkflowStep = () => {
+    const newStep: WorkflowStep = {
+      id: `step-${Date.now()}`,
+      name: `Step ${workflowData.steps.length + 1}`,
+      description: "",
+      type: 'task',
+      timeLimit: 24,
+      timeLimitUnit: 'hours'
+    };
+    setWorkflowData(prev => ({ ...prev, steps: [...prev.steps, newStep] }));
+  };
+
+  const removeWorkflowStep = (stepId: string) => {
+    setWorkflowData(prev => ({ ...prev, steps: prev.steps.filter(s => s.id !== stepId) }));
+  };
+
+  const updateWorkflowStep = (stepId: string, updates: Partial<WorkflowStep>) => {
+    setWorkflowData(prev => ({
+      ...prev,
+      steps: prev.steps.map(s => s.id === stepId ? { ...s, ...updates } : s)
+    }));
+  };
+
+  const addParticipant = (type: WorkflowParticipant['type']) => {
+    const newParticipant: WorkflowParticipant = {
+      id: `participant-${Date.now()}`,
+      name: "",
+      role: "",
+      type
+    };
+    setWorkflowData(prev => ({ ...prev, participants: [...prev.participants, newParticipant] }));
+  };
+
+  const removeParticipant = (participantId: string) => {
+    setWorkflowData(prev => ({ ...prev, participants: prev.participants.filter(p => p.id !== participantId) }));
+  };
+
   const renderStepContent = () => {
+    // Custom workflow flow
+    if (workflowData.type === "custom") {
+      switch (currentStep) {
+        case 1: // Workflow Basics
+          return (
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-semibold">Workflow Basics</h3>
+                <p className="text-muted-foreground">Set up the fundamental information for your custom workflow</p>
+              </div>
+
+              <div className="max-w-2xl mx-auto space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="workflow-name">Workflow Name *</Label>
+                  <Input
+                    id="workflow-name"
+                    placeholder="Enter workflow name (max 50 characters)"
+                    value={workflowData.name}
+                    onChange={(e) => setWorkflowData(prev => ({ ...prev, name: e.target.value.slice(0, 50) }))}
+                    className="transition-all duration-200"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{workflowData.name.length > 0 ? "✓ Valid name" : "Required field"}</span>
+                    <span>{workflowData.name.length}/50</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category</Label>
+                  <Select value={workflowData.category} onValueChange={(value) => setWorkflowData(prev => ({ ...prev, category: value }))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="hr">HR</SelectItem>
+                      <SelectItem value="finance">Finance</SelectItem>
+                      <SelectItem value="operations">Operations</SelectItem>
+                      <SelectItem value="general">General</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Describe the purpose and goals of this workflow (max 200 characters)"
+                    value={workflowData.description}
+                    onChange={(e) => setWorkflowData(prev => ({ ...prev, description: e.target.value.slice(0, 200) }))}
+                    className="min-h-[100px]"
+                  />
+                  <div className="text-xs text-muted-foreground text-right">
+                    {workflowData.description.length}/200 characters
+                  </div>
+                </div>
+
+                <Card className="bg-muted/30">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Hash className="w-4 h-4" />
+                      <span className="font-medium">Workflow ID:</span>
+                      <code className="bg-background px-2 py-1 rounded text-xs">{workflowData.id}</code>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          );
+
+        case 2: // Trigger Configuration
+          return (
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-semibold">Trigger Configuration</h3>
+                <p className="text-muted-foreground">Define how this workflow gets started</p>
+              </div>
+
+              <div className="max-w-2xl mx-auto space-y-6">
+                <div className="space-y-4">
+                  <Label>Trigger Type</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { value: 'manual', label: 'Manual Start', desc: 'Started manually by users', icon: Play },
+                      { value: 'form', label: 'Form Submission', desc: 'Triggered by form submission', icon: FileText },
+                      { value: 'scheduled', label: 'Scheduled', desc: 'Runs on a schedule', icon: Calendar },
+                      { value: 'email', label: 'Email Trigger', desc: 'Triggered by email', icon: Mail }
+                    ].map((trigger) => (
+                      <Card 
+                        key={trigger.value}
+                        className={`cursor-pointer transition-all ${workflowData.triggerType === trigger.value ? 'ring-2 ring-primary' : ''}`}
+                        onClick={() => setWorkflowData(prev => ({ ...prev, triggerType: trigger.value as any }))}
+                      >
+                        <CardContent className="p-4">
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                              <trigger.icon className="w-4 h-4 text-primary" />
+                            </div>
+                            <div>
+                              <h4 className="font-medium">{trigger.label}</h4>
+                              <p className="text-sm text-muted-foreground">{trigger.desc}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                {workflowData.triggerType === 'scheduled' && (
+                  <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                    <Label>Schedule Settings</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Frequency</Label>
+                        <Select 
+                          value={workflowData.scheduleFrequency} 
+                          onValueChange={(value) => setWorkflowData(prev => ({ ...prev, scheduleFrequency: value as any }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select frequency" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                            <SelectItem value="monthly">Monthly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Time</Label>
+                        <Input 
+                          type="time"
+                          value={workflowData.scheduleTime || "09:00"}
+                          onChange={(e) => setWorkflowData(prev => ({ ...prev, scheduleTime: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+
+        case 3: // Workflow Steps
+          return (
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-semibold">Workflow Steps</h3>
+                <p className="text-muted-foreground">Build your workflow by adding and configuring steps</p>
+              </div>
+
+              <div className="max-w-4xl mx-auto space-y-6">
+                <div className="flex justify-between items-center">
+                  <div className="text-sm text-muted-foreground">
+                    {workflowData.steps.length}/10 steps (minimum 1 required)
+                  </div>
+                  <Button 
+                    onClick={addWorkflowStep}
+                    disabled={workflowData.steps.length >= 10}
+                    size="sm"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Step
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {workflowData.steps.length === 0 ? (
+                    <Card className="p-8 text-center">
+                      <div className="space-y-4">
+                        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+                          <Settings className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium">No steps added yet</h4>
+                          <p className="text-sm text-muted-foreground">Click "Add Step" to start building your workflow</p>
+                        </div>
+                      </div>
+                    </Card>
+                  ) : (
+                    workflowData.steps.map((step, index) => (
+                      <Card key={step.id} className="p-4">
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
+                                {index + 1}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <GripVertical className="w-4 h-4 text-muted-foreground cursor-move" />
+                                <span className="font-medium">Step {index + 1}</span>
+                              </div>
+                            </div>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => removeWorkflowStep(step.id)}
+                              className="text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label>Step Name</Label>
+                              <Input
+                                value={step.name}
+                                onChange={(e) => updateWorkflowStep(step.id, { name: e.target.value })}
+                                placeholder="Enter step name"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Step Type</Label>
+                              <Select 
+                                value={step.type} 
+                                onValueChange={(value) => updateWorkflowStep(step.id, { type: value as any })}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="task">Task</SelectItem>
+                                  <SelectItem value="approval">Approval</SelectItem>
+                                  <SelectItem value="notification">Notification</SelectItem>
+                                  <SelectItem value="decision">Decision</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label>Description (Optional)</Label>
+                            <Textarea
+                              value={step.description}
+                              onChange={(e) => updateWorkflowStep(step.id, { description: e.target.value })}
+                              placeholder="Describe what happens in this step"
+                              className="min-h-[60px]"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label>Time Limit</Label>
+                              <div className="flex gap-2">
+                                <Input
+                                  type="number"
+                                  min="1"
+                                  max="720"
+                                  value={step.timeLimit}
+                                  onChange={(e) => updateWorkflowStep(step.id, { timeLimit: parseInt(e.target.value) || 1 })}
+                                />
+                                <Select 
+                                  value={step.timeLimitUnit}
+                                  onValueChange={(value) => updateWorkflowStep(step.id, { timeLimitUnit: value as any })}
+                                >
+                                  <SelectTrigger className="w-24">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="hours">Hours</SelectItem>
+                                    <SelectItem value="days">Days</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 4: // Participants
+          return (
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-semibold">Participants & Roles</h3>
+                <p className="text-muted-foreground">Define who will be involved in this workflow</p>
+              </div>
+
+              <div className="max-w-4xl mx-auto space-y-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    { type: 'initiator', label: 'Initiators', icon: UserPlus, desc: 'Can start workflow' },
+                    { type: 'approver', label: 'Approvers', icon: UserCheck, desc: 'Approve steps' },
+                    { type: 'reviewer', label: 'Reviewers', icon: Eye, desc: 'Review content' },
+                    { type: 'recipient', label: 'Recipients', icon: Users, desc: 'Receive notifications' }
+                  ].map((role) => (
+                    <Card key={role.type} className="text-center">
+                      <CardContent className="p-4">
+                        <div className="space-y-3">
+                          <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto">
+                            <role.icon className="w-6 h-6 text-primary" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium">{role.label}</h4>
+                            <p className="text-xs text-muted-foreground">{role.desc}</p>
+                          </div>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => addParticipant(role.type as any)}
+                          >
+                            <Plus className="w-3 h-3 mr-1" />
+                            Add
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                <div className="space-y-4">
+                  {workflowData.participants.length === 0 ? (
+                    <Card className="p-8 text-center">
+                      <div className="space-y-4">
+                        <Users className="w-16 h-16 text-muted-foreground mx-auto" />
+                        <div>
+                          <h4 className="font-medium">No participants added</h4>
+                          <p className="text-sm text-muted-foreground">Add participants using the role cards above</p>
+                        </div>
+                      </div>
+                    </Card>
+                  ) : (
+                    <div className="space-y-3">
+                      <Label>Workflow Participants</Label>
+                      {workflowData.participants.map((participant) => (
+                        <Card key={participant.id} className="p-4">
+                          <div className="flex items-center gap-4">
+                            <Badge variant="outline" className="capitalize">
+                              {participant.type}
+                            </Badge>
+                            <div className="flex-1 grid grid-cols-2 gap-4">
+                              <Input
+                                placeholder="Name/Email"
+                                value={participant.name}
+                                onChange={(e) => {
+                                  setWorkflowData(prev => ({
+                                    ...prev,
+                                    participants: prev.participants.map(p => 
+                                      p.id === participant.id ? { ...p, name: e.target.value } : p
+                                    )
+                                  }));
+                                }}
+                              />
+                              <Input
+                                placeholder="Role/Title"
+                                value={participant.role}
+                                onChange={(e) => {
+                                  setWorkflowData(prev => ({
+                                    ...prev,
+                                    participants: prev.participants.map(p => 
+                                      p.id === participant.id ? { ...p, role: e.target.value } : p
+                                    )
+                                  }));
+                                }}
+                              />
+                            </div>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => removeParticipant(participant.id)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+
+        case 5: // Basic Rules
+          return (
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-semibold">Basic Rules</h3>
+                <p className="text-muted-foreground">Configure time limits, escalation, and completion criteria</p>
+              </div>
+
+              <div className="max-w-2xl mx-auto space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Timer className="w-5 h-5" />
+                      Time Limits
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Global Time Limit for Workflow</Label>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <Slider
+                            value={[workflowData.globalTimeLimit]}
+                            onValueChange={(value) => setWorkflowData(prev => ({ ...prev, globalTimeLimit: value[0] }))}
+                            min={1}
+                            max={30}
+                            step={1}
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="flex gap-2 items-center">
+                          <span className="text-sm font-medium w-8">{workflowData.globalTimeLimit}</span>
+                          <Select 
+                            value={workflowData.globalTimeLimitUnit}
+                            onValueChange={(value) => setWorkflowData(prev => ({ ...prev, globalTimeLimitUnit: value as any }))}
+                          >
+                            <SelectTrigger className="w-20">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="hours">Hours</SelectItem>
+                              <SelectItem value="days">Days</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Escalation Action</Label>
+                      <Select 
+                        value={workflowData.escalationType}
+                        onValueChange={(value) => setWorkflowData(prev => ({ ...prev, escalationType: value as any }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="reminder">Send Reminder</SelectItem>
+                          <SelectItem value="auto-approve">Auto Approve</SelectItem>
+                          <SelectItem value="reassign">Reassign</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Target className="w-5 h-5" />
+                      Completion Criteria
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {[
+                      'All steps complete',
+                      'Final approval received',
+                      'All participants notified',
+                      'Documentation submitted'
+                    ].map((criteria) => (
+                      <div key={criteria} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={criteria}
+                          checked={workflowData.completionCriteria.includes(criteria)}
+                          onCheckedChange={(checked) => {
+                            setWorkflowData(prev => ({
+                              ...prev,
+                              completionCriteria: checked
+                                ? [...prev.completionCriteria, criteria]
+                                : prev.completionCriteria.filter(c => c !== criteria)
+                            }));
+                          }}
+                        />
+                        <Label htmlFor={criteria} className="text-sm">{criteria}</Label>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          );
+
+        case 6: // Notifications
+          return (
+            <div className="space-y-6">
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-semibold">Notification Settings</h3>
+                <p className="text-muted-foreground">Configure how participants receive workflow updates</p>
+              </div>
+
+              <div className="max-w-2xl mx-auto space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Notification Types</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Bell className="w-5 h-5 text-primary" />
+                        <div>
+                          <span className="font-medium">Send Start Notification</span>
+                          <p className="text-sm text-muted-foreground">Notify when workflow begins</p>
+                        </div>
+                      </div>
+                      <Switch
+                        checked={workflowData.notifications.sendStart}
+                        onCheckedChange={(checked) => 
+                          setWorkflowData(prev => ({
+                            ...prev,
+                            notifications: { ...prev.notifications, sendStart: checked }
+                          }))
+                        }
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Clock className="w-5 h-5 text-primary" />
+                        <div>
+                          <span className="font-medium">Send Reminder Notifications</span>
+                          <p className="text-sm text-muted-foreground">Periodic reminders for pending tasks</p>
+                        </div>
+                      </div>
+                      <Switch
+                        checked={workflowData.notifications.sendReminders}
+                        onCheckedChange={(checked) => 
+                          setWorkflowData(prev => ({
+                            ...prev,
+                            notifications: { ...prev.notifications, sendReminders: checked }
+                          }))
+                        }
+                      />
+                    </div>
+
+                    {workflowData.notifications.sendReminders && (
+                      <div className="ml-8 space-y-2">
+                        <Label>Reminder Frequency</Label>
+                        <Select 
+                          value={workflowData.notifications.reminderFrequency}
+                          onValueChange={(value) => 
+                            setWorkflowData(prev => ({
+                              ...prev,
+                              notifications: { ...prev.notifications, reminderFrequency: value as any }
+                            }))
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="hourly">Every Hour</SelectItem>
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle className="w-5 h-5 text-primary" />
+                        <div>
+                          <span className="font-medium">Send Completion Notification</span>
+                          <p className="text-sm text-muted-foreground">Notify when workflow completes</p>
+                        </div>
+                      </div>
+                      <Switch
+                        checked={workflowData.notifications.sendCompletion}
+                        onCheckedChange={(checked) => 
+                          setWorkflowData(prev => ({
+                            ...prev,
+                            notifications: { ...prev.notifications, sendCompletion: checked }
+                          }))
+                        }
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Email Template Preview</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="bg-muted/30 p-4 rounded-lg border-l-4 border-primary">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Mail className="w-4 h-4" />
+                          <span className="font-medium">Workflow Notification</span>
+                        </div>
+                        <p className="text-sm">
+                          <strong>Subject:</strong> Action Required - {workflowData.name || "Your Workflow"}
+                        </p>
+                        <div className="text-sm text-muted-foreground">
+                          <p>Hello [Participant Name],</p>
+                          <p className="mt-2">You have a new task in the workflow "{workflowData.name}".</p>
+                          <p className="mt-2">Please complete your assigned steps within the specified timeframe.</p>
+                          <p className="mt-2">Best regards,<br />Workflow System</p>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          );
+
+        default:
+          return null;
+      }
+    }
+
+    // Template workflow flow (existing logic)
     switch (currentStep) {
       case 1: // Template Selection
         return (
@@ -342,7 +1080,8 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
                   <Button 
                     onClick={() => {
                       setSelectedTemplate("custom");
-                      setWorkflowData(prev => ({ ...prev, template: "custom", type: "custom" }));
+                      setWorkflowData(prev => ({ ...prev, type: "custom" }));
+                      setCurrentStep(1); // Skip to custom workflow basics
                     }}
                     className="mt-4 bg-foreground text-background hover:bg-foreground/90"
                   >
@@ -785,10 +1524,15 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
             </Button>
             <Button 
               onClick={handleNext} 
-              disabled={currentStep === 5 || (currentStep === 1 && !selectedTemplate)}
+              disabled={
+                currentStep === maxSteps || 
+                (workflowData.type !== "custom" && currentStep === 1 && !selectedTemplate) ||
+                (workflowData.type === "custom" && currentStep === 1 && !workflowData.name) ||
+                (workflowData.type === "custom" && currentStep === 3 && workflowData.steps.length === 0)
+              }
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
-              {currentStep === 5 ? "Complete" : "Next"}
+              {currentStep === maxSteps ? "Complete" : "Next"}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
