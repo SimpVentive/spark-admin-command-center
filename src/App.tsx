@@ -32,6 +32,7 @@ import Processes from "./pages/Processes";
 import WorkflowManagement from "./pages/processes/WorkflowManagement";
 import UserRoleManagement from "./pages/processes/UserRoleManagement";
 import ApprovalFramework from "./pages/processes/ApprovalFramework";
+import BusinessRules from "./pages/processes/BusinessRules";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -74,6 +75,7 @@ const App = () => (
           <Route path="/processes/workflow" element={<WorkflowManagement />} />
           <Route path="/processes/user-roles" element={<UserRoleManagement />} />
           <Route path="/processes/approval" element={<ApprovalFramework />} />
+          <Route path="/processes/business-rules" element={<BusinessRules />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
