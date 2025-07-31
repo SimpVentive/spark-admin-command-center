@@ -112,7 +112,7 @@ interface WorkflowData {
     sendCompletion: boolean;
   };
   
-  // Legacy fields for template mode
+  // Mode tracking
   type?: string;
   template?: string;
   department?: string[];
@@ -123,6 +123,8 @@ interface WorkflowData {
 
 const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardProps) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [originalTemplateData, setOriginalTemplateData] = useState<WorkflowData | null>(null);
   const [workflowData, setWorkflowData] = useState<WorkflowData>({
     id: `workflow-${Date.now()}`,
     name: "",
@@ -146,7 +148,7 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 
-  // Sample workflow templates
+  // Enhanced template data with full workflow configurations
   const workflowTemplates = [
     {
       id: "onboarding",
@@ -157,7 +159,37 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
       complexity: "Medium",
       popularity: 95,
       steps: 8,
-      preview: ["Welcome Email", "Document Collection", "IT Setup", "Training Modules", "Manager Introduction"]
+      preview: ["Welcome Email", "Document Collection", "IT Setup", "Training Modules", "Manager Introduction"],
+      fullData: {
+        id: "onboarding-template",
+        name: "Employee Onboarding",
+        category: "hr",
+        description: "Comprehensive onboarding process for new employees covering documentation, training, and integration",
+        triggerType: 'form' as const,
+        steps: [
+          { id: 'step-1', name: 'Send Welcome Email', description: 'Welcome new employee and provide first-day information', type: 'notification' as const, timeLimit: 2, timeLimitUnit: 'hours' as const },
+          { id: 'step-2', name: 'Collect Documents', description: 'Gather required employment documents and forms', type: 'task' as const, timeLimit: 1, timeLimitUnit: 'days' as const },
+          { id: 'step-3', name: 'IT Setup', description: 'Create accounts and provision equipment', type: 'task' as const, timeLimit: 1, timeLimitUnit: 'days' as const },
+          { id: 'step-4', name: 'Assign Training Modules', description: 'Enroll in mandatory training courses', type: 'task' as const, timeLimit: 2, timeLimitUnit: 'days' as const },
+          { id: 'step-5', name: 'Manager Introduction', description: 'Schedule and conduct manager meeting', type: 'task' as const, timeLimit: 1, timeLimitUnit: 'days' as const }
+        ],
+        participants: [
+          { id: 'p1', name: 'HR Manager', role: 'Human Resources Manager', type: 'initiator' as const },
+          { id: 'p2', name: 'Direct Manager', role: 'Department Manager', type: 'approver' as const },
+          { id: 'p3', name: 'IT Admin', role: 'IT Administrator', type: 'recipient' as const },
+          { id: 'p4', name: 'New Employee', role: 'Employee', type: 'recipient' as const }
+        ],
+        globalTimeLimit: 5,
+        globalTimeLimitUnit: 'days' as const,
+        escalationType: 'reminder' as const,
+        completionCriteria: ['All steps complete', 'Final approval received', 'All participants notified'],
+        notifications: {
+          sendStart: true,
+          sendReminders: true,
+          reminderFrequency: 'daily' as const,
+          sendCompletion: true
+        }
+      }
     },
     {
       id: "compliance",
@@ -168,29 +200,37 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
       complexity: "Low",
       popularity: 87,
       steps: 5,
-      preview: ["Training Assignment", "Module Completion", "Assessment", "Certification", "Renewal Tracking"]
-    },
-    {
-      id: "skills",
-      name: "Skills Assessment",
-      description: "Evaluate and track employee skill development progress",
-      category: "Development",
-      duration: "1-2 weeks",
-      complexity: "High",
-      popularity: 72,
-      steps: 10,
-      preview: ["Skill Evaluation", "Gap Analysis", "Training Plan", "Progress Tracking", "Reassessment"]
-    },
-    {
-      id: "approval",
-      name: "Training Approval",
-      description: "Multi-level approval process for training requests",
-      category: "Operations",
-      duration: "3-5 days",
-      complexity: "Low",
-      popularity: 68,
-      steps: 4,
-      preview: ["Request Submission", "Manager Review", "Budget Approval", "Final Authorization"]
+      preview: ["Training Assignment", "Module Completion", "Assessment", "Certification", "Renewal Tracking"],
+      fullData: {
+        id: "compliance-template",
+        name: "Compliance Training",
+        category: "general",
+        description: "Mandatory compliance training program with tracking and certification",
+        triggerType: 'scheduled' as const,
+        scheduleFrequency: 'monthly' as const,
+        scheduleTime: '09:00',
+        steps: [
+          { id: 'step-1', name: 'Assign Course', description: 'Assign compliance training course to participants', type: 'task' as const, timeLimit: 1, timeLimitUnit: 'days' as const },
+          { id: 'step-2', name: 'Send Reminders', description: 'Send periodic reminders about course completion', type: 'notification' as const, timeLimit: 7, timeLimitUnit: 'days' as const },
+          { id: 'step-3', name: 'Track Completion', description: 'Monitor course completion progress', type: 'task' as const, timeLimit: 21, timeLimitUnit: 'days' as const },
+          { id: 'step-4', name: 'Generate Certificate', description: 'Issue completion certificate', type: 'task' as const, timeLimit: 1, timeLimitUnit: 'days' as const }
+        ],
+        participants: [
+          { id: 'p1', name: 'Training Coordinator', role: 'Training Specialist', type: 'initiator' as const },
+          { id: 'p2', name: 'Department Head', role: 'Department Manager', type: 'approver' as const },
+          { id: 'p3', name: 'Employees', role: 'All Staff', type: 'recipient' as const }
+        ],
+        globalTimeLimit: 30,
+        globalTimeLimitUnit: 'days' as const,
+        escalationType: 'auto-approve' as const,
+        completionCriteria: ['All steps complete', 'All participants notified', 'Documentation submitted'],
+        notifications: {
+          sendStart: true,
+          sendReminders: true,
+          reminderFrequency: 'weekly' as const,
+          sendCompletion: true
+        }
+      }
     }
   ];
 
@@ -240,6 +280,108 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
       case "High": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
+  };
+
+  // Load template data for editing
+  const loadTemplateForEditing = (templateId: string) => {
+    const template = workflowTemplates.find(t => t.id === templateId);
+    if (template && template.fullData) {
+      const templateData = { 
+        ...template.fullData, 
+        id: `${template.fullData.id}-copy-${Date.now()}`,
+        name: `${template.fullData.name} - Copy`,
+        type: "custom"
+      };
+      setWorkflowData(templateData);
+      setOriginalTemplateData(template.fullData);
+      setIsEditMode(true);
+      setSelectedTemplate(templateId);
+      setCurrentStep(1);
+      toast.success("Template loaded for editing!", {
+        description: `You can now customize the ${template.name} workflow`
+      });
+    }
+  };
+
+  const resetToTemplateDefaults = () => {
+    if (originalTemplateData) {
+      setWorkflowData({
+        ...originalTemplateData,
+        id: workflowData.id,
+        name: workflowData.name,
+        type: "custom"
+      });
+      toast.success("Reset to template defaults");
+    }
+  };
+
+  const resetSectionToDefaults = (section: string) => {
+    if (!originalTemplateData) return;
+    
+    const updates: Partial<WorkflowData> = {};
+    switch (section) {
+      case 'trigger':
+        updates.triggerType = originalTemplateData.triggerType;
+        updates.scheduleFrequency = originalTemplateData.scheduleFrequency;
+        updates.scheduleTime = originalTemplateData.scheduleTime;
+        break;
+      case 'steps':
+        updates.steps = [...originalTemplateData.steps];
+        break;
+      case 'participants':
+        updates.participants = [...originalTemplateData.participants];
+        break;
+      case 'rules':
+        updates.globalTimeLimit = originalTemplateData.globalTimeLimit;
+        updates.globalTimeLimitUnit = originalTemplateData.globalTimeLimitUnit;
+        updates.escalationType = originalTemplateData.escalationType;
+        updates.completionCriteria = [...originalTemplateData.completionCriteria];
+        break;
+      case 'notifications':
+        updates.notifications = { ...originalTemplateData.notifications };
+        break;
+    }
+    
+    setWorkflowData(prev => ({ ...prev, ...updates }));
+    toast.success(`${section} section reset to template defaults`);
+  };
+
+  // Helper functions for custom workflow
+  const addWorkflowStep = () => {
+    const newStep: WorkflowStep = {
+      id: `step-${Date.now()}`,
+      name: `Step ${workflowData.steps.length + 1}`,
+      description: "",
+      type: 'task',
+      timeLimit: 24,
+      timeLimitUnit: 'hours'
+    };
+    setWorkflowData(prev => ({ ...prev, steps: [...prev.steps, newStep] }));
+  };
+
+  const removeWorkflowStep = (stepId: string) => {
+    setWorkflowData(prev => ({ ...prev, steps: prev.steps.filter(s => s.id !== stepId) }));
+  };
+
+  const updateWorkflowStep = (stepId: string, updates: Partial<WorkflowStep>) => {
+    setWorkflowData(prev => ({
+      ...prev,
+      steps: prev.steps.map(s => s.id === stepId ? { ...s, ...updates } : s)
+    }));
+  };
+
+  const addParticipant = (type: WorkflowParticipant['type']) => {
+    const newParticipant: WorkflowParticipant = {
+      id: `participant-${Date.now()}`,
+      name: "",
+      role: "",
+      type
+    };
+    setWorkflowData(prev => ({ ...prev, participants: [...prev.participants, newParticipant] }));
+  };
+
+  const removeParticipant = (participantId: string) => {
+    setWorkflowData(prev => ({ ...prev, participants: prev.participants.filter(p => p.id !== participantId) }));
   };
 
   const handleNext = () => {
@@ -292,6 +434,8 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
         sendCompletion: true
       }
     });
+    setIsEditMode(false);
+    setOriginalTemplateData(null);
   };
 
   const addStepToFlow = (stepType: string) => {
@@ -321,46 +465,8 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
     }
   };
 
-  // Helper functions for custom workflow
-  const addWorkflowStep = () => {
-    const newStep: WorkflowStep = {
-      id: `step-${Date.now()}`,
-      name: `Step ${workflowData.steps.length + 1}`,
-      description: "",
-      type: 'task',
-      timeLimit: 24,
-      timeLimitUnit: 'hours'
-    };
-    setWorkflowData(prev => ({ ...prev, steps: [...prev.steps, newStep] }));
-  };
-
-  const removeWorkflowStep = (stepId: string) => {
-    setWorkflowData(prev => ({ ...prev, steps: prev.steps.filter(s => s.id !== stepId) }));
-  };
-
-  const updateWorkflowStep = (stepId: string, updates: Partial<WorkflowStep>) => {
-    setWorkflowData(prev => ({
-      ...prev,
-      steps: prev.steps.map(s => s.id === stepId ? { ...s, ...updates } : s)
-    }));
-  };
-
-  const addParticipant = (type: WorkflowParticipant['type']) => {
-    const newParticipant: WorkflowParticipant = {
-      id: `participant-${Date.now()}`,
-      name: "",
-      role: "",
-      type
-    };
-    setWorkflowData(prev => ({ ...prev, participants: [...prev.participants, newParticipant] }));
-  };
-
-  const removeParticipant = (participantId: string) => {
-    setWorkflowData(prev => ({ ...prev, participants: prev.participants.filter(p => p.id !== participantId) }));
-  };
-
   const renderStepContent = () => {
-    // Custom workflow flow
+    // Custom workflow flow (including template edit mode)
     if (workflowData.type === "custom") {
       switch (currentStep) {
         case 1: // Workflow Basics
@@ -368,10 +474,33 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
             <div className="space-y-6">
               <div className="text-center space-y-2">
                 <h3 className="text-xl font-semibold">Workflow Basics</h3>
-                <p className="text-muted-foreground">Set up the fundamental information for your custom workflow</p>
+                <p className="text-muted-foreground">Set up the fundamental information for your workflow</p>
+                {isEditMode && originalTemplateData && (
+                  <Badge variant="secondary" className="text-sm">
+                    Based on {workflowTemplates.find(t => t.fullData?.id === originalTemplateData.id)?.name}
+                  </Badge>
+                )}
               </div>
 
               <div className="max-w-2xl mx-auto space-y-6">
+                {isEditMode && originalTemplateData && (
+                  <Card className="bg-blue-50 border-blue-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Eye className="w-4 h-4 text-blue-600" />
+                          <span className="text-sm font-medium text-blue-700">Template Editing Mode</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" onClick={() => resetToTemplateDefaults()}>
+                            Reset All to Defaults
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <div className="space-y-2">
                   <Label htmlFor="workflow-name">Workflow Name *</Label>
                   <Input
@@ -438,6 +567,29 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
               </div>
 
               <div className="max-w-2xl mx-auto space-y-6">
+                {isEditMode && originalTemplateData && (
+                  <Card className="bg-amber-50 border-amber-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Zap className="w-4 h-4 text-amber-600" />
+                          <div>
+                            <span className="text-sm font-medium text-amber-700">Template Default</span>
+                            <p className="text-xs text-amber-600">
+                              Original: {originalTemplateData.triggerType === 'form' ? 'Form Submission' : 
+                                       originalTemplateData.triggerType === 'scheduled' ? 'Scheduled' :
+                                       originalTemplateData.triggerType === 'manual' ? 'Manual Start' : 'Email Trigger'}
+                            </p>
+                          </div>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => resetSectionToDefaults('trigger')}>
+                          Reset Section
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <div className="space-y-4">
                   <Label>Trigger Type</Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -512,6 +664,29 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
               </div>
 
               <div className="max-w-4xl mx-auto space-y-6">
+                {isEditMode && originalTemplateData && (
+                  <Card className="bg-green-50 border-green-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Settings className="w-4 h-4 text-green-600" />
+                          <div>
+                            <span className="text-sm font-medium text-green-700">Template Steps</span>
+                            <p className="text-xs text-green-600">
+                              {originalTemplateData.steps.length} original template steps loaded
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" onClick={() => resetSectionToDefaults('steps')}>
+                            Reset to Template
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <div className="flex justify-between items-center">
                   <div className="text-sm text-muted-foreground">
                     {workflowData.steps.length}/10 steps (minimum 1 required)
@@ -566,11 +741,18 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <Label>Step Name</Label>
-                              <Input
-                                value={step.name}
-                                onChange={(e) => updateWorkflowStep(step.id, { name: e.target.value })}
-                                placeholder="Enter step name"
-                              />
+                              <div className="flex gap-2">
+                                <Input
+                                  value={step.name}
+                                  onChange={(e) => updateWorkflowStep(step.id, { name: e.target.value })}
+                                  placeholder="Enter step name"
+                                />
+                                {isEditMode && originalTemplateData?.steps.find(s => s.name === step.name) && (
+                                  <Badge variant="outline" className="text-xs whitespace-nowrap">
+                                    Template
+                                  </Badge>
+                                )}
+                              </div>
                             </div>
                             <div className="space-y-2">
                               <Label>Step Type</Label>
@@ -645,6 +827,27 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
               </div>
 
               <div className="max-w-4xl mx-auto space-y-6">
+                {isEditMode && originalTemplateData && (
+                  <Card className="bg-purple-50 border-purple-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-purple-600" />
+                          <div>
+                            <span className="text-sm font-medium text-purple-700">Template Participants</span>
+                            <p className="text-xs text-purple-600">
+                              {originalTemplateData.participants.length} roles from template loaded
+                            </p>
+                          </div>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => resetSectionToDefaults('participants')}>
+                          Reset to Template
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {[
                     { type: 'initiator', label: 'Initiators', icon: UserPlus, desc: 'Can start workflow' },
@@ -697,18 +900,23 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
                               {participant.type}
                             </Badge>
                             <div className="flex-1 grid grid-cols-2 gap-4">
-                              <Input
-                                placeholder="Name/Email"
-                                value={participant.name}
-                                onChange={(e) => {
-                                  setWorkflowData(prev => ({
-                                    ...prev,
-                                    participants: prev.participants.map(p => 
-                                      p.id === participant.id ? { ...p, name: e.target.value } : p
-                                    )
-                                  }));
-                                }}
-                              />
+                              <div className="space-y-1">
+                                <Input
+                                  placeholder="Name/Email"
+                                  value={participant.name}
+                                  onChange={(e) => {
+                                    setWorkflowData(prev => ({
+                                      ...prev,
+                                      participants: prev.participants.map(p => 
+                                        p.id === participant.id ? { ...p, name: e.target.value } : p
+                                      )
+                                    }));
+                                  }}
+                                />
+                                {isEditMode && originalTemplateData?.participants.find(p => p.name === participant.name) && (
+                                  <Badge variant="outline" className="text-xs">Template Role</Badge>
+                                )}
+                              </div>
                               <Input
                                 placeholder="Role/Title"
                                 value={participant.role}
@@ -749,6 +957,27 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
               </div>
 
               <div className="max-w-2xl mx-auto space-y-6">
+                {isEditMode && originalTemplateData && (
+                  <Card className="bg-red-50 border-red-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-red-600" />
+                          <div>
+                            <span className="text-sm font-medium text-red-700">Template Rules</span>
+                            <p className="text-xs text-red-600">
+                              Original: {originalTemplateData.globalTimeLimit} {originalTemplateData.globalTimeLimitUnit}, {originalTemplateData.escalationType}
+                            </p>
+                          </div>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => resetSectionToDefaults('rules')}>
+                          Reset Section
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
@@ -852,6 +1081,27 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
               </div>
 
               <div className="max-w-2xl mx-auto space-y-6">
+                {isEditMode && originalTemplateData && (
+                  <Card className="bg-cyan-50 border-cyan-200">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Bell className="w-4 h-4 text-cyan-600" />
+                          <div>
+                            <span className="text-sm font-medium text-cyan-700">Template Notifications</span>
+                            <p className="text-xs text-cyan-600">
+                              Template notification settings loaded
+                            </p>
+                          </div>
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => resetSectionToDefaults('notifications')}>
+                          Reset Section
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg">Notification Types</CardTitle>
@@ -999,10 +1249,7 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
                       className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
                         selectedTemplate === template.id ? 'ring-2 ring-primary bg-primary/5' : ''
                       }`}
-                      onClick={() => {
-                        setSelectedTemplate(template.id);
-                        setWorkflowData(prev => ({ ...prev, template: template.id, type: "template" }));
-                      }}
+                      onClick={() => loadTemplateForEditing(template.id)}
                     >
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between">
@@ -1014,6 +1261,18 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
                             <Star className="w-3 h-3 fill-current" />
                             <span className="text-xs">{template.popularity}</span>
                           </div>
+                        </div>
+                        <div className="mt-2">
+                          <Button 
+                            size="sm" 
+                            className="w-full"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              loadTemplateForEditing(template.id);
+                            }}
+                          >
+                            Edit Template
+                          </Button>
                         </div>
                       </CardHeader>
                       <CardContent className="pt-0">
@@ -1042,10 +1301,7 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
                         className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
                           selectedTemplate === template.id ? 'ring-2 ring-primary bg-primary/5' : ''
                         }`}
-                        onClick={() => {
-                          setSelectedTemplate(template.id);
-                          setWorkflowData(prev => ({ ...prev, template: template.id, type: "template" }));
-                        }}
+                        onClick={() => loadTemplateForEditing(template.id)}
                       >
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between">
@@ -1081,7 +1337,7 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
                     onClick={() => {
                       setSelectedTemplate("custom");
                       setWorkflowData(prev => ({ ...prev, type: "custom" }));
-                      setCurrentStep(1); // Skip to custom workflow basics
+                      setCurrentStep(1);
                     }}
                     className="mt-4 bg-foreground text-background hover:bg-foreground/90"
                   >
@@ -1093,367 +1349,8 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
           </div>
         );
 
-      case 2: // Basic Information
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-semibold">Workflow Details</h3>
-              <p className="text-muted-foreground">Set up the basic information for your workflow</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="workflow-name">Workflow Name *</Label>
-                  <Input
-                    id="workflow-name"
-                    placeholder="Enter workflow name..."
-                    value={workflowData.name}
-                    onChange={(e) => setWorkflowData(prev => ({ ...prev, name: e.target.value }))}
-                    className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
-                  />
-                  {workflowData.name.length > 0 && (
-                    <div className="flex items-center gap-1 text-green-600 text-sm">
-                      <Check className="w-3 h-3" />
-                      Valid name
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="priority">Priority Level</Label>
-                  <Select value={workflowData.priority} onValueChange={(value) => setWorkflowData(prev => ({ ...prev, priority: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                          Low Priority
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="medium">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-                          Medium Priority
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="high">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                          High Priority
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="duration">Estimated Duration</Label>
-                  <Select value={workflowData.duration} onValueChange={(value) => setWorkflowData(prev => ({ ...prev, duration: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select duration" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1-day">1 Day</SelectItem>
-                      <SelectItem value="2-3-days">2-3 Days</SelectItem>
-                      <SelectItem value="1-week">1 Week</SelectItem>
-                      <SelectItem value="2-weeks">2 Weeks</SelectItem>
-                      <SelectItem value="1-month">1 Month</SelectItem>
-                      <SelectItem value="custom">Custom</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Describe the purpose and goals of this workflow..."
-                    value={workflowData.description}
-                    onChange={(e) => setWorkflowData(prev => ({ ...prev, description: e.target.value }))}
-                    className="min-h-[120px] transition-all duration-200 focus:ring-2 focus:ring-blue-500"
-                  />
-                  <div className="text-xs text-muted-foreground text-right">
-                    {workflowData.description.length}/500 characters
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Department Assignment</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {["HR", "IT", "Finance", "Operations", "Sales", "Marketing"].map((dept) => (
-                      <Button
-                        key={dept}
-                        variant={workflowData.department.includes(dept) ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => {
-                          setWorkflowData(prev => ({
-                            ...prev,
-                            department: prev.department.includes(dept) 
-                              ? prev.department.filter(d => d !== dept)
-                              : [...prev.department, dept]
-                          }));
-                        }}
-                        className="justify-start"
-                      >
-                        {dept}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Card className="bg-blue-50 border-blue-200">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-2 text-blue-700">
-                  <Save className="w-4 h-4" />
-                  <span className="text-sm font-medium">Auto-save enabled</span>
-                </div>
-                <p className="text-xs text-blue-600 mt-1">
-                  Your progress is automatically saved every 30 seconds
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        );
-
-      case 3: // Workflow Builder
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-semibold">Build Your Workflow</h3>
-              <p className="text-muted-foreground">Drag and drop components to create your workflow</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Component Library */}
-              <div className="space-y-4">
-                <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-                  Workflow Components
-                </h4>
-                <div className="space-y-2">
-                  {stepComponents.map((component) => (
-                    <Button
-                      key={component.type}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => addStepToFlow(component.type)}
-                      className="w-full justify-start h-auto p-3 hover:shadow-md transition-all duration-200"
-                    >
-                      <div className={`w-8 h-8 rounded bg-gradient-to-r ${component.color} flex items-center justify-center mr-3`}>
-                        <component.icon className="w-4 h-4 text-white" />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-medium text-sm">{component.name}</div>
-                      </div>
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Workflow Canvas */}
-              <div className="lg:col-span-3">
-                <Card className="h-96">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">Workflow Canvas</CardTitle>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                          <Eye className="w-4 h-4 mr-1" />
-                          Preview
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          <TestTube className="w-4 h-4 mr-1" />
-                          Test
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-0 h-full">
-                    <div className="h-full w-full">
-                      <ReactFlow
-                        nodes={nodes}
-                        edges={edges}
-                        onNodesChange={onNodesChange}
-                        onEdgesChange={onEdgesChange}
-                        fitView
-                        style={{ height: '100%' }}
-                      >
-                        <Controls />
-                        <Background />
-                      </ReactFlow>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 4: // Participants
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-semibold">Assign Participants</h3>
-              <p className="text-muted-foreground">Define who will be involved in this workflow</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Role-Based Assignment</CardTitle>
-                  <CardDescription>Assign workflow steps to specific roles</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {["Manager", "HR Representative", "IT Support", "Training Coordinator"].map((role) => (
-                    <div key={role} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Users className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <span className="font-medium">{role}</span>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Assign
-                      </Button>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Notification Settings</CardTitle>
-                  <CardDescription>Configure how participants receive updates</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    { type: "Email", enabled: true },
-                    { type: "In-App", enabled: true },
-                    { type: "SMS", enabled: false },
-                    { type: "Slack", enabled: false }
-                  ].map((notification) => (
-                    <div key={notification.type} className="flex items-center justify-between">
-                      <span>{notification.type} Notifications</span>
-                      <Button 
-                        variant={notification.enabled ? "default" : "outline"} 
-                        size="sm"
-                      >
-                        {notification.enabled ? "Enabled" : "Disabled"}
-                      </Button>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        );
-
-      case 5: // Review & Launch
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2">
-              <h3 className="text-xl font-semibold">Review & Launch</h3>
-              <p className="text-muted-foreground">Review your workflow configuration before launching</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Workflow Summary</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Name:</span>
-                      <span className="font-medium">{workflowData.name || "Untitled Workflow"}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Template:</span>
-                      <span className="font-medium">
-                        {workflowData.template === "custom" ? "Custom" : 
-                         workflowTemplates.find(t => t.id === workflowData.template)?.name || "None"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Priority:</span>
-                      <Badge variant={workflowData.priority === "high" ? "destructive" : "default"}>
-                        {workflowData.priority || "Not set"}
-                      </Badge>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Duration:</span>
-                      <span className="font-medium">{workflowData.duration || "Not set"}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Steps:</span>
-                      <span className="font-medium">{nodes.length} steps</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Validation Checklist</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {[
-                      { item: "Workflow name provided", valid: !!workflowData.name },
-                      { item: "Template selected", valid: !!workflowData.template },
-                      { item: "Priority level set", valid: !!workflowData.priority },
-                      { item: "Workflow steps defined", valid: nodes.length > 0 },
-                      { item: "Participants assigned", valid: true }
-                    ].map((check, idx) => (
-                      <div key={idx} className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                          check.valid ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-                        }`}>
-                          {check.valid ? <Check className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
-                        </div>
-                        <span className={check.valid ? 'text-green-700' : 'text-red-700'}>
-                          {check.item}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-semibold text-lg mb-2">Ready to Launch!</h4>
-                    <p className="text-muted-foreground">
-                      Your workflow is configured and ready to activate
-                    </p>
-                  </div>
-                  <div className="flex gap-3">
-                    <Button variant="outline">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      Schedule
-                    </Button>
-                    <Button onClick={handleLaunch} className="bg-gradient-to-r from-blue-600 to-purple-600">
-                      <Rocket className="w-4 h-4 mr-2" />
-                      Launch Now
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        );
-
       default:
-        return null;
+        return <div>Template workflow steps - legacy code</div>;
     }
   };
 
@@ -1462,7 +1359,7 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
         <DialogHeader className="border-b pb-4">
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Create New Workflow
+            {isEditMode ? "Edit Workflow Template" : "Create New Workflow"}
           </DialogTitle>
           
           {/* Progress Indicator */}
@@ -1506,8 +1403,15 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
           <div className="flex items-center gap-3">
             <Button variant="outline" onClick={handleSave} size="sm">
               <Save className="w-4 h-4 mr-2" />
-              Save Draft
+              {isEditMode ? "Save Changes" : "Save Draft"}
             </Button>
+            {isEditMode && (
+              <Button variant="outline" size="sm" onClick={() => {
+                toast.info("Feature coming soon", { description: "Template comparison view" });
+              }}>
+                Compare Changes
+              </Button>
+            )}
             <span className="text-xs text-muted-foreground">
               Last saved: Just now
             </span>
@@ -1532,7 +1436,7 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
               }
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
-              {currentStep === maxSteps ? "Complete" : "Next"}
+              {currentStep === maxSteps ? (isEditMode ? "Save & Complete" : "Complete") : "Next"}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
