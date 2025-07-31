@@ -28,6 +28,8 @@ import StatusTracking from "./pages/learning-paths/StatusTracking";
 import LearningPathDetails from "./pages/learning-paths/LearningPathDetails";
 import LearningPathManagement from "./pages/learning-paths/LearningPathManagement";
 import Assessments from "./pages/Assessments";
+import Processes from "./pages/Processes";
+import WorkflowManagement from "./pages/processes/WorkflowManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -66,6 +68,8 @@ const App = () => (
           <Route path="/learning-paths/:id/details" element={<LearningPathDetails />} />
           <Route path="/learning-paths/:id/manage" element={<LearningPathManagement />} />
                   <Route path="/assessments" element={<Assessments />} />
+                  <Route path="/processes" element={<Processes />} />
+                  <Route path="/processes/workflow" element={<WorkflowManagement />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

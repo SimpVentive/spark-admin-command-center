@@ -22,7 +22,8 @@ import {
   Lock,
   Monitor,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Workflow
 } from "lucide-react";
 
 import {
@@ -144,6 +145,17 @@ const navigationItems = [
       { title: "Tools", url: "/lti/tools" },
       { title: "Launches", url: "/lti/launches" },
       { title: "Grade Passback", url: "/lti/grades" }
+    ]
+  },
+  { 
+    title: "Processes", 
+    icon: Workflow,
+    subItems: [
+      { title: "Workflow Management", url: "/processes/workflow" },
+      { title: "User and Role Management", url: "/processes/user-roles" },
+      { title: "Approval Framework", url: "/processes/approval" },
+      { title: "Business Rules", url: "/processes/business-rules" },
+      { title: "Security & Access Control", url: "/processes/security" }
     ]
   },
   { title: "Security", url: "/security", icon: Shield },
