@@ -1,1 +1,52 @@
 project_id = "exwakeotltumdcsviinl"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+
+[db.pooler]
+enabled = false
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 20
+max_client_conn = 100
+
+[realtime]
+enabled = true
+port = 54323
+
+[studio]
+enabled = true
+port = 54324
+
+[inbucket]
+enabled = true
+port = 54325
+smtp_port = 54326
+pop3_port = 54327
+
+[storage]
+enabled = true
+port = 54326
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+port = 54321
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://exwakeotltumdcsviinl.supabase.co"]
+
+[functions.ppt-to-video]
+verify_jwt = false
+
+[functions.video-format-converter]
+verify_jwt = false
+
+[functions.scorm-package-creator]
+verify_jwt = false

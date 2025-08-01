@@ -2,6 +2,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
 import { 
   Video, 
   FileVideo, 
@@ -12,10 +17,131 @@ import {
   PlayCircle,
   FileText,
   Zap,
-  Globe
+  Globe,
+  Upload,
+  Loader2
 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const ContentTools = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentTask, setCurrentTask] = useState("");
+  const [results, setResults] = useState<any>(null);
+  const [showProgressDialog, setShowProgressDialog] = useState(false);
+
+  // PPT to Video conversion
+  const handlePptToVideoConversion = async () => {
+    try {
+      setIsLoading(true);
+      setProgress(0);
+      setCurrentTask("Initializing PPT to Video conversion...");
+      setShowProgressDialog(true);
+      setResults(null);
+
+      const { data, error } = await supabase.functions.invoke('ppt-to-video', {
+        body: { 
+          file: { name: 'sample-presentation.pptx' },
+          settings: { resolution: '1080p', fps: 30 }
+        }
+      });
+
+      if (error) throw error;
+
+      // Simulate progress updates
+      for (let i = 0; i <= 100; i += 20) {
+        setProgress(i);
+        setCurrentTask(data.steps[Math.floor(i / 20)] || "Processing...");
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+
+      setResults(data);
+      toast.success("PPT to Video conversion completed successfully!");
+    } catch (error) {
+      console.error('PPT conversion error:', error);
+      toast.error("Failed to convert presentation to video");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Video format conversion
+  const handleVideoFormatConversion = async () => {
+    try {
+      setIsLoading(true);
+      setProgress(0);
+      setCurrentTask("Starting video format conversion...");
+      setShowProgressDialog(true);
+      setResults(null);
+
+      const { data, error } = await supabase.functions.invoke('video-format-converter', {
+        body: { 
+          file: { name: 'sample-video.avi', size: '150 MB' },
+          outputFormat: 'MP4',
+          settings: { resolution: '1920x1080', bitrate: '5 Mbps' }
+        }
+      });
+
+      if (error) throw error;
+
+      // Simulate progress updates
+      for (let i = 0; i <= 100; i += 15) {
+        setProgress(i);
+        setCurrentTask(data.steps[Math.floor(i / 15)] || "Converting...");
+        await new Promise(resolve => setTimeout(resolve, 600));
+      }
+
+      setResults(data);
+      toast.success("Video format conversion completed successfully!");
+    } catch (error) {
+      console.error('Video conversion error:', error);
+      toast.error("Failed to convert video format");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // SCORM package creation
+  const handleScormPackageCreation = async () => {
+    try {
+      setIsLoading(true);
+      setProgress(0);
+      setCurrentTask("Creating SCORM package...");
+      setShowProgressDialog(true);
+      setResults(null);
+
+      const { data, error } = await supabase.functions.invoke('scorm-package-creator', {
+        body: { 
+          content: { type: 'video', url: '/sample-content.mp4' },
+          metadata: { 
+            title: 'Learning Module', 
+            description: 'Interactive learning content' 
+          },
+          scormVersion: 'SCORM 2004 4th Edition'
+        }
+      });
+
+      if (error) throw error;
+
+      // Simulate progress updates
+      for (let i = 0; i <= 100; i += 12.5) {
+        setProgress(i);
+        setCurrentTask(data.steps[Math.floor(i / 12.5)] || "Building package...");
+        await new Promise(resolve => setTimeout(resolve, 400));
+      }
+
+      setResults(data);
+      toast.success("SCORM package created successfully!");
+    } catch (error) {
+      console.error('SCORM creation error:', error);
+      toast.error("Failed to create SCORM package");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -24,6 +150,52 @@ const ContentTools = () => {
           <p className="text-muted-foreground">Convert and optimize your content for e-learning</p>
         </div>
       </div>
+
+      {/* Progress Dialog */}
+      <Dialog open={showProgressDialog} onOpenChange={setShowProgressDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Processing Content</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Progress</span>
+                <span>{progress}%</span>
+              </div>
+              <Progress value={progress} className="w-full" />
+            </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+              <span>{currentTask}</span>
+            </div>
+            {results && (
+              <div className="space-y-3 pt-4 border-t">
+                <h4 className="font-medium text-green-600">Conversion Complete!</h4>
+                {results.metadata && (
+                  <div className="space-y-1 text-sm">
+                    <p><strong>Output:</strong> {results.metadata.outputFormat || results.packageInfo?.name}</p>
+                    <p><strong>Size:</strong> {results.metadata.outputSize || results.packageInfo?.size}</p>
+                    {results.metadata.duration && <p><strong>Duration:</strong> {results.metadata.duration}</p>}
+                  </div>
+                )}
+                <Button 
+                  onClick={() => {
+                    setShowProgressDialog(false);
+                    if (results.downloadUrl) {
+                      toast.success("Download started!");
+                    }
+                  }}
+                  className="w-full"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Result
+                </Button>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Tabs defaultValue="ppt-video" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
@@ -123,8 +295,8 @@ const ContentTools = () => {
               </div>
 
               <div className="flex gap-4">
-                <Button>
-                  <PlayCircle className="h-4 w-4 mr-2" />
+                <Button onClick={handlePptToVideoConversion} disabled={isLoading}>
+                  {isLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <PlayCircle className="h-4 w-4 mr-2" />}
                   Start Conversion
                 </Button>
                 <Button variant="outline">
@@ -226,8 +398,8 @@ const ContentTools = () => {
               </div>
 
               <div className="flex gap-4">
-                <Button>
-                  <FileVideo className="h-4 w-4 mr-2" />
+                <Button onClick={handleVideoFormatConversion} disabled={isLoading}>
+                  {isLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileVideo className="h-4 w-4 mr-2" />}
                   Convert Video
                 </Button>
                 <Button variant="outline">
@@ -336,8 +508,8 @@ const ContentTools = () => {
               </div>
 
               <div className="flex gap-4">
-                <Button>
-                  <Package className="h-4 w-4 mr-2" />
+                <Button onClick={handleScormPackageCreation} disabled={isLoading}>
+                  {isLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Package className="h-4 w-4 mr-2" />}
                   Create SCORM Package
                 </Button>
                 <Button variant="outline">
