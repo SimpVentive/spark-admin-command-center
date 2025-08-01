@@ -372,6 +372,45 @@ Training Team`,
 
         {/* Programs Configuration */}
         <TabsContent value="programs" className="space-y-6">
+          {/* Available Programs */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Available Programs</CardTitle>
+              <CardDescription>
+                Training programs available for this cycle ({programs.length} programs)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+                {programs.map((program) => (
+                  <Card key={program.id} className="p-4">
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between">
+                        <h4 className="font-medium text-sm">{program.title}</h4>
+                        <Badge variant="secondary" className="text-xs">
+                          {program.category}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {program.description}
+                      </p>
+                      <div className="flex items-center text-xs text-muted-foreground">
+                        <span className="mr-3">Level: {program.level}</span>
+                        <span>{program.duration_hours}h</span>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+              {programs.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  No programs available. Please add programs first.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Mandatory Programs */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
