@@ -749,9 +749,26 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
                                   placeholder="Enter step name"
                                 />
                                 {isEditMode && originalTemplateData?.steps.find(s => s.name === step.name) && (
-                                  <Badge variant="outline" className="text-xs whitespace-nowrap">
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="text-xs px-2 py-1 h-auto"
+                                    onClick={() => {
+                                      const originalStep = originalTemplateData.steps.find(s => s.name === step.name);
+                                      if (originalStep) {
+                                        updateWorkflowStep(step.id, {
+                                          description: originalStep.description,
+                                          type: originalStep.type,
+                                          timeLimit: originalStep.timeLimit,
+                                          timeLimitUnit: originalStep.timeLimitUnit
+                                        });
+                                        toast.success("Step reset to template defaults");
+                                      }
+                                    }}
+                                  >
+                                    <Sparkles className="w-3 h-3 mr-1" />
                                     Template
-                                  </Badge>
+                                  </Button>
                                 )}
                               </div>
                             </div>
