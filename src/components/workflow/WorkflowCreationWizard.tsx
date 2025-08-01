@@ -58,6 +58,7 @@ import {
   Position
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface WorkflowCreationWizardProps {
   open: boolean;
@@ -1356,7 +1357,7 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
         <DialogHeader className="border-b pb-4">
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {isEditMode ? "Edit Workflow Template" : "Create New Workflow"}
@@ -1395,9 +1396,9 @@ const WorkflowCreationWizard = ({ open, onOpenChange }: WorkflowCreationWizardPr
           </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <ScrollArea className="flex-1 p-6">
           {renderStepContent()}
-        </div>
+        </ScrollArea>
 
         <div className="border-t pt-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
