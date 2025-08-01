@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,13 +10,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Clock, CheckCircle, AlertCircle, BookOpen, Target, Users, Lightbulb } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface Program {
   id: string;
-  name: string;
+  title: string;
   description: string;
-  duration: string;
-  category: 'managerial' | 'behavioral' | 'functional' | 'technical';
+  duration_hours: number;
+  category: string;
+  level: string;
+  faculty: string;
+  venue: string;
   isMandatory?: boolean;
 }
 
@@ -33,7 +38,11 @@ interface TNIData {
 
 export default function EmployeeTNI() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const [user, setUser] = useState<any>(null);
+  const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
   const [tniData, setTNIData] = useState<TNIData>({
     selectedPrograms: [],
     customRequirements: [],
@@ -51,6 +60,48 @@ export default function EmployeeTNI() {
     priority: 'medium'
   });
 
+  // Check authentication
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/auth');
+        return;
+      }
+      setUser(session.user);
+      setLoading(false);
+    };
+
+    checkAuth();
+  }, [navigate]);
+
+  // Fetch programs from database
+  useEffect(() => {
+    if (!user) return;
+    
+    const fetchPrograms = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('training_programs')
+          .select('*')
+          .eq('is_active', true)
+          .order('category', { ascending: true })
+          .order('title', { ascending: true });
+
+        if (error) throw error;
+        setPrograms(data || []);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch programs",
+          variant: "destructive"
+        });
+      }
+    };
+
+    fetchPrograms();
+  }, [user, toast]);
+
   // Sample cycle info
   const cycleInfo = {
     name: "Q1 2024 Training Needs Identification",
@@ -61,45 +112,22 @@ export default function EmployeeTNI() {
     status: "Active"
   };
 
-  // Sample programs data
-  const programs: Program[] = [
-    // Managerial
-    { id: "m1", name: "Leadership Excellence", description: "Develop core leadership skills", duration: "3 days", category: "managerial", isMandatory: true },
-    { id: "m2", name: "Strategic Planning", description: "Strategic thinking and planning", duration: "2 days", category: "managerial" },
-    { id: "m3", name: "Team Management", description: "Effective team leadership", duration: "2 days", category: "managerial" },
-    
-    // Behavioral
-    { id: "b1", name: "Communication Skills", description: "Effective workplace communication", duration: "2 days", category: "behavioral", isMandatory: true },
-    { id: "b2", name: "Emotional Intelligence", description: "Understanding and managing emotions", duration: "1 day", category: "behavioral" },
-    { id: "b3", name: "Conflict Resolution", description: "Managing workplace conflicts", duration: "1 day", category: "behavioral" },
-    
-    // Functional
-    { id: "f1", name: "Project Management", description: "PMP certification preparation", duration: "5 days", category: "functional" },
-    { id: "f2", name: "Financial Analysis", description: "Business financial skills", duration: "3 days", category: "functional" },
-    { id: "f3", name: "Quality Management", description: "Six Sigma principles", duration: "4 days", category: "functional" },
-    
-    // Technical
-    { id: "t1", name: "Data Analytics", description: "Data analysis and visualization", duration: "4 days", category: "technical" },
-    { id: "t2", name: "Digital Transformation", description: "Technology adoption strategies", duration: "2 days", category: "technical" },
-    { id: "t3", name: "Cybersecurity Awareness", description: "Information security basics", duration: "1 day", category: "technical", isMandatory: true }
-  ];
-
   const categoryIcons = {
-    managerial: Target,
-    behavioral: Users,
-    functional: BookOpen,
-    technical: Lightbulb
+    'Managerial': Target,
+    'Behavioral': Users,
+    'Functional': BookOpen,
+    'Technical': Lightbulb
   };
 
   const categoryColors = {
-    managerial: "bg-blue-500",
-    behavioral: "bg-green-500",
-    functional: "bg-purple-500",
-    technical: "bg-orange-500"
+    'Managerial': "bg-blue-500",
+    'Behavioral': "bg-green-500",
+    'Functional': "bg-purple-500",
+    'Technical': "bg-orange-500"
   };
 
-  const mandatoryPrograms = programs.filter(p => p.isMandatory);
-  const optionalPrograms = programs.filter(p => !p.isMandatory);
+  const mandatoryPrograms = programs.filter(p => p.category === 'Mandatory');
+  const optionalPrograms = programs.filter(p => p.category !== 'Mandatory');
 
   const handleProgramToggle = (programId: string) => {
     setTNIData(prev => ({
@@ -145,9 +173,9 @@ export default function EmployeeTNI() {
   };
 
   const renderProgramCard = (program: Program) => {
-    const Icon = categoryIcons[program.category];
-    const isSelected = tniData.selectedPrograms.includes(program.id) || program.isMandatory;
-    const isMandatory = program.isMandatory;
+    const Icon = categoryIcons[program.category as keyof typeof categoryIcons] || BookOpen;
+    const isSelected = tniData.selectedPrograms.includes(program.id) || program.category === 'Mandatory';
+    const isMandatory = program.category === 'Mandatory';
 
     return (
       <Card 
@@ -160,11 +188,11 @@ export default function EmployeeTNI() {
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 ${categoryColors[program.category]} rounded-lg flex items-center justify-center`}>
+              <div className={`w-10 h-10 ${categoryColors[program.category as keyof typeof categoryColors] || 'bg-gray-500'} rounded-lg flex items-center justify-center`}>
                 <Icon className="w-5 h-5 text-white" />
               </div>
               <div>
-                <CardTitle className="text-sm">{program.name}</CardTitle>
+                <CardTitle className="text-sm">{program.title}</CardTitle>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant="outline" className="text-xs">
                     {program.category}
@@ -179,7 +207,7 @@ export default function EmployeeTNI() {
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">{program.duration}</span>
+              <span className="text-sm text-muted-foreground">{Math.ceil((program.duration_hours || 0) / 8)} days</span>
             </div>
           </div>
         </CardHeader>
@@ -199,6 +227,17 @@ export default function EmployeeTNI() {
       </Card>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-6">
@@ -288,10 +327,10 @@ export default function EmployeeTNI() {
               <Tabs defaultValue="all" className="space-y-4">
                 <TabsList>
                   <TabsTrigger value="all">All Categories</TabsTrigger>
-                  <TabsTrigger value="managerial">Managerial</TabsTrigger>
-                  <TabsTrigger value="behavioral">Behavioral</TabsTrigger>
-                  <TabsTrigger value="functional">Functional</TabsTrigger>
-                  <TabsTrigger value="technical">Technical</TabsTrigger>
+                  <TabsTrigger value="Managerial">Managerial</TabsTrigger>
+                  <TabsTrigger value="Behavioral">Behavioral</TabsTrigger>
+                  <TabsTrigger value="Functional">Functional</TabsTrigger>
+                  <TabsTrigger value="Technical">Technical</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="all">
@@ -300,7 +339,7 @@ export default function EmployeeTNI() {
                   </div>
                 </TabsContent>
                 
-                {Object.keys(categoryIcons).map(category => (
+                {['Managerial', 'Behavioral', 'Functional', 'Technical'].map(category => (
                   <TabsContent key={category} value={category}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {optionalPrograms.filter(p => p.category === category).map(renderProgramCard)}
@@ -343,12 +382,12 @@ export default function EmployeeTNI() {
                       <SelectTrigger className="mt-1">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="managerial">Managerial</SelectItem>
-                        <SelectItem value="behavioral">Behavioral</SelectItem>
-                        <SelectItem value="functional">Functional</SelectItem>
-                        <SelectItem value="technical">Technical</SelectItem>
-                      </SelectContent>
+                        <SelectContent>
+                          <SelectItem value="Managerial">Managerial</SelectItem>
+                          <SelectItem value="Behavioral">Behavioral</SelectItem>
+                          <SelectItem value="Functional">Functional</SelectItem>
+                          <SelectItem value="Technical">Technical</SelectItem>
+                        </SelectContent>
                     </Select>
                   </div>
                   
@@ -452,16 +491,16 @@ export default function EmployeeTNI() {
                 <h4 className="font-medium mb-3">Selected Programs ({tniData.selectedPrograms.length + mandatoryPrograms.length})</h4>
                 <div className="space-y-2">
                   {[...mandatoryPrograms, ...programs.filter(p => tniData.selectedPrograms.includes(p.id))].map(program => (
-                    <div key={program.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <p className="font-medium">{program.name}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline" className="text-xs">{program.category}</Badge>
-                          {program.isMandatory && <Badge variant="destructive" className="text-xs">Mandatory</Badge>}
-                        </div>
-                      </div>
-                      <span className="text-sm text-muted-foreground">{program.duration}</span>
-                    </div>
+                     <div key={program.id} className="flex items-center justify-between p-3 border rounded-lg">
+                       <div>
+                         <p className="font-medium">{program.title}</p>
+                         <div className="flex items-center gap-2 mt-1">
+                           <Badge variant="outline" className="text-xs">{program.category}</Badge>
+                           {program.category === 'Mandatory' && <Badge variant="destructive" className="text-xs">Mandatory</Badge>}
+                         </div>
+                       </div>
+                       <span className="text-sm text-muted-foreground">{Math.ceil((program.duration_hours || 0) / 8)} days</span>
+                     </div>
                   ))}
                 </div>
               </div>

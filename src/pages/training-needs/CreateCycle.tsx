@@ -31,6 +31,7 @@ interface CycleData {
   startDate: Date | undefined;
   endDate: Date | undefined;
   workflowType: 'individual' | 'manager' | 'tm_batch';
+  requiresManagerApproval: boolean;
   minPrograms: number;
   maxPrograms: number;
   autoCloseThreshold: number;
@@ -52,6 +53,7 @@ export default function CreateCycle() {
     startDate: undefined,
     endDate: undefined,
     workflowType: 'individual',
+    requiresManagerApproval: true,
     minPrograms: 3,
     maxPrograms: 8,
     autoCloseThreshold: 80,
@@ -205,6 +207,24 @@ Training Team`,
                       <SelectItem value="tm_batch">TM Batch Input by Department</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="manager-approval"
+                      checked={cycleData.requiresManagerApproval}
+                      onCheckedChange={(checked) => setCycleData(prev => ({ ...prev, requiresManagerApproval: checked }))}
+                    />
+                    <div className="space-y-0.5">
+                      <label htmlFor="manager-approval" className="text-sm font-medium">
+                        Requires Manager Approval
+                      </label>
+                      <p className="text-xs text-muted-foreground">
+                        Employee TNI submissions need manager approval before finalization
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
