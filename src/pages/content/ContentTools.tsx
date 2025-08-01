@@ -31,9 +31,26 @@ const ContentTools = () => {
   const [currentTask, setCurrentTask] = useState("");
   const [results, setResults] = useState<any>(null);
   const [showProgressDialog, setShowProgressDialog] = useState(false);
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const [uploadType, setUploadType] = useState<'ppt' | 'video' | 'scorm'>('ppt');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // File upload handler
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
 
   // PPT to Video conversion
   const handlePptToVideoConversion = async () => {
+    if (!selectedFile) {
+      setUploadType('ppt');
+      setShowUploadDialog(true);
+      return;
+    }
+
     try {
       setIsLoading(true);
       setProgress(0);
@@ -43,7 +60,7 @@ const ContentTools = () => {
 
       const { data, error } = await supabase.functions.invoke('ppt-to-video', {
         body: { 
-          file: { name: 'sample-presentation.pptx' },
+          file: { name: selectedFile.name, size: selectedFile.size },
           settings: { resolution: '1080p', fps: 30 }
         }
       });
@@ -69,6 +86,12 @@ const ContentTools = () => {
 
   // Video format conversion
   const handleVideoFormatConversion = async () => {
+    if (!selectedFile) {
+      setUploadType('video');
+      setShowUploadDialog(true);
+      return;
+    }
+
     try {
       setIsLoading(true);
       setProgress(0);
@@ -78,7 +101,7 @@ const ContentTools = () => {
 
       const { data, error } = await supabase.functions.invoke('video-format-converter', {
         body: { 
-          file: { name: 'sample-video.avi', size: '150 MB' },
+          file: { name: selectedFile.name, size: selectedFile.size },
           outputFormat: 'MP4',
           settings: { resolution: '1920x1080', bitrate: '5 Mbps' }
         }
@@ -114,7 +137,7 @@ const ContentTools = () => {
 
       const { data, error } = await supabase.functions.invoke('scorm-package-creator', {
         body: { 
-          content: { type: 'video', url: '/sample-content.mp4' },
+          content: { type: 'video', url: selectedFile ? URL.createObjectURL(selectedFile) : '/sample-content.mp4' },
           metadata: { 
             title: 'Learning Module', 
             description: 'Interactive learning content' 
@@ -140,6 +163,16 @@ const ContentTools = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const openDocumentation = () => {
+    toast.success("Opening documentation in new tab");
+    window.open('https://docs.lovable.dev/features', '_blank');
+  };
+
+  const openScormCloudTest = () => {
+    toast.success("Opening SCORM Cloud testing platform");
+    window.open('https://cloud.scorm.com/sc/guest/SignInGuest', '_blank');
   };
 
   return (
@@ -193,6 +226,64 @@ const ContentTools = () => {
                 </Button>
               </div>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* File Upload Dialog */}
+      <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              Upload {uploadType === 'ppt' ? 'PowerPoint' : uploadType === 'video' ? 'Video' : 'Content'} File
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center">
+              <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <h3 className="text-lg font-medium mb-2">Choose your file</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                {uploadType === 'ppt' && 'Supports: PPT, PPTX files'}
+                {uploadType === 'video' && 'Supports: MP4, AVI, MOV, WMV files'}
+                {uploadType === 'scorm' && 'Supports: Any content files'}
+              </p>
+              <Input
+                type="file"
+                onChange={handleFileUpload}
+                accept={
+                  uploadType === 'ppt' ? '.ppt,.pptx' : 
+                  uploadType === 'video' ? '.mp4,.avi,.mov,.wmv' : '*'
+                }
+                className="cursor-pointer"
+              />
+            </div>
+            {selectedFile && (
+              <div className="p-3 bg-muted rounded-lg">
+                <p className="text-sm font-medium">Selected: {selectedFile.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  Size: {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                </p>
+              </div>
+            )}
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => {
+                  setShowUploadDialog(false);
+                  if (selectedFile) {
+                    if (uploadType === 'ppt') handlePptToVideoConversion();
+                    else if (uploadType === 'video') handleVideoFormatConversion();
+                    else if (uploadType === 'scorm') handleScormPackageCreation();
+                  }
+                }}
+                disabled={!selectedFile}
+                className="flex-1"
+              >
+                Continue
+              </Button>
+              <Button variant="outline" onClick={() => setShowUploadDialog(false)} className="flex-1">
+                Cancel
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -299,9 +390,9 @@ const ContentTools = () => {
                   {isLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <PlayCircle className="h-4 w-4 mr-2" />}
                   Start Conversion
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => window.open('https://handbrake.fr/', '_blank')}>
                   <Download className="h-4 w-4 mr-2" />
-                  Download Guide
+                  Download HandBrake
                 </Button>
               </div>
             </CardContent>
@@ -402,9 +493,9 @@ const ContentTools = () => {
                   {isLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileVideo className="h-4 w-4 mr-2" />}
                   Convert Video
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => window.open('https://ffmpeg.org/download.html', '_blank')}>
                   <Download className="h-4 w-4 mr-2" />
-                  Download Tools
+                  Download FFmpeg
                 </Button>
               </div>
             </CardContent>
@@ -455,10 +546,10 @@ const ContentTools = () => {
                   <div className="p-4 bg-muted rounded-lg">
                     <h4 className="font-medium mb-2">Free Authoring Tools</h4>
                     <ul className="list-disc list-inside space-y-1 text-sm">
-                      <li><strong>eXeLearning:</strong> Web-based authoring</li>
-                      <li><strong>H5P:</strong> Interactive content creation</li>
-                      <li><strong>Adapt Learning:</strong> Responsive framework</li>
-                      <li><strong>SCORM Cloud:</strong> Testing and validation</li>
+                      <li><strong><Button variant="link" className="p-0 h-auto text-sm" onClick={() => window.open('https://exelearning.net/', '_blank')}>eXeLearning</Button>:</strong> Web-based authoring</li>
+                      <li><strong><Button variant="link" className="p-0 h-auto text-sm" onClick={() => window.open('https://h5p.org/', '_blank')}>H5P</Button>:</strong> Interactive content creation</li>
+                      <li><strong><Button variant="link" className="p-0 h-auto text-sm" onClick={() => window.open('https://www.adaptlearning.org/', '_blank')}>Adapt Learning</Button>:</strong> Responsive framework</li>
+                      <li><strong><Button variant="link" className="p-0 h-auto text-sm" onClick={() => window.open('https://cloud.scorm.com/', '_blank')}>SCORM Cloud</Button>:</strong> Testing and validation</li>
                     </ul>
                   </div>
                 </div>
@@ -512,11 +603,11 @@ const ContentTools = () => {
                   {isLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Package className="h-4 w-4 mr-2" />}
                   Create SCORM Package
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={openScormCloudTest}>
                   <Globe className="h-4 w-4 mr-2" />
                   Test in SCORM Cloud
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={openDocumentation}>
                   <FileText className="h-4 w-4 mr-2" />
                   Documentation
                 </Button>
