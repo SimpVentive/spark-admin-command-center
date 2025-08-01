@@ -37,6 +37,7 @@ import SecurityAccessControl from "./pages/processes/SecurityAccessControl";
 import TrainingNeeds from "./pages/TrainingNeeds";
 import EmployeeTNI from "./pages/training-needs/EmployeeTNI";
 import CreateCycle from "./pages/training-needs/CreateCycle";
+import TNADashboard from "./pages/training-needs/TNADashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -84,6 +85,7 @@ const App = () => (
         <Route path="/training-needs" element={<TrainingNeeds />} />
         <Route path="/training-needs/employee-tni" element={<EmployeeTNI />} />
         <Route path="/training-needs/create-cycle" element={<CreateCycle />} />
+        <Route path="/training-needs/tna-dashboard" element={<TNADashboard />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
