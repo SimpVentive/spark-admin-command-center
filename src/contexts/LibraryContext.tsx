@@ -47,6 +47,8 @@ type LibraryAction =
   | { type: 'CANCEL_RESERVATION'; payload: string }
   | { type: 'ADD_CHECKOUT_RECORD'; payload: CheckoutRecord }
   | { type: 'UPDATE_BOOK_AVAILABILITY'; payload: { id: string; availability: 'Available' | 'Checked Out' } }
+  | { type: 'ADD_BOOK'; payload: Book }
+  | { type: 'ADD_RESOURCE'; payload: Resource }
   | { type: 'LOAD_FROM_STORAGE'; payload: Partial<LibraryState> };
 
 const initialState: LibraryState = {
@@ -95,6 +97,14 @@ function libraryReducer(state: LibraryState, action: LibraryAction): LibraryStat
             : book
         ),
       };
+    case 'ADD_BOOK':
+      const newBooks = [...state.books, action.payload];
+      localStorage.setItem('libraryBooks', JSON.stringify(newBooks));
+      return { ...state, books: newBooks };
+    case 'ADD_RESOURCE':
+      const newResources = [...state.resources, action.payload];
+      localStorage.setItem('libraryResources', JSON.stringify(newResources));
+      return { ...state, resources: newResources };
     case 'LOAD_FROM_STORAGE':
       return { ...state, ...action.payload };
     default:
@@ -110,6 +120,8 @@ interface LibraryContextType {
   cancelReservation: (id: string) => void;
   addCheckoutRecord: (record: Omit<CheckoutRecord, 'id' | 'timestamp'>) => void;
   updateBookAvailability: (id: string, availability: 'Available' | 'Checked Out') => void;
+  addBook: (book: Omit<Book, 'id'>) => void;
+  addResource: (resource: Omit<Resource, 'id'>) => void;
 }
 
 const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
@@ -120,10 +132,25 @@ export const LibraryProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Load data from localStorage on mount
   useEffect(() => {
     const savedReservations = localStorage.getItem('libraryReservations');
+    const savedBooks = localStorage.getItem('libraryBooks');
+    const savedResources = localStorage.getItem('libraryResources');
+    
+    const loadData: Partial<LibraryState> = {};
+    
     if (savedReservations) {
+      loadData.reservations = JSON.parse(savedReservations);
+    }
+    if (savedBooks) {
+      loadData.books = JSON.parse(savedBooks);
+    }
+    if (savedResources) {
+      loadData.resources = JSON.parse(savedResources);
+    }
+    
+    if (Object.keys(loadData).length > 0) {
       dispatch({
         type: 'LOAD_FROM_STORAGE',
-        payload: { reservations: JSON.parse(savedReservations) },
+        payload: loadData,
       });
     }
   }, []);
@@ -161,6 +188,22 @@ export const LibraryProvider: React.FC<{ children: React.ReactNode }> = ({ child
     dispatch({ type: 'UPDATE_BOOK_AVAILABILITY', payload: { id, availability } });
   };
 
+  const addBook = (book: Omit<Book, 'id'>) => {
+    const newBook: Book = {
+      ...book,
+      id: Date.now().toString(),
+    };
+    dispatch({ type: 'ADD_BOOK', payload: newBook });
+  };
+
+  const addResource = (resource: Omit<Resource, 'id'>) => {
+    const newResource: Resource = {
+      ...resource,
+      id: Date.now().toString(),
+    };
+    dispatch({ type: 'ADD_RESOURCE', payload: newResource });
+  };
+
   return (
     <LibraryContext.Provider
       value={{
@@ -171,6 +214,8 @@ export const LibraryProvider: React.FC<{ children: React.ReactNode }> = ({ child
         cancelReservation,
         addCheckoutRecord,
         updateBookAvailability,
+        addBook,
+        addResource,
       }}
     >
       {children}

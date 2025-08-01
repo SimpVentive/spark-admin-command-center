@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Book } from "lucide-react";
+import { Search, Book, Plus, Settings } from "lucide-react";
 import { useLibrary } from "@/contexts/LibraryContext";
+import AddBookDialog from "@/components/library/AddBookDialog";
 
 const Catalog = () => {
   const { state } = useLibrary();
@@ -24,9 +26,17 @@ const Catalog = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Catalog</h1>
-        <p className="text-muted-foreground">Browse and search the library catalog</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Catalog</h1>
+          <p className="text-muted-foreground">Browse and search the library catalog</p>
+        </div>
+        <div className="flex gap-2">
+          <AddBookDialog />
+          <Button variant="outline" size="icon">
+            <Settings className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Search Bar */}

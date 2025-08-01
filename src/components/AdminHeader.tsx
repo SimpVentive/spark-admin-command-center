@@ -4,8 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Bell, Search, Settings } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 export function AdminHeader() {
+  const { toast } = useToast();
+
+  const handleSettingsClick = () => {
+    toast({
+      title: "Settings",
+      description: "System settings functionality coming soon!",
+    });
+  };
+
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="flex h-14 items-center gap-4 px-4">
@@ -27,7 +37,7 @@ export function AdminHeader() {
             <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full text-xs"></span>
           </Button>
           
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" onClick={handleSettingsClick}>
             <Settings className="h-4 w-4" />
           </Button>
           

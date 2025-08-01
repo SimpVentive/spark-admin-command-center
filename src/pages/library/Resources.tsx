@@ -2,9 +2,10 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, FileText, Video, Download } from "lucide-react";
+import { BookOpen, FileText, Video, Download, Plus, Settings } from "lucide-react";
 import { useLibrary } from "@/contexts/LibraryContext";
 import { useToast } from "@/hooks/use-toast";
+import AddResourceDialog from "@/components/library/AddResourceDialog";
 
 const Resources = () => {
   const { state } = useLibrary();
@@ -50,9 +51,17 @@ const Resources = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Resources</h1>
-        <p className="text-muted-foreground">Access digital learning resources and materials</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Resources</h1>
+          <p className="text-muted-foreground">Access digital learning resources and materials</p>
+        </div>
+        <div className="flex gap-2">
+          <AddResourceDialog />
+          <Button variant="outline" size="icon">
+            <Settings className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
