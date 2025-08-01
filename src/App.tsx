@@ -85,10 +85,8 @@ const App = () => (
           <Route path="/processes/business-rules" element={<BusinessRules />} />
           <Route path="/processes/security" element={<SecurityAccessControl />} />
         <Route path="/training-needs" element={<TNADashboard />} />
-        <Route path="/training-needs/employee-tni" element={<EmployeeTNI />} />
         <Route path="/training-needs/create-cycle" element={<CreateCycle />} />
-        <Route path="/training-needs/tna-dashboard" element={<TNADashboard />} />
-        <Route path="/training-needs/programs" element={<ProgramManagement />} />
+        <Route path="/training-needs/employee-tni" element={<EmployeeTNI />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

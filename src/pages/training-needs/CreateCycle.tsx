@@ -163,11 +163,12 @@ Training Team`,
       </div>
 
       <Tabs defaultValue="basic" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="basic">Basic Info</TabsTrigger>
           <TabsTrigger value="workflow">Workflow</TabsTrigger>
           <TabsTrigger value="programs">Programs</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="preview">Preview</TabsTrigger>
           <TabsTrigger value="review">Review</TabsTrigger>
         </TabsList>
 
@@ -595,6 +596,89 @@ Training Team`,
                     </div>
                   </div>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Preview */}
+        <TabsContent value="preview" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Employee TNI Preview</CardTitle>
+              <CardDescription>
+                Preview how the TNI form will appear to employees
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="border rounded-lg p-6 bg-card">
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-bold">Training Needs Identification</h2>
+                    <p className="text-muted-foreground mt-2">
+                      {cycleData.name || 'TNI Cycle Name'} - Complete by {cycleData.endDate ? format(cycleData.endDate, "PPP") : 'End Date'}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h3 className="font-semibold mb-3">Available Programs</h3>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {programs.slice(0, 8).map((program) => (
+                          <div key={program.id} className="flex items-center justify-between p-3 border rounded-lg">
+                            <div>
+                              <p className="font-medium">{program.title}</p>
+                              <p className="text-sm text-muted-foreground">{program.category} • {program.duration_hours}h</p>
+                            </div>
+                            <Checkbox disabled />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="font-semibold mb-3">Mandatory Programs</h3>
+                      <div className="space-y-2">
+                        {cycleData.mandatoryPrograms.length > 0 ? (
+                          cycleData.mandatoryPrograms.map((mp, index) => {
+                            const program = programs.find(p => p.id === mp.programId);
+                            return program ? (
+                              <div key={index} className="flex items-center justify-between p-3 border rounded-lg bg-primary/5">
+                                <div>
+                                  <p className="font-medium">{program.title}</p>
+                                  <p className="text-sm text-muted-foreground">{program.category} • {program.duration_hours}h</p>
+                                  <Badge variant="secondary" className="text-xs mt-1">Mandatory</Badge>
+                                </div>
+                                <Checkbox checked disabled />
+                              </div>
+                            ) : null;
+                          })
+                        ) : (
+                          <p className="text-muted-foreground">No mandatory programs for this cycle</p>
+                        )}
+                      </div>
+
+                      <div className="mt-6">
+                        <h3 className="font-semibold mb-3">Training Requirements</h3>
+                        <div className="p-3 border rounded-lg">
+                          <p className="text-sm text-muted-foreground">
+                            Select {cycleData.minPrograms} to {cycleData.maxPrograms} programs for this cycle
+                          </p>
+                          {cycleData.requiresManagerApproval && (
+                            <p className="text-sm text-amber-600 mt-2">
+                              ⚠️ Manager approval required for submissions
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-2">
+                    <Button variant="outline" disabled>Save Draft</Button>
+                    <Button disabled>Submit for {cycleData.requiresManagerApproval ? 'Manager ' : ''}Approval</Button>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
