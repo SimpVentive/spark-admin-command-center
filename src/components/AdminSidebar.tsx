@@ -27,7 +27,8 @@ import {
   UserCog,
   CheckCircle,
   Brain,
-  ShieldCheck
+  ShieldCheck,
+  Target
 } from "lucide-react";
 
 import {
@@ -97,6 +98,18 @@ const navigationItems = [
       { title: "Enrollment Management", url: "/learning-paths/enrollment" },
       { title: "Analytics Dashboard", url: "/learning-paths/analytics" },
       { title: "Status Tracking", url: "/learning-paths/status" }
+    ]
+  },
+  { 
+    title: "Training Needs Analysis", 
+    icon: Target,
+    subItems: [
+      { title: "Dashboard", url: "/training-needs/dashboard" },
+      { title: "Create TNI Cycle", url: "/training-needs/create-cycle" },
+      { title: "Employee TNI", url: "/training-needs/employee-tni" },
+      { title: "Manager Approval", url: "/training-needs/approval" },
+      { title: "Analytics & Reports", url: "/training-needs/analytics" },
+      { title: "Training Programs", url: "/training-needs/programs" }
     ]
   },
   { 
