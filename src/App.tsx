@@ -45,6 +45,10 @@ import Catalog from "./pages/library/Catalog";
 import CheckInOut from "./pages/library/CheckInOut";
 import Reservations from "./pages/library/Reservations";
 import NotFound from "./pages/NotFound";
+import ContentLibrary from "./pages/content/ContentLibrary";
+import ContentTools from "./pages/content/ContentTools";
+import UploadContent from "./pages/content/UploadContent";
+import ContentCategories from "./pages/content/ContentCategories";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +104,10 @@ const App = () => (
         <Route path="/library/catalog" element={<Catalog />} />
         <Route path="/library/checkout" element={<CheckInOut />} />
         <Route path="/library/reservations" element={<Reservations />} />
+        <Route path="/content" element={<ContentLibrary />} />
+        <Route path="/content/tools" element={<ContentTools />} />
+        <Route path="/content/upload" element={<UploadContent />} />
+        <Route path="/content/categories" element={<ContentCategories />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
