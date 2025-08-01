@@ -4,8 +4,12 @@ import { RecentActivity } from "@/components/RecentActivity";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from "recharts";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const chartData = [
     { name: "Jan", users: 120, courses: 45 },
     { name: "Feb", users: 150, courses: 52 },
@@ -97,19 +101,48 @@ const Index = () => {
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => navigate('/programs/create')}
+            >
               Create New Course
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => toast({
+                title: "Send Announcement",
+                description: "Announcement functionality will be implemented soon.",
+              })}
+            >
               Send Announcement
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => toast({
+                title: "Generate Report",
+                description: "Report generation functionality will be implemented soon.",
+              })}
+            >
               Generate Report
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => navigate('/processes/user-role-management')}
+            >
               Manage Permissions
             </Button>
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => toast({
+                title: "System Settings",
+                description: "System settings functionality will be implemented soon.",
+              })}
+            >
               System Settings
             </Button>
           </CardContent>
