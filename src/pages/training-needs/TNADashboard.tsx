@@ -143,13 +143,50 @@ export default function TNADashboard() {
             <Mail className="h-4 w-4 mr-2" />
             Send Reminders
           </Button>
-          {overallStats.canStartTNA && (
-            <Button onClick={handleStartTNA}>
-              <TrendingUp className="h-4 w-4 mr-2" />
-              Start TNA Process
-            </Button>
-          )}
         </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader className="pb-3">
+            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-3">
+              <Users className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-lg">Create TNI Cycle</CardTitle>
+            <p className="text-sm text-muted-foreground">Start a new training needs identification cycle</p>
+          </CardHeader>
+        </Card>
+        
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader className="pb-3">
+            <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-3">
+              <BarChart3 className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-lg">View Analytics</CardTitle>
+            <p className="text-sm text-muted-foreground">Analyze training needs data and trends</p>
+          </CardHeader>
+        </Card>
+        
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader className="pb-3">
+            <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-3">
+              <BookOpen className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-lg">Employee TNI</CardTitle>
+            <p className="text-sm text-muted-foreground">Access employee training needs interface</p>
+          </CardHeader>
+        </Card>
+        
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader className="pb-3">
+            <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-3">
+              <CheckCircle className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-lg">Manager Approval</CardTitle>
+            <p className="text-sm text-muted-foreground">Review and approve training requests</p>
+          </CardHeader>
+        </Card>
       </div>
 
       {/* Overall Statistics */}

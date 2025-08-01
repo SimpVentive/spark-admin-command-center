@@ -1073,6 +1073,57 @@ export type Database = {
         }
         Relationships: []
       }
+      training_programs: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          duration_hours: number | null
+          faculty: string | null
+          id: string
+          is_active: boolean | null
+          level: string | null
+          outline: string | null
+          prerequisites: string[] | null
+          skills_covered: string[] | null
+          title: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          duration_hours?: number | null
+          faculty?: string | null
+          id?: string
+          is_active?: boolean | null
+          level?: string | null
+          outline?: string | null
+          prerequisites?: string[] | null
+          skills_covered?: string[] | null
+          title: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_hours?: number | null
+          faculty?: string | null
+          id?: string
+          is_active?: boolean | null
+          level?: string | null
+          outline?: string | null
+          prerequisites?: string[] | null
+          skills_covered?: string[] | null
+          title?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: []
+      }
       user_assessment_attempts: {
         Row: {
           assessment_id: string

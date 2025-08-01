@@ -34,10 +34,10 @@ import UserRoleManagement from "./pages/processes/UserRoleManagement";
 import ApprovalFramework from "./pages/processes/ApprovalFramework";
 import BusinessRules from "./pages/processes/BusinessRules";
 import SecurityAccessControl from "./pages/processes/SecurityAccessControl";
-import TrainingNeeds from "./pages/TrainingNeeds";
 import EmployeeTNI from "./pages/training-needs/EmployeeTNI";
 import CreateCycle from "./pages/training-needs/CreateCycle";
 import TNADashboard from "./pages/training-needs/TNADashboard";
+import ProgramManagement from "./pages/training-needs/ProgramManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -82,10 +82,11 @@ const App = () => (
           <Route path="/processes/approval" element={<ApprovalFramework />} />
           <Route path="/processes/business-rules" element={<BusinessRules />} />
           <Route path="/processes/security" element={<SecurityAccessControl />} />
-        <Route path="/training-needs" element={<TrainingNeeds />} />
+        <Route path="/training-needs" element={<TNADashboard />} />
         <Route path="/training-needs/employee-tni" element={<EmployeeTNI />} />
         <Route path="/training-needs/create-cycle" element={<CreateCycle />} />
         <Route path="/training-needs/tna-dashboard" element={<TNADashboard />} />
+        <Route path="/training-needs/programs" element={<ProgramManagement />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -104,8 +104,7 @@ const navigationItems = [
     title: "Training Needs Analysis", 
     icon: Target,
     subItems: [
-      { title: "TNI Dashboard", url: "/training-needs" },
-      { title: "TNA Dashboard", url: "/training-needs/tna-dashboard" },
+      { title: "TNA Dashboard", url: "/training-needs" },
       { title: "Create TNI Cycle", url: "/training-needs/create-cycle" },
       { title: "Employee TNI", url: "/training-needs/employee-tni" },
       { title: "Manager Approval", url: "/training-needs/approval" },

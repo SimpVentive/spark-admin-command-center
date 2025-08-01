@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,14 +76,27 @@ Training Team`,
   const locations = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Pune'];
   const roles = ['Manager', 'Senior Manager', 'Assistant Manager', 'Executive', 'Senior Executive'];
   
-  const samplePrograms = [
-    { id: 'm1', name: 'Leadership Excellence', category: 'Managerial' },
-    { id: 'b1', name: 'Communication Skills', category: 'Behavioral' },
-    { id: 'f1', name: 'Project Management', category: 'Functional' },
-    { id: 't1', name: 'Data Analytics', category: 'Technical' },
-    { id: 'm2', name: 'Strategic Planning', category: 'Managerial' },
-    { id: 'b2', name: 'Emotional Intelligence', category: 'Behavioral' }
-  ];
+  const [programs, setPrograms] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchPrograms();
+  }, []);
+
+  const fetchPrograms = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('training_programs')
+        .select('*')
+        .eq('is_active', true)
+        .order('category', { ascending: true })
+        .order('title', { ascending: true });
+
+      if (error) throw error;
+      setPrograms(data || []);
+    } catch (error) {
+      console.error('Failed to fetch programs:', error);
+    }
+  };
 
   const addMandatoryProgram = () => {
     setCycleData(prev => ({
@@ -399,9 +413,9 @@ Training Team`,
                             <SelectValue placeholder="Select program" />
                           </SelectTrigger>
                           <SelectContent>
-                            {samplePrograms.map((program) => (
+                            {programs.map((program) => (
                               <SelectItem key={program.id} value={program.id}>
-                                {program.name} ({program.category})
+                                {program.title} ({program.category})
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -590,10 +604,10 @@ Training Team`,
                       {cycleData.mandatoryPrograms.length ? (
                         <div className="space-y-1">
                           {cycleData.mandatoryPrograms.map((mp, index) => {
-                            const program = samplePrograms.find(p => p.id === mp.programId);
+                            const program = programs.find(p => p.id === mp.programId);
                             return (
                               <p key={index}>
-                                <strong>{program?.name || 'Unknown Program'}</strong> - 
+                                <strong>{program?.title || 'Unknown Program'}</strong> - 
                                 {mp.departments.length ? ` ${mp.departments.join(', ')}` : ' All Depts'}
                               </p>
                             );
