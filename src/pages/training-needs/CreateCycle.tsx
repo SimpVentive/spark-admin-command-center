@@ -373,7 +373,17 @@ Training Team`,
 
         {/* Programs Configuration */}
         <TabsContent value="programs" className="space-y-6">
-          <ProgramManagementSection showAddButton={true} showHeader={false} compact={false} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Available Programs</CardTitle>
+              <CardDescription>
+                Select programs from repository and manage program categories
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ProgramManagementSection showAddButton={true} showHeader={false} compact={true} />
+            </CardContent>
+          </Card>
 
           {/* Mandatory Programs */}
           <Card>

@@ -57,12 +57,18 @@ export default function ProgramManagementSection({
     category: "Managerial",
     faculty: "",
     venue: "",
+    departments: [] as string[],
+    locations: [] as string[],
+    roles: [] as string[],
     prerequisites: [] as string[],
     skills_covered: [] as string[]
   });
 
-  const categories = ["Managerial", "Behavioral", "Functional", "Technical"];
+  const categories = ["Managerial", "Behavioral", "Functional", "Technical", "Mandatory"];
   const levels = ["Basic", "Intermediate", "Advanced"];
+  const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations'];
+  const locations = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Pune'];
+  const roles = ['Manager', 'Senior Manager', 'Assistant Manager', 'Executive', 'Senior Executive'];
 
   useEffect(() => {
     fetchPrograms();
@@ -120,6 +126,9 @@ export default function ProgramManagementSection({
       category: "Managerial",
       faculty: "",
       venue: "",
+      departments: [],
+      locations: [],
+      roles: [],
       prerequisites: [],
       skills_covered: []
     });
@@ -138,6 +147,9 @@ export default function ProgramManagementSection({
       category: program.category,
       faculty: program.faculty || "",
       venue: program.venue || "",
+      departments: [],
+      locations: [],
+      roles: [],
       prerequisites: program.prerequisites || [],
       skills_covered: program.skills_covered || []
     });
@@ -236,7 +248,8 @@ export default function ProgramManagementSection({
       'Managerial': 'bg-blue-500',
       'Behavioral': 'bg-green-500',
       'Functional': 'bg-purple-500',
-      'Technical': 'bg-orange-500'
+      'Technical': 'bg-orange-500',
+      'Mandatory': 'bg-red-500'
     };
     return colors[category as keyof typeof colors] || 'bg-gray-500';
   };
@@ -363,6 +376,78 @@ export default function ProgramManagementSection({
                       onChange={(e) => setFormData(prev => ({ ...prev, venue: e.target.value }))}
                       placeholder="Training venue or location"
                     />
+                  </div>
+
+                  {/* Department, Location, Role Selection */}
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label>Departments</Label>
+                      <div className="max-h-32 overflow-y-auto border rounded p-2 space-y-1">
+                        {departments.map(dept => (
+                          <div key={dept} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={`dept-${dept}`}
+                              checked={formData.departments.includes(dept)}
+                              onChange={(e) => {
+                                const newDepts = e.target.checked 
+                                  ? [...formData.departments, dept]
+                                  : formData.departments.filter(d => d !== dept);
+                                setFormData(prev => ({ ...prev, departments: newDepts }));
+                              }}
+                              className="rounded"
+                            />
+                            <label htmlFor={`dept-${dept}`} className="text-sm">{dept}</label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>Locations</Label>
+                      <div className="max-h-32 overflow-y-auto border rounded p-2 space-y-1">
+                        {locations.map(location => (
+                          <div key={location} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={`loc-${location}`}
+                              checked={formData.locations.includes(location)}
+                              onChange={(e) => {
+                                const newLocs = e.target.checked 
+                                  ? [...formData.locations, location]
+                                  : formData.locations.filter(l => l !== location);
+                                setFormData(prev => ({ ...prev, locations: newLocs }));
+                              }}
+                              className="rounded"
+                            />
+                            <label htmlFor={`loc-${location}`} className="text-sm">{location}</label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>Roles</Label>
+                      <div className="max-h-32 overflow-y-auto border rounded p-2 space-y-1">
+                        {roles.map(role => (
+                          <div key={role} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={`role-${role}`}
+                              checked={formData.roles.includes(role)}
+                              onChange={(e) => {
+                                const newRoles = e.target.checked 
+                                  ? [...formData.roles, role]
+                                  : formData.roles.filter(r => r !== role);
+                                setFormData(prev => ({ ...prev, roles: newRoles }));
+                              }}
+                              className="rounded"
+                            />
+                            <label htmlFor={`role-${role}`} className="text-sm">{role}</label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex justify-end gap-2">
