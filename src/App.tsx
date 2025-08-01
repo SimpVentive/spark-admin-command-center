@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { AdminHeader } from "@/components/AdminHeader";
+import { LibraryProvider } from "@/contexts/LibraryContext";
 import Index from "./pages/Index";
 import Users from "./pages/Users";
 import AddEmployee from "./pages/users/AddEmployee";
@@ -39,6 +40,10 @@ import CreateCycle from "./pages/training-needs/CreateCycle";
 import TNADashboard from "./pages/training-needs/TNADashboard";
 import ProgramManagement from "./pages/training-needs/ProgramManagement";
 import ManagerApproval from "./pages/training-needs/ManagerApproval";
+import Resources from "./pages/library/Resources";
+import Catalog from "./pages/library/Catalog";
+import CheckInOut from "./pages/library/CheckInOut";
+import Reservations from "./pages/library/Reservations";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,12 +56,13 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <SidebarProvider>
-          <div className="min-h-screen flex w-full bg-background">
-            <AdminSidebar />
-            <div className="flex-1 flex flex-col">
-              <AdminHeader />
-              <main className="flex-1 p-6 overflow-auto">
+        <LibraryProvider>
+          <SidebarProvider>
+            <div className="min-h-screen flex w-full bg-background">
+              <AdminSidebar />
+              <div className="flex-1 flex flex-col">
+                <AdminHeader />
+                <main className="flex-1 p-6 overflow-auto">
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/users" element={<Users />} />
@@ -90,6 +96,10 @@ const App = () => (
         <Route path="/training-needs/employee-tni" element={<EmployeeTNI />} />
         <Route path="/training-needs/manager-approval" element={<ManagerApproval />} />
         <Route path="/training-needs/analytics" element={<TNADashboard />} />
+        <Route path="/library" element={<Resources />} />
+        <Route path="/library/catalog" element={<Catalog />} />
+        <Route path="/library/checkout" element={<CheckInOut />} />
+        <Route path="/library/reservations" element={<Reservations />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
@@ -97,6 +107,7 @@ const App = () => (
             </div>
           </div>
         </SidebarProvider>
+        </LibraryProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
