@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +17,7 @@ import {
 
 export default function TNADashboard() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const [expandedDepts, setExpandedDepts] = useState<Set<string>>(new Set());
   const [aiInput, setAiInput] = useState("");
@@ -148,7 +150,7 @@ export default function TNADashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/create-cycle')}>
           <CardHeader className="pb-3">
             <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-3">
               <Users className="w-6 h-6 text-white" />
@@ -158,7 +160,7 @@ export default function TNADashboard() {
           </CardHeader>
         </Card>
         
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/analytics')}>
           <CardHeader className="pb-3">
             <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-3">
               <BarChart3 className="w-6 h-6 text-white" />
@@ -168,7 +170,7 @@ export default function TNADashboard() {
           </CardHeader>
         </Card>
         
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/auth')}>
           <CardHeader className="pb-3">
             <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-3">
               <BookOpen className="w-6 h-6 text-white" />
@@ -178,7 +180,7 @@ export default function TNADashboard() {
           </CardHeader>
         </Card>
         
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/manager-approval')}>
           <CardHeader className="pb-3">
             <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-3">
               <CheckCircle className="w-6 h-6 text-white" />
