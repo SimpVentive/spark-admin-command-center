@@ -11,6 +11,7 @@ import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import ProgramCategoryManagement from "@/components/ProgramCategoryManagement";
+import ResourceSelector from "@/components/library/ResourceSelector";
 
 const CreateProgram = () => {
   const navigate = useNavigate();
@@ -38,13 +39,14 @@ const CreateProgram = () => {
     assessmentCriteria: "",
     certificationOffered: false,
     cost: "",
+    linkedResources: [] as string[],
   });
 
   const [sessions, setSessions] = useState([
     { date: "", startTime: "", endTime: "", venue: "", trainer: "" }
   ]);
 
-  const handleInputChange = (field: string, value: string | boolean) => {
+  const handleInputChange = (field: string, value: string | boolean | string[]) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -392,6 +394,19 @@ const CreateProgram = () => {
                   />
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Library Resources */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Library Resources</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResourceSelector
+                selectedResources={formData.linkedResources}
+                onResourcesChange={(resources) => handleInputChange('linkedResources', resources)}
+              />
             </CardContent>
           </Card>
 
