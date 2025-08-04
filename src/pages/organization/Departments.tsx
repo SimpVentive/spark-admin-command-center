@@ -6,10 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Building2, Users, MapPin, Plus, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { OrganizationalHierarchy } from "@/components/OrganizationalHierarchy";
 
 interface Department {
   id: number;
@@ -267,9 +265,6 @@ const Departments = () => {
         </DialogContent>
       </Dialog>
 
-      <Separator className="my-8" />
-
-      <OrganizationalHierarchy />
     </div>
   );
 };
