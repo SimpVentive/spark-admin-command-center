@@ -51,7 +51,6 @@ const navigationItems = [
     title: "Organization", 
     icon: Building2,
     subItems: [
-      { title: "Departments", url: "/organization/departments" },
       { title: "Reporting Structure", url: "/organization/hierarchy" },
       { title: "Plants & Locations", url: "/organization/locations" },
       { title: "Job Roles", url: "/organization/roles" }

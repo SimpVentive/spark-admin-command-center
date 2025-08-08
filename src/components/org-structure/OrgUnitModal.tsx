@@ -240,21 +240,15 @@ const OrgUnitModal: React.FC<OrgUnitModalProps> = ({
               )}
             </div>
 
-            {/* Parent Unit - Editable */}
+            {/* Parent Unit - Static Display */}
             <div>
-              <Label htmlFor="parentName">Parent (reporting)</Label>
-              <Input
-                id="parentName"
-                value={parentUnit?.name || 'CEO'}
-                placeholder="Enter parent unit name"
-                readOnly={!!parentUnit}
-                className={parentUnit ? 'bg-muted' : ''}
-              />
-              {parentUnit && (
-                <p className="text-xs text-muted-foreground mt-1">
-                  Inherited from hierarchy position
-                </p>
-              )}
+              <Label htmlFor="parentName">Reports to</Label>
+              <div className="px-3 py-2 bg-muted rounded-md text-sm">
+                {parentUnit?.name || 'CEO'}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {parentUnit ? 'Inherited from hierarchy position' : 'Default reporting structure'}
+              </p>
             </div>
           </div>
 
