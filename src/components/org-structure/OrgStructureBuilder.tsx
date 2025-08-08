@@ -141,7 +141,7 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     };
   }, [queryClient]);
 
-  const [currentUnitId, setCurrentUnitId] = useState('1');
+  const [currentUnitId, setCurrentUnitId] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUnit, setEditingUnit] = useState<OrgUnitFormData | null>(null);
@@ -183,9 +183,9 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     }
   };
 
-  const currentUnit = orgUnits.find(unit => unit.id === currentUnitId);
+  const currentUnit = currentUnitId ? orgUnits.find(unit => unit.id === currentUnitId) : null;
   const currentLevelUnits = orgUnits.filter(unit => unit.parentId === currentUnitId);
-  const breadcrumbPath = getBreadcrumbPath(currentUnitId);
+  const breadcrumbPath = currentUnitId ? getBreadcrumbPath(currentUnitId) : [];
   const progress = Math.round((orgUnits.filter(u => u.isComplete).length / orgUnits.length) * 100);
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -238,7 +238,7 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
         name: formData.name,
         description: formData.description,
         level: formData.level,
-        parent_id: formData.parentId || currentUnitId,
+        parent_id: formData.parentId || currentUnitId || undefined,
         manager_name: 'TBD' // Default manager name
       });
     }
@@ -314,9 +314,9 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
             </div>
             
             <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={() => setCurrentUnitId('1')} className="gap-2">
+              <Button variant="outline" onClick={() => window.location.href = '/organization/chart'} className="gap-2">
                 <Users className="h-4 w-4" />
-                Phase 2: People
+                View Chart
               </Button>
               <Button variant="outline" onClick={handleExport} className="gap-2">
                 <Download className="h-4 w-4" />
