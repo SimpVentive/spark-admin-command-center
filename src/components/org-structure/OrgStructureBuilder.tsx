@@ -373,7 +373,7 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
 
             <Button onClick={handleAddUnit} size="lg" className="gap-2">
               <Plus className="h-4 w-4" />
-              {currentUnit?.level === 'organization' ? 'Add Department' : 'Add Sub-Department'}
+              {!currentUnitId ? 'Add Department' : 'Add Sub-Department'}
             </Button>
           </div>
         </div>
@@ -383,10 +383,10 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
       <div className="max-w-6xl mx-auto p-6">
         <div className="mb-6">
           <h2 className="text-xl font-semibold mb-2">
-            {currentUnit ? `${currentUnit.title} - Sub Units` : 'Organization Units'}
+            {!currentUnitId ? 'Organization Departments' : `${currentUnit?.title} - Sub Units`}
           </h2>
           <p className="text-muted-foreground">
-            {currentLevelUnits.length} units at this level
+            {currentLevelUnits.length} {!currentUnitId ? 'departments' : 'sub-units'} at this level
           </p>
         </div>
 
@@ -434,13 +434,18 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
         {currentLevelUnits.length === 0 && (
           <div className="text-center py-12 bg-muted/20 rounded-lg border-2 border-dashed">
             <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <div className="text-lg font-medium mb-2">No units at this level yet</div>
+            <div className="text-lg font-medium mb-2">
+              {!currentUnitId ? 'No departments yet' : 'No sub-units at this level yet'}
+            </div>
             <p className="text-muted-foreground mb-4">
-              Start building your organizational structure by adding the first unit
+              {!currentUnitId 
+                ? 'Start building your organizational structure by adding your first department'
+                : 'Add sub-departments or teams under this department'
+              }
             </p>
             <Button onClick={handleAddUnit} size="lg">
               <Plus className="h-4 w-4 mr-2" />
-              Add First Unit
+              {!currentUnitId ? 'Add First Department' : 'Add Sub-Unit'}
             </Button>
           </div>
         )}
