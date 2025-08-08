@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import {
   ReactFlow,
   Controls,
@@ -19,86 +19,19 @@ import {
   Crown,
   ArrowLeft,
   Download,
-  ZoomIn,
-  ZoomOut,
-  Maximize
+  Loader2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-// Sample organizational data - this would come from your database
-const orgUnits = [
-  {
-    id: '1',
-    name: 'Executive Office',
-    level: 'organization',
-    parentId: null,
-    manager: 'CEO',
-    employeeCount: 5,
-    description: 'Executive leadership team'
-  },
-  {
-    id: '2',
-    name: 'Engineering Department',
-    level: 'department',
-    parentId: '1',
-    manager: 'John Smith',
-    employeeCount: 25,
-    description: 'Product development and engineering'
-  },
-  {
-    id: '3',
-    name: 'Frontend Team',
-    level: 'team',
-    parentId: '2',
-    manager: 'Sarah Johnson',
-    employeeCount: 8,
-    description: 'UI/UX and frontend development'
-  },
-  {
-    id: '4',
-    name: 'Backend Team',
-    level: 'team',
-    parentId: '2',
-    manager: 'Mike Chen',
-    employeeCount: 12,
-    description: 'Backend services and APIs'
-  },
-  {
-    id: '5',
-    name: 'Marketing Department',
-    level: 'department',
-    parentId: '1',
-    manager: 'Lisa Wang',
-    employeeCount: 15,
-    description: 'Marketing and communications'
-  },
-  {
-    id: '6',
-    name: 'Digital Marketing',
-    level: 'team',
-    parentId: '5',
-    manager: 'Alex Rodriguez',
-    employeeCount: 7,
-    description: 'Online marketing and social media'
-  },
-  {
-    id: '7',
-    name: 'Content Team',
-    level: 'team',
-    parentId: '5',
-    manager: 'Emma Davis',
-    employeeCount: 5,
-    description: 'Content creation and strategy'
-  }
-];
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 
 interface OrgUnit {
   id: string;
   name: string;
   level: string;
-  parentId: string | null;
-  manager: string;
-  employeeCount: number;
+  parent_id: string | null;
+  manager_name: string;
+  employee_count: number;
   description: string;
 }
 
@@ -152,11 +85,11 @@ const OrgNode = ({ data }: { data: OrgUnit }) => {
         <div className="text-sm text-muted-foreground mb-2">
           <div className="flex items-center gap-1">
             <Users className="h-3 w-3" />
-            <span>Manager: {data.manager}</span>
+            <span>Manager: {data.manager_name}</span>
           </div>
           <div className="flex items-center gap-1">
             <UserCheck className="h-3 w-3" />
-            <span>{data.employeeCount} employees</span>
+            <span>{data.employee_count} employees</span>
           </div>
         </div>
         
@@ -174,6 +107,45 @@ const nodeTypes = {
 
 export const OrganizationChart: React.FC = () => {
   const navigate = useNavigate();
+
+  // Fetch organizational units from database
+  const { data: orgUnits = [], isLoading, error } = useQuery({
+    queryKey: ['organizational-units'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('organizational_units')
+        .select('*')
+        .eq('is_active', true)
+        .order('level', { ascending: true })
+        .order('name', { ascending: true });
+      
+      if (error) throw error;
+      return data as OrgUnit[];
+    },
+  });
+
+  // Set up real-time subscription for live updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('org-units-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'organizational_units'
+        },
+        () => {
+          // Refetch data when changes occur
+          window.location.reload();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const { nodes, edges } = useMemo(() => {
     const nodes: Node[] = [];
@@ -221,10 +193,10 @@ export const OrganizationChart: React.FC = () => {
     
     // Create edges
     orgUnits.forEach(unit => {
-      if (unit.parentId) {
+      if (unit.parent_id) {
         edges.push({
-          id: `e-${unit.parentId}-${unit.id}`,
-          source: unit.parentId,
+          id: `e-${unit.parent_id}-${unit.id}`,
+          source: unit.parent_id,
           target: unit.id,
           type: 'smoothstep',
           animated: false,
@@ -243,16 +215,51 @@ export const OrganizationChart: React.FC = () => {
     });
     
     return { nodes, edges };
-  }, []);
-
-  const handleExport = () => {
-    // This would implement actual export functionality
-    console.log('Exporting organization chart...');
-  };
+  }, [orgUnits]);
 
   const handleBackToBuilder = () => {
     navigate('/organization/hierarchy');
   };
+
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-background">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading organization chart...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Error loading organization chart</h2>
+          <p className="text-muted-foreground mb-4">Please try again later</p>
+          <Button onClick={handleBackToBuilder}>
+            Back to Builder
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!orgUnits.length) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <Building2 className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+          <h2 className="text-xl font-semibold mb-2">No organizational units found</h2>
+          <p className="text-muted-foreground mb-4">Start building your organization structure first</p>
+          <Button onClick={handleBackToBuilder}>
+            Go to Hierarchy Builder
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col bg-background">
@@ -276,7 +283,7 @@ export const OrganizationChart: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleExport}>
+            <Button variant="outline" size="sm" onClick={() => console.log('Export functionality coming soon')}>
               <Download className="h-4 w-4 mr-1" />
               Export
             </Button>

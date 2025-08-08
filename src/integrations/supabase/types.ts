@@ -903,6 +903,62 @@ export type Database = {
         }
         Relationships: []
       }
+      organizational_units: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          employee_count: number | null
+          id: string
+          is_active: boolean | null
+          level: string
+          manager_name: string | null
+          name: string
+          parent_id: string | null
+          position_x: number | null
+          position_y: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          level: string
+          manager_name?: string | null
+          name: string
+          parent_id?: string | null
+          position_x?: number | null
+          position_y?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          level?: string
+          manager_name?: string | null
+          name?: string
+          parent_id?: string | null
+          position_x?: number | null
+          position_y?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizational_units_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "organizational_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null
