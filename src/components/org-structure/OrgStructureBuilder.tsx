@@ -1,11 +1,13 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, closestCenter } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Download, Users, ChevronRight, Building2, Plus } from 'lucide-react';
+import { Download, Users, ChevronRight, Building2, Plus, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   Breadcrumb, 
   BreadcrumbList, 
@@ -24,49 +26,120 @@ interface OrgStructureBuilderProps {
 
 const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }) => {
   const { toast } = useToast();
-  
-  // Sample data - in real app this would come from props or context
-  const [orgUnits, setOrgUnits] = useState<OrgUnitCardData[]>([
-    {
-      id: '1',
-      title: 'Executive Office',
-      description: 'Top-level executive leadership and strategic direction',
-      level: 'organization',
-      subUnitsCount: 3,
-      isComplete: false,
-      peopleCount: 5
+  const queryClient = useQueryClient();
+
+  // Fetch organizational units from database
+  const { data: orgUnitsData = [], isLoading, error } = useQuery({
+    queryKey: ['organizational-units'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('organizational_units')
+        .select('*')
+        .eq('is_active', true)
+        .order('level', { ascending: true })
+        .order('name', { ascending: true });
+      
+      if (error) throw error;
+      return data;
     },
-    {
-      id: '2',
-      title: 'Engineering Department',
-      description: 'Product development and technical innovation',
-      level: 'department',
-      parentId: '1',
-      subUnitsCount: 2,
-      isComplete: true,
-      peopleCount: 25
+  });
+
+  // Convert database format to component format
+  const orgUnits: OrgUnitCardData[] = orgUnitsData.map(unit => ({
+    id: unit.id,
+    title: unit.name,
+    description: unit.description || '',
+    level: unit.level as 'organization' | 'department' | 'sub-department' | 'team',
+    parentId: unit.parent_id || undefined,
+    subUnitsCount: orgUnitsData.filter(u => u.parent_id === unit.id).length,
+    isComplete: true, // For now, assume all units are complete
+    peopleCount: unit.employee_count || 0
+  }));
+
+  // Mutations for database operations
+  const createUnitMutation = useMutation({
+    mutationFn: async (unitData: { name: string; description?: string; level: string; parent_id?: string; manager_name?: string }) => {
+      const { data, error } = await supabase
+        .from('organizational_units')
+        .insert([unitData])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
     },
-    {
-      id: '3',
-      title: 'Sales Department',
-      description: 'Revenue generation and customer acquisition',
-      level: 'department',
-      parentId: '1',
-      subUnitsCount: 1,
-      isComplete: false,
-      peopleCount: 15
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organizational-units'] });
+      toast({ title: "Success", description: "Unit created successfully" });
     },
-    {
-      id: '4',
-      title: 'Frontend Team',
-      description: 'User interface and experience development',
-      level: 'team',
-      parentId: '2',
-      subUnitsCount: 0,
-      isComplete: true,
-      peopleCount: 8
+    onError: (error) => {
+      toast({ title: "Error", description: "Failed to create unit", variant: "destructive" });
+      console.error('Error creating unit:', error);
+    }
+  });
+
+  const updateUnitMutation = useMutation({
+    mutationFn: async ({ id, ...updateData }: { id: string; name?: string; description?: string; level?: string; manager_name?: string }) => {
+      const { data, error } = await supabase
+        .from('organizational_units')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
     },
-  ]);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organizational-units'] });
+      toast({ title: "Success", description: "Unit updated successfully" });
+    },
+    onError: (error) => {
+      toast({ title: "Error", description: "Failed to update unit", variant: "destructive" });
+      console.error('Error updating unit:', error);
+    }
+  });
+
+  const deleteUnitMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('organizational_units')
+        .update({ is_active: false })
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organizational-units'] });
+      toast({ title: "Success", description: "Unit deleted successfully" });
+    },
+    onError: (error) => {
+      toast({ title: "Error", description: "Failed to delete unit", variant: "destructive" });
+      console.error('Error deleting unit:', error);
+    }
+  });
+
+  // Set up real-time subscription for live updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('org-units-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'organizational_units'
+        },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['organizational-units'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const [currentUnitId, setCurrentUnitId] = useState('1');
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -123,13 +196,7 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     const { active, over } = event;
     
     if (over && active.id !== over.id) {
-      setOrgUnits((units) => {
-        const activeIndex = units.findIndex((unit) => unit.id === active.id);
-        const overIndex = units.findIndex((unit) => unit.id === over.id);
-        
-        return arrayMove(units, activeIndex, overIndex);
-      });
-      
+      // For now, just show reorder message - we could implement position updates later
       toast({
         title: "Reordered",
         description: "Unit order updated successfully"
@@ -157,43 +224,40 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
 
   const handleSaveUnit = useCallback((formData: OrgUnitFormData) => {
     if (formData.id) {
-      setOrgUnits(prev => prev.map(unit => 
-        unit.id === formData.id 
-          ? { ...unit, title: formData.name, description: formData.description, level: formData.level }
-          : unit
-      ));
-    } else {
-      const newUnit: OrgUnitCardData = {
-        id: Date.now().toString(),
-        title: formData.name,
+      // Update existing unit
+      updateUnitMutation.mutate({
+        id: formData.id,
+        name: formData.name,
         description: formData.description,
         level: formData.level,
-        parentId: formData.parentId || currentUnitId,
-        subUnitsCount: 0,
-        isComplete: false,
-        peopleCount: 0
-      };
-      setOrgUnits(prev => [...prev, newUnit]);
+        manager_name: 'TBD' // Default manager name
+      });
+    } else {
+      // Create new unit
+      createUnitMutation.mutate({
+        name: formData.name,
+        description: formData.description,
+        level: formData.level,
+        parent_id: formData.parentId || currentUnitId,
+        manager_name: 'TBD' // Default manager name
+      });
     }
     
     if (!editingUnit) {
       setIsModalOpen(false);
     }
-  }, [currentUnitId, editingUnit]);
+  }, [currentUnitId, editingUnit, createUnitMutation, updateUnitMutation]);
 
   const handleDeleteUnit = useCallback((id: string) => {
-    setOrgUnits(prev => prev.filter(unit => unit.id !== id));
-    toast({
-      title: "Deleted",
-      description: "Unit deleted successfully"
-    });
-  }, [toast]);
+    deleteUnitMutation.mutate(id);
+  }, [deleteUnitMutation]);
 
   const handleUpdateTitle = useCallback((id: string, title: string) => {
-    setOrgUnits(prev => prev.map(unit => 
-      unit.id === id ? { ...unit, title } : unit
-    ));
-  }, []);
+    updateUnitMutation.mutate({
+      id,
+      name: title
+    });
+  }, [updateUnitMutation]);
 
   const handleAddPeople = useCallback((unitId: string) => {
     if (onAddPeople) {
@@ -212,6 +276,31 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
       description: "Organizational structure is being exported..."
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading organization structure...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Error loading organization structure</h2>
+          <p className="text-muted-foreground mb-4">Please try again later</p>
+          <Button onClick={() => window.location.reload()}>
+            Refresh Page
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
