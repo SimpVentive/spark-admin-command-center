@@ -59,22 +59,28 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
   // Mutations for database operations
   const createUnitMutation = useMutation({
     mutationFn: async (unitData: { name: string; description?: string; level: string; parent_id?: string; manager_name?: string }) => {
+      console.log('Creating unit with data:', unitData);
       const { data, error } = await supabase
         .from('organizational_units')
         .insert([unitData])
         .select()
         .single();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
+      console.log('Created unit:', data);
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organizational-units'] });
       toast({ title: "Success", description: "Unit created successfully" });
+      setIsModalOpen(false);
     },
     onError: (error) => {
+      console.error('Mutation error:', error);
       toast({ title: "Error", description: "Failed to create unit", variant: "destructive" });
-      console.error('Error creating unit:', error);
     }
   });
 
@@ -243,9 +249,7 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
       });
     }
     
-    if (!editingUnit) {
-      setIsModalOpen(false);
-    }
+    setIsModalOpen(false);
   }, [currentUnitId, editingUnit, createUnitMutation, updateUnitMutation]);
 
   const handleDeleteUnit = useCallback((id: string) => {
@@ -263,12 +267,10 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     if (onAddPeople) {
       onAddPeople(unitId);
     } else {
-      toast({
-        title: "Add People",
-        description: `Adding people to unit ${unitId}`
-      });
+      // Navigate to Add Employee page with unit context
+      window.location.href = `/users/add?unitId=${unitId}`;
     }
-  }, [onAddPeople, toast]);
+  }, [onAddPeople]);
 
   const handleExport = () => {
     toast({
