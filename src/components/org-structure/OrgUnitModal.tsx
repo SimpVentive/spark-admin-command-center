@@ -240,19 +240,22 @@ const OrgUnitModal: React.FC<OrgUnitModalProps> = ({
               )}
             </div>
 
-            {/* Parent Unit */}
-            {parentUnit && (
-              <div>
-                <Label>Parent (reporting)</Label>
-                <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
-                  {getLevelIcon(parentUnit.level)}
-                  <span className="font-medium">{parentUnit.name}</span>
-                  <Badge variant="outline" className="ml-auto">
-                    {parentUnit.level}
-                  </Badge>
-                </div>
-              </div>
-            )}
+            {/* Parent Unit - Editable */}
+            <div>
+              <Label htmlFor="parentName">Parent (reporting)</Label>
+              <Input
+                id="parentName"
+                value={parentUnit?.name || 'CEO'}
+                placeholder="Enter parent unit name"
+                readOnly={!!parentUnit}
+                className={parentUnit ? 'bg-muted' : ''}
+              />
+              {parentUnit && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Inherited from hierarchy position
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Description */}
