@@ -48,14 +48,13 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
   { 
-    title: "Processes", 
-    icon: Workflow,
+    title: "Organization", 
+    icon: Building2,
     subItems: [
-      { title: "Workflow Management", url: "/processes/workflow", icon: Workflow },
-      { title: "User and Role Management", url: "/processes/user-roles", icon: UserCog },
-      { title: "Approval Framework", url: "/processes/approval", icon: CheckCircle },
-      { title: "Business Rules", url: "/processes/business-rules", icon: Brain },
-      { title: "Security & Access Control", url: "/processes/security", icon: ShieldCheck }
+      { title: "Departments", url: "/organization/departments" },
+      { title: "Reporting Structure", url: "/organization/hierarchy" },
+      { title: "Plants & Locations", url: "/organization/locations" },
+      { title: "Job Roles", url: "/organization/roles" }
     ]
   },
   { 
@@ -68,13 +67,22 @@ const navigationItems = [
     ]
   },
   { 
-    title: "Organization", 
-    icon: Building2,
+    title: "Processes", 
+    icon: Workflow,
     subItems: [
-      { title: "Departments", url: "/organization/departments" },
-      { title: "Reporting Structure", url: "/organization/hierarchy" },
-      { title: "Plants & Locations", url: "/organization/locations" },
-      { title: "Job Roles", url: "/organization/roles" }
+      { title: "Workflow Management", url: "/processes/workflow", icon: Workflow },
+      { title: "User and Role Management", url: "/processes/user-roles", icon: UserCog },
+      { title: "Approval Framework", url: "/processes/approval", icon: CheckCircle },
+      { title: "Business Rules", url: "/processes/business-rules", icon: Brain },
+      { title: "Security & Access Control", url: "/processes/security", icon: ShieldCheck }
+    ]
+  },
+  { 
+    title: "Training Needs Analysis", 
+    icon: Target,
+    subItems: [
+      { title: "TNA Dashboard", url: "/training-needs" },
+      { title: "Create TNI Cycle", url: "/training-needs/create-cycle" }
     ]
   },
   { 
@@ -98,14 +106,6 @@ const navigationItems = [
       { title: "Enrollment Management", url: "/learning-paths/enrollment" },
       { title: "Analytics Dashboard", url: "/learning-paths/analytics" },
       { title: "Status Tracking", url: "/learning-paths/status" }
-    ]
-  },
-  { 
-    title: "Training Needs Analysis", 
-    icon: Target,
-    subItems: [
-      { title: "TNA Dashboard", url: "/training-needs" },
-      { title: "Create TNI Cycle", url: "/training-needs/create-cycle" }
     ]
   },
   { 
