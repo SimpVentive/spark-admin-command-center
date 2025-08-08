@@ -240,14 +240,14 @@ const OrgUnitModal: React.FC<OrgUnitModalProps> = ({
               )}
             </div>
 
-            {/* Parent Unit - Static Display */}
+            {/* Reports To - Simple Text Display */}
             <div>
-              <Label htmlFor="parentName">Reports to</Label>
-              <div className="px-3 py-2 bg-muted rounded-md text-sm">
+              <Label>Reports to</Label>
+              <div className="px-3 py-2 bg-muted/30 rounded-md text-sm border">
                 {parentUnit?.name || 'CEO'}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {parentUnit ? 'Inherited from hierarchy position' : 'Default reporting structure'}
+                {parentUnit ? 'Based on organizational hierarchy' : 'Default top-level reporting'}
               </p>
             </div>
           </div>
