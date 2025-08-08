@@ -147,7 +147,7 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     }
   };
 
-  const handleSaveUnit = (formData: { name: string; description: string; level: string }) => {
+  const handleSaveUnit = (formData: { name: string; description: string; level: string; manager_name?: string }) => {
     const level = modalType === 'department' ? 'department' : 'sub-department';
     const parent_id = modalType === 'sub-department' ? selectedDepartmentId : undefined;
     
@@ -155,7 +155,8 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
       name: formData.name,
       description: formData.description,
       level,
-      parent_id
+      parent_id,
+      manager_name: formData.manager_name || 'TBD'
     });
   };
 
@@ -307,7 +308,7 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
 
       {/* Modal */}
       <OrgUnitModal
-        isOpen={isModalOpen}
+        open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveUnit}
         editingUnit={null}
