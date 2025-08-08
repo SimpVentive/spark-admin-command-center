@@ -282,9 +282,9 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
               </BreadcrumbList>
             </Breadcrumb>
 
-            <Button onClick={handleAddUnit} size="lg" className="gap-2 bg-primary hover:bg-primary/90">
+            <Button onClick={handleAddUnit} size="lg" className="gap-2">
               <Plus className="h-4 w-4" />
-              Add Sub-Unit
+              {currentUnit?.level === 'organization' ? 'Add Department' : 'Add Sub-Department'}
             </Button>
           </div>
         </div>

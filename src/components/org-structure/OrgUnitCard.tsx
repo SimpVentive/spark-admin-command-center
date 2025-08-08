@@ -253,7 +253,7 @@ const OrgUnitCard: React.FC<OrgUnitCardProps> = ({
                     className="gap-1"
                   >
                     <Plus className="h-3 w-3" />
-                    Sub-unit
+                    {unit.level === 'organization' ? 'Add Dept' : unit.level === 'department' ? 'Add Sub-Dept' : 'Add Team'}
                   </Button>
 
                   <Button
