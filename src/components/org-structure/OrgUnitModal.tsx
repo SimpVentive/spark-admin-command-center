@@ -157,7 +157,7 @@ const OrgUnitModal: React.FC<OrgUnitModalProps> = ({
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
-            {editingUnit ? 'Edit' : 'Add New'} Organizational Unit
+            {editingUnit ? 'Edit' : 'Add'} Department
           </DialogTitle>
         </DialogHeader>
 
@@ -198,7 +198,7 @@ const OrgUnitModal: React.FC<OrgUnitModalProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div className="md:col-span-2">
-              <Label htmlFor="name">Name *</Label>
+              <Label htmlFor="name">Name of the Department *</Label>
               <Input
                 id="name"
                 value={formData.name}
@@ -243,7 +243,7 @@ const OrgUnitModal: React.FC<OrgUnitModalProps> = ({
             {/* Parent Unit */}
             {parentUnit && (
               <div>
-                <Label>Parent Unit</Label>
+                <Label>Parent (reporting)</Label>
                 <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
                   {getLevelIcon(parentUnit.level)}
                   <span className="font-medium">{parentUnit.name}</span>
@@ -280,7 +280,7 @@ const OrgUnitModal: React.FC<OrgUnitModalProps> = ({
           )}
           
           <Button onClick={handleSave}>
-            {editingUnit ? 'Update' : 'Create'} Unit
+            {editingUnit ? 'Update' : 'Create'} Department
           </Button>
         </DialogFooter>
       </DialogContent>
