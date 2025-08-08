@@ -14,6 +14,7 @@ import AddEmployee from "./pages/users/AddEmployee";
 import BulkEnrollment from "./pages/users/BulkEnrollment";
 import Organization from "./pages/Organization";
 import Hierarchy from "./pages/organization/Hierarchy";
+import OrganizationChart from "./pages/organization/OrganizationChart";
 import Locations from "./pages/organization/Locations";
 import Roles from "./pages/organization/Roles";
 import Programs from "./pages/Programs";
@@ -72,10 +73,11 @@ const App = () => (
                   <Route path="/users" element={<Users />} />
                   <Route path="/users/add" element={<AddEmployee />} />
                   <Route path="/users/bulk" element={<BulkEnrollment />} />
-                  <Route path="/organization/departments" element={<Organization />} />
-                  <Route path="/organization/hierarchy" element={<Hierarchy />} />
-                  <Route path="/organization/locations" element={<Locations />} />
-                  <Route path="/organization/roles" element={<Roles />} />
+                   <Route path="/organization/departments" element={<Organization />} />
+                   <Route path="/organization/hierarchy" element={<Hierarchy />} />
+                   <Route path="/organization/chart" element={<OrganizationChart />} />
+                   <Route path="/organization/locations" element={<Locations />} />
+                   <Route path="/organization/roles" element={<Roles />} />
                   <Route path="/programs" element={<Programs />} />
           <Route path="/programs/create" element={<CreateProgram />} />
           <Route path="/programs/trainers" element={<Trainers />} />
