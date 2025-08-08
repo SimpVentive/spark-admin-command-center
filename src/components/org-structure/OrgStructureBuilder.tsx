@@ -4,11 +4,17 @@ import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-ki
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Download, Users } from 'lucide-react';
+import { Download, Users, ChevronRight, Building2, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  Breadcrumb, 
+  BreadcrumbList, 
+  BreadcrumbItem, 
+  BreadcrumbLink, 
+  BreadcrumbPage, 
+  BreadcrumbSeparator 
+} from '@/components/ui/breadcrumb';
 
-import OrgBreadcrumb, { BreadcrumbItem } from './OrgBreadcrumb';
-import OrgTreeSidebar, { OrgUnit } from './OrgTreeSidebar';
 import OrgUnitCard, { OrgUnitCardData } from './OrgUnitCard';
 import OrgUnitModal, { OrgUnitFormData } from './OrgUnitModal';
 
@@ -66,21 +72,14 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUnit, setEditingUnit] = useState<OrgUnitFormData | null>(null);
-  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set(['1', '2']));
 
-  // Derived state
-  const currentUnit = orgUnits.find(unit => unit.id === currentUnitId);
-  const currentLevelUnits = orgUnits.filter(unit => unit.parentId === currentUnitId);
-  const breadcrumbPath = getBreadcrumbPath(currentUnitId, orgUnits);
-  const treeData = buildTreeData(orgUnits);
-  const progress = calculateProgress(orgUnits);
-
-  function getBreadcrumbPath(unitId: string, units: OrgUnitCardData[]): BreadcrumbItem[] {
-    const path: BreadcrumbItem[] = [];
+  // Get breadcrumb path
+  const getBreadcrumbPath = (unitId: string) => {
+    const path: { id: string; name: string; level: string }[] = [];
     let currentId = unitId;
     
     while (currentId) {
-      const unit = units.find(u => u.id === currentId);
+      const unit = orgUnits.find(u => u.id === currentId);
       if (unit) {
         path.unshift({
           id: unit.id,
@@ -94,41 +93,27 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     }
     
     return path;
-  }
+  };
 
-  function buildTreeData(units: OrgUnitCardData[]): OrgUnit[] {
-    const rootUnits = units.filter(unit => !unit.parentId);
-    
-    function buildChildren(parentId: string): OrgUnit[] {
-      return units
-        .filter(unit => unit.parentId === parentId)
-        .map(unit => ({
-          id: unit.id,
-          name: unit.title,
-          level: unit.level,
-          parentId: unit.parentId,
-          isComplete: unit.isComplete,
-          subUnitsCount: unit.subUnitsCount,
-          children: buildChildren(unit.id)
-        }));
+  const getLevelIcon = (level: string) => {
+    switch (level) {
+      case 'organization':
+        return <Building2 className="h-4 w-4" />;
+      case 'department':
+        return <Users className="h-4 w-4" />;
+      case 'sub-department':
+        return <Users className="h-3 w-3" />;
+      case 'team':
+        return <Users className="h-3 w-3" />;
+      default:
+        return <Building2 className="h-4 w-4" />;
     }
+  };
 
-    return rootUnits.map(unit => ({
-      id: unit.id,
-      name: unit.title,
-      level: unit.level,
-      parentId: unit.parentId,
-      isComplete: unit.isComplete,
-      subUnitsCount: unit.subUnitsCount,
-      children: buildChildren(unit.id)
-    }));
-  }
-
-  function calculateProgress(units: OrgUnitCardData[]): number {
-    if (units.length === 0) return 0;
-    const completeUnits = units.filter(unit => unit.isComplete).length;
-    return Math.round((completeUnits / units.length) * 100);
-  }
+  const currentUnit = orgUnits.find(unit => unit.id === currentUnitId);
+  const currentLevelUnits = orgUnits.filter(unit => unit.parentId === currentUnitId);
+  const breadcrumbPath = getBreadcrumbPath(currentUnitId);
+  const progress = Math.round((orgUnits.filter(u => u.isComplete).length / orgUnits.length) * 100);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
@@ -172,14 +157,12 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
 
   const handleSaveUnit = useCallback((formData: OrgUnitFormData) => {
     if (formData.id) {
-      // Update existing unit
       setOrgUnits(prev => prev.map(unit => 
         unit.id === formData.id 
           ? { ...unit, title: formData.name, description: formData.description, level: formData.level }
           : unit
       ));
     } else {
-      // Add new unit
       const newUnit: OrgUnitCardData = {
         id: Date.now().toString(),
         title: formData.name,
@@ -212,18 +195,6 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     ));
   }, []);
 
-  const handleToggleExpand = useCallback((id: string) => {
-    setExpandedCards(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  }, []);
-
   const handleAddPeople = useCallback((unitId: string) => {
     if (onAddPeople) {
       onAddPeople(unitId);
@@ -243,20 +214,11 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
   };
 
   return (
-    <div className="flex h-screen bg-background">
-      {/* Left Sidebar - Org Tree */}
-      <OrgTreeSidebar
-        orgData={treeData}
-        currentUnitId={currentUnitId}
-        onSelectUnit={setCurrentUnitId}
-        onAddSubUnit={handleAddUnit}
-      />
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <div className="border-b bg-card p-6">
-          <div className="flex items-center justify-between mb-4">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="border-b bg-card p-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
             <div>
               <h1 className="text-3xl font-bold">Organization Structure</h1>
               <p className="text-muted-foreground">Build your organizational hierarchy and structure</p>
@@ -275,11 +237,11 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
           </div>
 
           {/* Progress Indicator */}
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4 mb-6">
             <Badge variant="outline" className="bg-primary/10 text-primary">
               Phase 1: Structure
             </Badge>
-            <div className="flex-1">
+            <div className="flex-1 max-w-md">
               <div className="flex items-center justify-between text-sm mb-1">
                 <span>Completion Progress</span>
                 <span>{progress}%</span>
@@ -288,85 +250,111 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
             </div>
           </div>
 
-          {/* Breadcrumb */}
-          <OrgBreadcrumb
-            items={breadcrumbPath}
-            onNavigate={setCurrentUnitId}
-            onAddNew={handleAddUnit}
-          />
-        </div>
+          {/* Breadcrumb Navigation */}
+          <div className="flex items-center justify-between bg-muted/30 px-4 py-4 rounded-lg border">
+            <Breadcrumb>
+              <BreadcrumbList>
+                {breadcrumbPath.map((item, index) => (
+                  <React.Fragment key={item.id}>
+                    <BreadcrumbItem>
+                      {index === breadcrumbPath.length - 1 ? (
+                        <BreadcrumbPage className="flex items-center gap-2 font-medium text-lg">
+                          {getLevelIcon(item.level)}
+                          <span>{item.name}</span>
+                        </BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink 
+                          onClick={() => setCurrentUnitId(item.id)}
+                          className="flex items-center gap-2 hover:text-primary cursor-pointer transition-colors text-base"
+                        >
+                          {getLevelIcon(item.level)}
+                          <span>{item.name}</span>
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                    {index < breadcrumbPath.length - 1 && (
+                      <BreadcrumbSeparator>
+                        <ChevronRight className="h-4 w-4" />
+                      </BreadcrumbSeparator>
+                    )}
+                  </React.Fragment>
+                ))}
+              </BreadcrumbList>
+            </Breadcrumb>
 
-        {/* Main Area */}
-        <div className="flex-1 overflow-auto p-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-xl font-semibold">
-                  {currentUnit ? `${currentUnit.title} - Sub Units` : 'Organization Units'}
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  {currentLevelUnits.length} units at this level
-                </p>
-              </div>
-              
-              <Button onClick={handleAddUnit} className="gap-2">
-                Add Unit
-              </Button>
-            </div>
-
-            <DndContext
-              collisionDetection={closestCenter}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext 
-                items={currentLevelUnits.map(u => u.id)} 
-                strategy={verticalListSortingStrategy}
-              >
-                <div className="space-y-4">
-                  {currentLevelUnits.map((unit) => (
-                    <OrgUnitCard
-                      key={unit.id}
-                      unit={unit}
-                      onEdit={handleEditUnit}
-                      onDelete={handleDeleteUnit}
-                      onAddSubUnit={handleAddUnit}
-                      onAddPeople={handleAddPeople}
-                      onUpdateTitle={handleUpdateTitle}
-                      isExpanded={expandedCards.has(unit.id)}
-                      onToggleExpand={handleToggleExpand}
-                      hasChildren={orgUnits.some(u => u.parentId === unit.id)}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-
-              <DragOverlay>
-                {activeId ? (
-                  <div className="opacity-90">
-                    {/* Simplified version of the card being dragged */}
-                    <div className="bg-card border rounded-lg p-4 shadow-lg">
-                      <div className="font-semibold">
-                        {orgUnits.find(u => u.id === activeId)?.title}
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-              </DragOverlay>
-            </DndContext>
-
-            {currentLevelUnits.length === 0 && (
-              <div className="text-center py-12">
-                <div className="text-muted-foreground mb-4">
-                  No units at this level yet
-                </div>
-                <Button onClick={handleAddUnit} variant="outline">
-                  Add First Unit
-                </Button>
-              </div>
-            )}
+            <Button onClick={handleAddUnit} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Add Unit
+            </Button>
           </div>
         </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-2">
+            {currentUnit ? `${currentUnit.title} - Sub Units` : 'Organization Units'}
+          </h2>
+          <p className="text-muted-foreground">
+            {currentLevelUnits.length} units at this level
+          </p>
+        </div>
+
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext 
+            items={currentLevelUnits.map(u => u.id)} 
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-4">
+              {currentLevelUnits.map((unit) => (
+                <OrgUnitCard
+                  key={unit.id}
+                  unit={unit}
+                  onEdit={handleEditUnit}
+                  onDelete={handleDeleteUnit}
+                  onAddSubUnit={() => {
+                    setCurrentUnitId(unit.id);
+                    handleAddUnit();
+                  }}
+                  onAddPeople={handleAddPeople}
+                  onUpdateTitle={handleUpdateTitle}
+                  hasChildren={orgUnits.some(u => u.parentId === unit.id)}
+                />
+              ))}
+            </div>
+          </SortableContext>
+
+          <DragOverlay>
+            {activeId ? (
+              <div className="opacity-90">
+                <div className="bg-card border rounded-lg p-4 shadow-lg">
+                  <div className="font-semibold">
+                    {orgUnits.find(u => u.id === activeId)?.title}
+                  </div>
+                </div>
+              </div>
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+
+        {currentLevelUnits.length === 0 && (
+          <div className="text-center py-12 bg-muted/20 rounded-lg border-2 border-dashed">
+            <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <div className="text-lg font-medium mb-2">No units at this level yet</div>
+            <p className="text-muted-foreground mb-4">
+              Start building your organizational structure by adding the first unit
+            </p>
+            <Button onClick={handleAddUnit} size="lg">
+              <Plus className="h-4 w-4 mr-2" />
+              Add First Unit
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Modal */}
@@ -380,11 +368,7 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
           name: currentUnit.title,
           level: currentUnit.level
         } : undefined}
-        breadcrumbPath={breadcrumbPath.map(item => ({
-          id: item.id,
-          name: item.name,
-          level: item.level
-        }))}
+        breadcrumbPath={breadcrumbPath}
       />
     </div>
   );
