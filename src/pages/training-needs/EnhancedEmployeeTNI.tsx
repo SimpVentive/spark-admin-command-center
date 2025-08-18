@@ -1,5 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,10 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import {
   Search, User, Building, Award, BookOpen, Clock, 
-  CheckCircle, AlertCircle, Users, Filter
+  CheckCircle, AlertCircle, Users, Filter, Plus
 } from "lucide-react";
 
 interface Employee {
@@ -37,12 +40,135 @@ interface TrainingNeed {
   status: "pending" | "approved" | "in_progress" | "completed";
 }
 
+interface JobRole {
+  id: string;
+  title: string;
+  description?: string;
+  department_id?: string;
+  level: string;
+  is_active: boolean;
+}
+
+interface NewRoleFormData {
+  title: string;
+  description: string;
+  level: string;
+  department_id: string;
+}
+
 export default function EnhancedEmployeeTNI() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [searchEmployeeId, setSearchEmployeeId] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [selectedDepartment, setSelectedDepartment] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"search" | "department">("search");
+  const [isNewRoleDialogOpen, setIsNewRoleDialogOpen] = useState(false);
+  const [newRoleForm, setNewRoleForm] = useState<NewRoleFormData>({
+    title: "",
+    description: "",
+    level: "mid",
+    department_id: ""
+  });
+
+  // Fetch organizational units (departments)
+  const { data: departments } = useQuery({
+    queryKey: ['organizational-units'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('organizational_units')
+        .select('*')
+        .eq('is_active', true)
+        .eq('level', 'department');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Fetch job roles
+  const { data: jobRoles } = useQuery({
+    queryKey: ['job-roles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('job_roles')
+        .select('*')
+        .eq('is_active', true);
+      
+      if (error) throw error;
+      return data as JobRole[];
+    }
+  });
+
+  // Create new job role mutation
+  const createJobRoleMutation = useMutation({
+    mutationFn: async (roleData: NewRoleFormData) => {
+      // Check if role already exists
+      const { data: existingRole } = await supabase
+        .from('job_roles')
+        .select('id')
+        .eq('title', roleData.title)
+        .eq('department_id', roleData.department_id)
+        .maybeSingle();
+
+      if (existingRole) {
+        throw new Error(`Job role "${roleData.title}" already exists in this department`);
+      }
+
+      const { data, error } = await supabase
+        .from('job_roles')
+        .insert([{
+          title: roleData.title,
+          description: roleData.description,
+          level: roleData.level,
+          department_id: roleData.department_id || null
+        }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (newRole) => {
+      queryClient.invalidateQueries({ queryKey: ['job-roles'] });
+      toast({
+        title: "Job Role Created",
+        description: `"${newRole.title}" has been added to the organizational structure`,
+      });
+      setIsNewRoleDialogOpen(false);
+      setNewRoleForm({ title: "", description: "", level: "mid", department_id: "" });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Check if employee's position exists as a job role
+  const checkEmployeeRole = (employee: Employee) => {
+    if (!jobRoles) return null;
+    return jobRoles.find(role => 
+      role.title.toLowerCase() === employee.position.toLowerCase()
+    );
+  };
+
+  // Create job role from employee position
+  const handleCreateRoleFromEmployee = (employee: Employee) => {
+    const deptId = departments?.find(d => 
+      d.name.toLowerCase() === employee.department.toLowerCase()
+    )?.id;
+
+    setNewRoleForm({
+      title: employee.position,
+      description: `Role for ${employee.position} in ${employee.department}`,
+      level: "mid", // Default level, can be adjusted
+      department_id: deptId || ""
+    });
+    setIsNewRoleDialogOpen(true);
+  };
 
   // Mock data
   const employees: Employee[] = [
@@ -144,16 +270,26 @@ export default function EnhancedEmployeeTNI() {
     ]
   };
 
-  const departments = ["Engineering", "Sales", "Marketing", "HR", "Finance"];
+  const departmentNames = ["Engineering", "Sales", "Marketing", "HR", "Finance"];
 
   const handleSearchEmployee = () => {
     const employee = employees.find(emp => emp.id.toLowerCase() === searchEmployeeId.toLowerCase());
     if (employee) {
       setSelectedEmployee(employee);
-      toast({
-        title: "Employee Found",
-        description: `Loaded profile for ${employee.name}`,
-      });
+      
+      // Check if employee's role exists in organizational structure
+      const existingRole = checkEmployeeRole(employee);
+      if (!existingRole) {
+        toast({
+          title: "Employee Found",
+          description: `Loaded profile for ${employee.name}. Position "${employee.position}" not found in org structure.`,
+        });
+      } else {
+        toast({
+          title: "Employee Found",
+          description: `Loaded profile for ${employee.name}`,
+        });
+      }
     } else {
       toast({
         title: "Employee Not Found",
@@ -246,7 +382,7 @@ export default function EnhancedEmployeeTNI() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Departments</SelectItem>
-                  {departments.map((dept) => (
+                  {departmentNames.map((dept) => (
                     <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                   ))}
                 </SelectContent>
@@ -324,16 +460,34 @@ export default function EnhancedEmployeeTNI() {
                 </div>
               </div>
               
+              
+              {/* Job Role Status - Show if position exists in org structure */}
               <div className="mt-4 pt-4 border-t">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-sm font-medium">Join Date:</span>
-                    <div>{selectedEmployee.joinDate}</div>
+                    <span className="text-sm font-medium">Position in Org Structure:</span>
+                    <div className="flex items-center gap-2 mt-1">
+                      {checkEmployeeRole(selectedEmployee) ? (
+                        <Badge variant="default" className="bg-green-100 text-green-700">
+                          ✓ Exists in Structure
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="border-orange-200 text-orange-700">
+                          Not in Structure
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-sm font-medium">Last TNI Date:</span>
-                    <div>{selectedEmployee.lastTNIDate || "Not completed"}</div>
-                  </div>
+                  {!checkEmployeeRole(selectedEmployee) && (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleCreateRoleFromEmployee(selectedEmployee)}
+                    >
+                      <Plus className="h-3 w-3 mr-1" />
+                      Add to Org Structure
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -436,6 +590,88 @@ export default function EnhancedEmployeeTNI() {
           </Card>
         </div>
       )}
+
+      {/* New Job Role Dialog */}
+      <Dialog open={isNewRoleDialogOpen} onOpenChange={setIsNewRoleDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Add Job Role to Organizational Structure</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Role Title</label>
+              <Input
+                value={newRoleForm.title}
+                onChange={(e) => setNewRoleForm({...newRoleForm, title: e.target.value})}
+                placeholder="e.g., Senior Developer"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Description</label>
+              <Textarea
+                value={newRoleForm.description}
+                onChange={(e) => setNewRoleForm({...newRoleForm, description: e.target.value})}
+                placeholder="Describe the responsibilities and requirements..."
+                rows={3}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Level</label>
+                <Select 
+                  value={newRoleForm.level} 
+                  onValueChange={(value) => setNewRoleForm({...newRoleForm, level: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="entry">Entry Level</SelectItem>
+                    <SelectItem value="mid">Mid Level</SelectItem>
+                    <SelectItem value="senior">Senior Level</SelectItem>
+                    <SelectItem value="lead">Lead</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                    <SelectItem value="director">Director</SelectItem>
+                    <SelectItem value="executive">Executive</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Department</label>
+                <Select 
+                  value={newRoleForm.department_id} 
+                  onValueChange={(value) => setNewRoleForm({...newRoleForm, department_id: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">No Department</SelectItem>
+                    {departments?.map((dept) => (
+                      <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-2 pt-4">
+              <Button variant="outline" onClick={() => setIsNewRoleDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={() => createJobRoleMutation.mutate(newRoleForm)}
+                disabled={!newRoleForm.title || createJobRoleMutation.isPending}
+              >
+                {createJobRoleMutation.isPending ? "Creating..." : "Create Role"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

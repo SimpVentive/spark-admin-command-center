@@ -5,7 +5,8 @@ import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building2, Factory, Users, Plus, ArrowRight, ChevronRight } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Building2, Factory, Users, Plus, ArrowRight, ChevronRight, ChevronDown, Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import OrgUnitModal from './OrgUnitModal';
 
@@ -22,6 +23,16 @@ interface OrgUnit {
 
 type StructureType = 'corp' | 'plant';
 
+interface JobRole {
+  id: string;
+  title: string;
+  description?: string;
+  department_id?: string;
+  level: string;
+  skill_requirements: any[];
+  is_active: boolean;
+}
+
 interface Department {
   id: string;
   name: string;
@@ -29,6 +40,7 @@ interface Department {
   manager_name?: string;
   subDepartments: SubDepartment[];
   employee_count: number;
+  jobRoles: JobRole[];
 }
 
 interface SubDepartment {
@@ -37,6 +49,7 @@ interface SubDepartment {
   description?: string;
   manager_name?: string;
   employee_count: number;
+  jobRoles: JobRole[];
 }
 
 interface OrgStructureBuilderProps {
@@ -100,6 +113,20 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     }
   });
 
+  // Fetch job roles
+  const { data: jobRoles } = useQuery({
+    queryKey: ['job-roles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('job_roles')
+        .select('*')
+        .eq('is_active', true);
+      
+      if (error) throw error;
+      return data as JobRole[];
+    }
+  });
+
   // Transform data into departments
   const departments: Department[] = orgUnits?.filter(unit => unit.level === 'department' && !unit.parent_id).map(dept => ({
     id: dept.id,
@@ -107,12 +134,14 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     description: dept.description,
     manager_name: dept.manager_name,
     employee_count: dept.employee_count,
+    jobRoles: jobRoles?.filter(role => role.department_id === dept.id) || [],
     subDepartments: orgUnits.filter(unit => unit.parent_id === dept.id).map(sub => ({
       id: sub.id,
       name: sub.name,
       description: sub.description,
       manager_name: sub.manager_name,
-      employee_count: sub.employee_count
+      employee_count: sub.employee_count,
+      jobRoles: jobRoles?.filter(role => role.department_id === sub.id) || []
     }))
   })) || [];
 
@@ -275,25 +304,61 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
                       </div>
                     </div>
 
+                    {/* Job Roles for Department */}
+                    {dept.jobRoles.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        <h4 className="font-medium text-sm text-muted-foreground flex items-center gap-1">
+                          <Briefcase className="h-4 w-4" />
+                          Job Roles ({dept.jobRoles.length}):
+                        </h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                          {dept.jobRoles.map((role) => (
+                            <Badge key={role.id} variant="secondary" className="text-xs">
+                              {role.title} ({role.level})
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Sub-departments */}
                     {dept.subDepartments.length > 0 && (
                       <div className="mt-4 space-y-2">
                         <h4 className="font-medium text-sm text-muted-foreground">Sub-Departments:</h4>
                         {dept.subDepartments.map((subDept) => (
-                          <div key={subDept.id} className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                            <div>
-                              <h5 className="font-medium">{subDept.name}</h5>
-                              {subDept.description && (
-                                <p className="text-xs text-muted-foreground">{subDept.description}</p>
-                              )}
-                              {subDept.manager_name && (
-                                <p className="text-xs">Manager: {subDept.manager_name}</p>
-                              )}
+                          <div key={subDept.id} className="p-3 bg-muted/50 rounded-lg">
+                            <div className="flex justify-between items-center mb-2">
+                              <div>
+                                <h5 className="font-medium">{subDept.name}</h5>
+                                {subDept.description && (
+                                  <p className="text-xs text-muted-foreground">{subDept.description}</p>
+                                )}
+                                {subDept.manager_name && (
+                                  <p className="text-xs">Manager: {subDept.manager_name}</p>
+                                )}
+                              </div>
+                              <Button variant="outline" size="sm" onClick={() => handleAddPeople(subDept.id)}>
+                                <Users className="h-3 w-3 mr-1" />
+                                Add People
+                              </Button>
                             </div>
-                            <Button variant="outline" size="sm" onClick={() => handleAddPeople(subDept.id)}>
-                              <Users className="h-3 w-3 mr-1" />
-                              Add People
-                            </Button>
+                            
+                            {/* Job Roles for Sub-Department */}
+                            {subDept.jobRoles.length > 0 && (
+                              <div className="mt-2 space-y-1">
+                                <h6 className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                                  <Briefcase className="h-3 w-3" />
+                                  Roles:
+                                </h6>
+                                <div className="flex flex-wrap gap-1">
+                                  {subDept.jobRoles.map((role) => (
+                                    <Badge key={role.id} variant="outline" className="text-xs">
+                                      {role.title}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
