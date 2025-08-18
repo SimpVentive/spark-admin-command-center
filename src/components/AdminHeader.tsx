@@ -49,3 +49,5 @@ export function AdminHeader() {
     </header>
   );
 }
+
+export default AdminHeader;
