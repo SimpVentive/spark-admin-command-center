@@ -23,7 +23,6 @@ export default function TNADashboard() {
   const [aiInput, setAiInput] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
-  // Mock data for dashboard
   const overallStats = {
     totalEmployees: 2847,
     completed: 2456,
@@ -130,6 +129,10 @@ export default function TNADashboard() {
     });
   };
 
+  const handleViewAnalytics = () => {
+    navigate('/training-needs/analytics');
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -160,33 +163,33 @@ export default function TNADashboard() {
           </CardHeader>
         </Card>
         
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/analytics')}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={handleViewAnalytics}>
           <CardHeader className="pb-3">
             <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-3">
               <BarChart3 className="w-6 h-6 text-white" />
             </div>
             <CardTitle className="text-lg">View Analytics</CardTitle>
-            <p className="text-sm text-muted-foreground">Analyze training needs data and trends</p>
+            <p className="text-sm text-muted-foreground">Comprehensive training needs analytics and insights</p>
           </CardHeader>
         </Card>
         
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/auth')}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/enhanced-employee-tni')}>
           <CardHeader className="pb-3">
             <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-3">
               <BookOpen className="w-6 h-6 text-white" />
             </div>
             <CardTitle className="text-lg">Employee TNI</CardTitle>
-            <p className="text-sm text-muted-foreground">Access employee training needs interface</p>
+            <p className="text-sm text-muted-foreground">Search and manage employee training needs</p>
           </CardHeader>
         </Card>
         
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/manager-approval')}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/enhanced-manager-approval')}>
           <CardHeader className="pb-3">
             <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-3">
               <CheckCircle className="w-6 h-6 text-white" />
             </div>
             <CardTitle className="text-lg">Manager Approval</CardTitle>
-            <p className="text-sm text-muted-foreground">Review and approve training requests</p>
+            <p className="text-sm text-muted-foreground">Reporting & Training Manager approvals</p>
           </CardHeader>
         </Card>
       </div>
