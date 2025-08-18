@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Sidebar } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 import Index from "./pages/Index";
@@ -81,72 +81,74 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <div className="flex h-screen">
-          <AdminSidebar />
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <AdminHeader />
-            <main className="flex-1 overflow-auto p-6">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/users" element={<Users />} />
-                <Route path="/users/add-employee" element={<AddEmployee />} />
-                <Route path="/users/bulk-enrollment" element={<BulkEnrollment />} />
-                
-                <Route path="/programs" element={<Programs />} />
-                <Route path="/programs/create" element={<CreateProgram />} />
-                <Route path="/programs/categories" element={<CategoryManagement />} />
-                <Route path="/programs/trainers" element={<Trainers />} />
-                
-                <Route path="/learning-paths" element={<LearningPaths />} />
-                <Route path="/learning-paths/create" element={<CreateLearningPath />} />
-                <Route path="/learning-paths/management" element={<LearningPathManagement />} />
-                <Route path="/learning-paths/details/:id" element={<LearningPathDetails />} />
-                <Route path="/learning-paths/content" element={<ContentManagement />} />
-                <Route path="/learning-paths/enrollment" element={<EnrollmentManagement />} />
-                <Route path="/learning-paths/status" element={<StatusTracking />} />
-                <Route path="/learning-paths/analytics" element={<AnalyticsDashboard />} />
-                
-                <Route path="/organization" element={<Organization />} />
-                <Route path="/organization/chart" element={<OrganizationChart />} />
-                <Route path="/organization/departments" element={<Departments />} />
-                <Route path="/organization/roles" element={<Roles />} />
-                <Route path="/organization/hierarchy" element={<Hierarchy />} />
-                <Route path="/organization/locations" element={<Locations />} />
-                
-                <Route path="/processes" element={<Processes />} />
-                <Route path="/processes/workflows" element={<WorkflowManagement />} />
-                <Route path="/processes/approvals" element={<ApprovalFramework />} />
-                <Route path="/processes/user-roles" element={<UserRoleManagement />} />
-                <Route path="/processes/security" element={<SecurityAccessControl />} />
-                <Route path="/processes/business-rules" element={<BusinessRules />} />
-                
-                <Route path="/content" element={<ContentLibrary />} />
-                <Route path="/content/upload" element={<UploadContent />} />
-                <Route path="/content/categories" element={<ContentCategories />} />
-                <Route path="/content/tools" element={<ContentTools />} />
-                
-                <Route path="/library" element={<Catalog />} />
-                <Route path="/library/catalog" element={<Catalog />} />
-                <Route path="/library/resources" element={<Resources />} />
-                <Route path="/library/check-in-out" element={<CheckInOut />} />
-                <Route path="/library/reservations" element={<Reservations />} />
-                
-                <Route path="/training-needs" element={<TNADashboard />} />
-                <Route path="/training-needs/create-cycle" element={<CreateCycle />} />
-                <Route path="/training-needs/employee-tni" element={<EmployeeTNI />} />
-                <Route path="/training-needs/enhanced-employee-tni" element={<EnhancedEmployeeTNI />} />
-                <Route path="/training-needs/manager-approval" element={<ManagerApproval />} />
-                <Route path="/training-needs/enhanced-manager-approval" element={<EnhancedManagerApproval />} />
-                <Route path="/training-needs/program-management" element={<ProgramManagement />} />
-                <Route path="/training-needs/analytics" element={<Analytics />} />
-                
-                <Route path="/assessments" element={<Assessments />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
+        <SidebarProvider>
+          <div className="flex h-screen w-full">
+            <AdminSidebar />
+            <div className="flex-1 flex flex-col overflow-hidden">
+              <AdminHeader />
+              <main className="flex-1 overflow-auto p-6">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/users" element={<Users />} />
+                  <Route path="/users/add-employee" element={<AddEmployee />} />
+                  <Route path="/users/bulk-enrollment" element={<BulkEnrollment />} />
+                  
+                  <Route path="/programs" element={<Programs />} />
+                  <Route path="/programs/create" element={<CreateProgram />} />
+                  <Route path="/programs/categories" element={<CategoryManagement />} />
+                  <Route path="/programs/trainers" element={<Trainers />} />
+                  
+                  <Route path="/learning-paths" element={<LearningPaths />} />
+                  <Route path="/learning-paths/create" element={<CreateLearningPath />} />
+                  <Route path="/learning-paths/management" element={<LearningPathManagement />} />
+                  <Route path="/learning-paths/details/:id" element={<LearningPathDetails />} />
+                  <Route path="/learning-paths/content" element={<ContentManagement />} />
+                  <Route path="/learning-paths/enrollment" element={<EnrollmentManagement />} />
+                  <Route path="/learning-paths/status" element={<StatusTracking />} />
+                  <Route path="/learning-paths/analytics" element={<AnalyticsDashboard />} />
+                  
+                  <Route path="/organization" element={<Organization />} />
+                  <Route path="/organization/chart" element={<OrganizationChart />} />
+                  <Route path="/organization/departments" element={<Departments />} />
+                  <Route path="/organization/roles" element={<Roles />} />
+                  <Route path="/organization/hierarchy" element={<Hierarchy />} />
+                  <Route path="/organization/locations" element={<Locations />} />
+                  
+                  <Route path="/processes" element={<Processes />} />
+                  <Route path="/processes/workflows" element={<WorkflowManagement />} />
+                  <Route path="/processes/approvals" element={<ApprovalFramework />} />
+                  <Route path="/processes/user-roles" element={<UserRoleManagement />} />
+                  <Route path="/processes/security" element={<SecurityAccessControl />} />
+                  <Route path="/processes/business-rules" element={<BusinessRules />} />
+                  
+                  <Route path="/content" element={<ContentLibrary />} />
+                  <Route path="/content/upload" element={<UploadContent />} />
+                  <Route path="/content/categories" element={<ContentCategories />} />
+                  <Route path="/content/tools" element={<ContentTools />} />
+                  
+                  <Route path="/library" element={<Catalog />} />
+                  <Route path="/library/catalog" element={<Catalog />} />
+                  <Route path="/library/resources" element={<Resources />} />
+                  <Route path="/library/check-in-out" element={<CheckInOut />} />
+                  <Route path="/library/reservations" element={<Reservations />} />
+                  
+                  <Route path="/training-needs" element={<TNADashboard />} />
+                  <Route path="/training-needs/create-cycle" element={<CreateCycle />} />
+                  <Route path="/training-needs/employee-tni" element={<EmployeeTNI />} />
+                  <Route path="/training-needs/enhanced-employee-tni" element={<EnhancedEmployeeTNI />} />
+                  <Route path="/training-needs/manager-approval" element={<ManagerApproval />} />
+                  <Route path="/training-needs/enhanced-manager-approval" element={<EnhancedManagerApproval />} />
+                  <Route path="/training-needs/program-management" element={<ProgramManagement />} />
+                  <Route path="/training-needs/analytics" element={<Analytics />} />
+                  
+                  <Route path="/assessments" element={<Assessments />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
+            </div>
           </div>
-        </div>
+        </SidebarProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
