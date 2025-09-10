@@ -267,7 +267,7 @@ export function AdminSidebar() {
                         </CollapsibleContent>
                       )}
                     </Collapsible>
-                  ) : (
+                  ) : item.url ? (
                     <SidebarMenuButton asChild>
                       <NavLink 
                         to={item.url} 
@@ -279,7 +279,7 @@ export function AdminSidebar() {
                         {!isCollapsed && <span>{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
-                  )}
+                  ) : null}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
