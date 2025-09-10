@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,8 @@ import {
   ChevronRight,
   Brain,
   Target,
-  BookOpen
+  BookOpen,
+  Loader2
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -33,57 +34,81 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
-// Mock data for demonstration
-const mockEmployees = [
-  {
-    id: 1,
-    name: "John Smith",
-    email: "john.smith@company.com",
-    department: "Engineering",
-    role: "Senior Developer",
-    profileStatus: "Complete",
-    skillsCount: 8,
-    learningGoals: 3,
-    lastUpdated: "2024-01-15"
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    email: "sarah.johnson@company.com",
-    department: "Marketing",
-    role: "Marketing Manager",
-    profileStatus: "Incomplete",
-    skillsCount: 5,
-    learningGoals: 2,
-    lastUpdated: "2024-01-10"
-  },
-  {
-    id: 3,
-    name: "Mike Chen",
-    email: "mike.chen@company.com",
-    department: "Engineering",
-    role: "Frontend Developer",
-    profileStatus: "Not Started",
-    skillsCount: 0,
-    learningGoals: 0,
-    lastUpdated: null
-  }
-];
-
-const mockSkillTemplates = [
-  { id: 1, name: "Software Development", skills: ["JavaScript", "React", "Node.js", "Python", "Git"] },
-  { id: 2, name: "Digital Marketing", skills: ["SEO", "Google Analytics", "Content Marketing", "Social Media"] },
-  { id: 3, name: "Project Management", skills: ["Agile", "Scrum", "Risk Management", "Stakeholder Management"] },
-  { id: 4, name: "Data Analysis", skills: ["Excel", "SQL", "Python", "Tableau", "Statistics"] }
-];
-
+// Remove the old mock data
 const EmployeeLearningProfiles = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [employees, setEmployees] = useState([]);
+  const [skillTemplates, setSkillTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const filteredEmployees = mockEmployees.filter(emp => 
+  useEffect(() => {
+    fetchEmployees();
+    fetchSkillTemplates();
+  }, []);
+
+  const fetchEmployees = async () => {
+    try {
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          learning_preferences (*),
+          user_skills (*)
+        `);
+
+      if (error) throw error;
+
+      const employeesWithStats = profiles.map((profile: any) => {
+        const preferences = profile.learning_preferences?.[0];
+        return {
+          id: profile.id,
+          name: profile.full_name || profile.email,
+          email: profile.email,
+          department: profile.department || 'Unassigned',
+          role: profile.position || 'Not specified',
+          profileStatus: preferences ? 'Complete' : 'Not Started',
+          skillsCount: profile.user_skills?.length || 0,
+          learningGoals: preferences?.career_goals?.length || 0,
+          lastUpdated: preferences?.updated_at || null
+        };
+      });
+
+      setEmployees(employeesWithStats);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load employee data",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSkillTemplates = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('skill_templates')
+        .select('*')
+        .eq('is_active', true);
+
+      if (error) throw error;
+      setSkillTemplates(data || []);
+    } catch (error) {
+      console.error('Error fetching skill templates:', error);
+    }
+  };
+
+  const filteredEmployees = employees.filter(emp => 
     emp.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (selectedDepartment === "all" || emp.department === selectedDepartment)
   );
@@ -96,6 +121,15 @@ const EmployeeLearningProfiles = () => {
     };
     return <Badge variant={variants[status]}>{status}</Badge>;
   };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto py-6 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading employee data...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -248,13 +282,14 @@ const EmployeeLearningProfiles = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {mockSkillTemplates.map((template) => (
+              {skillTemplates.map((template) => (
                 <Card key={template.id} className="p-4">
                   <h3 className="font-semibold mb-3">{template.name}</h3>
+                  <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
                   <div className="space-y-2">
-                    {template.skills.map((skill) => (
-                      <Badge key={skill} variant="secondary" className="mr-2 mb-2">
-                        {skill}
+                    {JSON.parse(template.skills).map((skill) => (
+                      <Badge key={skill.name} variant="secondary" className="mr-2 mb-2">
+                        {skill.name} ({skill.level})
                       </Badge>
                     ))}
                   </div>
@@ -274,8 +309,8 @@ const EmployeeLearningProfiles = () => {
                 <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">248</div>
-                <p className="text-xs text-muted-foreground">+12% from last month</p>
+                <div className="text-2xl font-bold">{employees.length}</div>
+                <p className="text-xs text-muted-foreground">Active employees</p>
               </CardContent>
             </Card>
             <Card>
@@ -283,26 +318,36 @@ const EmployeeLearningProfiles = () => {
                 <CardTitle className="text-sm font-medium">Profiles Complete</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">187</div>
-                <p className="text-xs text-muted-foreground">75% completion rate</p>
+                <div className="text-2xl font-bold">
+                  {employees.filter(emp => emp.profileStatus === 'Complete').length}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {Math.round((employees.filter(emp => emp.profileStatus === 'Complete').length / employees.length) * 100)}% completion rate
+                </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">AI Recommendations Active</CardTitle>
+                <CardTitle className="text-sm font-medium">Total Skills Recorded</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">156</div>
-                <p className="text-xs text-muted-foreground">63% of all employees</p>
+                <div className="text-2xl font-bold">
+                  {employees.reduce((total, emp) => total + emp.skillsCount, 0)}
+                </div>
+                <p className="text-xs text-muted-foreground">Across all employees</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Avg Skills per Profile</CardTitle>
+                <CardTitle className="text-sm font-medium">Avg Skills per Employee</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">6.2</div>
-                <p className="text-xs text-muted-foreground">+0.8 from last month</p>
+                <div className="text-2xl font-bold">
+                  {employees.length > 0 ? 
+                    Math.round(employees.reduce((total, emp) => total + emp.skillsCount, 0) / employees.length * 10) / 10 
+                    : 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Skills per profile</p>
               </CardContent>
             </Card>
           </div>
@@ -316,29 +361,100 @@ const EmployeeLearningProfiles = () => {
 const BulkSetupForm = () => {
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [employees, setEmployees] = useState([]);
+  const [skillTemplates, setSkillTemplates] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [employeesRes, templatesRes] = await Promise.all([
+        supabase.from('profiles').select('id, full_name, email, department'),
+        supabase.from('skill_templates').select('*').eq('is_active', true)
+      ]);
+
+      setEmployees(employeesRes.data || []);
+      setSkillTemplates(templatesRes.data || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const applyTemplate = async () => {
+    if (!selectedEmployees.length || !selectedTemplate) return;
+
+    setLoading(true);
+    try {
+      const template = skillTemplates.find(t => t.id === selectedTemplate);
+      const skills = JSON.parse(template.skills);
+
+      // Apply skills to selected employees
+      const skillInserts = [];
+      selectedEmployees.forEach(empId => {
+        skills.forEach(skill => {
+          skillInserts.push({
+            user_id: empId,
+            skill_name: skill.name,
+            proficiency_level: skill.level,
+            confidence_score: 70, // Default confidence
+            source: 'admin_assigned'
+          });
+        });
+      });
+
+      const { error } = await supabase
+        .from('user_skills')
+        .upsert(skillInserts, { 
+          onConflict: 'user_id,skill_name',
+          ignoreDuplicates: false 
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Applied ${template.name} template to ${selectedEmployees.length} employees`
+      });
+
+      setSelectedEmployees([]);
+      setSelectedTemplate("");
+    } catch (error) {
+      console.error('Error applying template:', error);
+      toast({
+        title: "Error", 
+        description: "Failed to apply template",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium mb-4">Select Employees</h3>
-        <div className="space-y-2 max-h-48 overflow-y-auto border rounded-lg p-4">
-          {mockEmployees.map((emp) => (
-            <label key={emp.id} className="flex items-center space-x-2 cursor-pointer">
-              <input 
-                type="checkbox" 
-                className="rounded"
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedEmployees([...selectedEmployees, emp.id]);
-                  } else {
-                    setSelectedEmployees(selectedEmployees.filter(id => id !== emp.id));
-                  }
-                }}
-              />
-              <span className="text-sm">{emp.name} - {emp.department}</span>
-            </label>
-          ))}
-        </div>
+      <div className="space-y-2 max-h-48 overflow-y-auto border rounded-lg p-4">
+        {employees.map((emp) => (
+          <label key={emp.id} className="flex items-center space-x-2 cursor-pointer">
+            <Checkbox 
+              checked={selectedEmployees.includes(emp.id)}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  setSelectedEmployees([...selectedEmployees, emp.id]);
+                } else {
+                  setSelectedEmployees(selectedEmployees.filter(id => id !== emp.id));
+                }
+              }}
+            />
+            <span className="text-sm">{emp.full_name || emp.email} - {emp.department}</span>
+          </label>
+        ))}
+      </div>
       </div>
 
       <div>
@@ -348,8 +464,8 @@ const BulkSetupForm = () => {
             <SelectValue placeholder="Select a skill template" />
           </SelectTrigger>
           <SelectContent>
-            {mockSkillTemplates.map((template) => (
-              <SelectItem key={template.id} value={template.id.toString()}>
+            {skillTemplates.map((template) => (
+              <SelectItem key={template.id} value={template.id}>
                 {template.name}
               </SelectItem>
             ))}
@@ -359,7 +475,11 @@ const BulkSetupForm = () => {
 
       <div className="flex justify-end gap-2">
         <Button variant="outline">Cancel</Button>
-        <Button disabled={!selectedEmployees.length || !selectedTemplate}>
+        <Button 
+          disabled={!selectedEmployees.length || !selectedTemplate || loading}
+          onClick={applyTemplate}
+        >
+          {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
           Apply to {selectedEmployees.length} Employees
         </Button>
       </div>

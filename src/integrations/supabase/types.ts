@@ -1473,6 +1473,45 @@ export type Database = {
         }
         Relationships: []
       }
+      skill_templates: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          department: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          skills: Json
+          target_roles: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          skills?: Json
+          target_roles?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          department?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          skills?: Json
+          target_roles?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       sso_configurations: {
         Row: {
           client_id: string | null
