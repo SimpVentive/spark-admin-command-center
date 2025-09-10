@@ -28,7 +28,8 @@ import {
   CheckCircle,
   Brain,
   ShieldCheck,
-  Target
+  Target,
+  Zap
 } from "lucide-react";
 
 import {
@@ -110,7 +111,7 @@ const navigationItems = [
   },
   { 
     title: "AI Recommendations", 
-    icon: Brain,
+    icon: Zap,
     url: "/ai-recommendations"
   },
   { 
