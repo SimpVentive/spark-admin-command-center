@@ -109,6 +109,11 @@ const navigationItems = [
     ]
   },
   { 
+    title: "AI Recommendations", 
+    icon: Brain,
+    url: "/ai-recommendations"
+  },
+  { 
     title: "Assessments", 
     icon: FileText,
     subItems: [

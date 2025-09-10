@@ -77,6 +77,9 @@ import EnhancedManagerApproval from "./pages/training-needs/EnhancedManagerAppro
 // Auth pages
 import Auth from "./pages/auth/Auth";
 
+// AI pages
+import AIRecommendationsPage from "./pages/AIRecommendations";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -150,6 +153,7 @@ const App = () => (
                   <Route path="/assessments/create" element={<CreateAssessment />} />
                   <Route path="/assessments/questions" element={<QuestionBank />} />
                   <Route path="/assessments/results" element={<AssessmentResults />} />
+                  <Route path="/ai-recommendations" element={<AIRecommendationsPage />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
