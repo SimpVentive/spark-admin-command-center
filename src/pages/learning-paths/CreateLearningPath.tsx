@@ -330,7 +330,6 @@ const PrerequisitesStep = ({ formData, setFormData }) => {
               size="sm" 
               className="gap-2" 
               onClick={addPrerequisite}
-              disabled={!prerequisiteInput.trim()}
             >
               <Plus className="h-4 w-4" />
               Add Prerequisite
