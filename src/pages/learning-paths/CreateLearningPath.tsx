@@ -495,44 +495,66 @@ const AssessmentConfigurationStep = ({ formData, setFormData }) => (
   </div>
 );
 
-const CertificationSetupStep = ({ formData, setFormData }) => (
-  <div className="space-y-6">
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="certificateTemplate">Certificate Template</Label>
-        <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-          <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-4" />
-          <p className="text-sm text-muted-foreground">Upload certificate template</p>
-          <Button variant="outline" size="sm" className="mt-2">
-            Choose File
-          </Button>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+const CertificationSetupStep = ({ formData, setFormData }) => {
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFormData({...formData, certificateTemplate: file.name});
+    }
+  };
+
+  const triggerFileInput = () => {
+    document.getElementById('certificateFileInput').click();
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="validity">Certificate Validity (months)</Label>
-          <Input
-            id="validity"
-            type="number"
-            value={formData.validity}
-            onChange={(e) => setFormData({...formData, validity: parseInt(e.target.value)})}
-            min="1"
-          />
+          <Label htmlFor="certificateTemplate">Certificate Template</Label>
+          <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+            <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-4" />
+            <p className="text-sm text-muted-foreground">
+              {formData.certificateTemplate ? `Selected: ${formData.certificateTemplate}` : 'Upload certificate template'}
+            </p>
+            <Button variant="outline" size="sm" className="mt-2" onClick={triggerFileInput}>
+              Choose File
+            </Button>
+            <input
+              id="certificateFileInput"
+              type="file"
+              accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+            />
+          </div>
         </div>
         
-        <div className="flex items-center space-x-2 pt-8">
-          <Checkbox 
-            id="industryRecognition" 
-            checked={formData.industryRecognition}
-            onCheckedChange={(checked) => setFormData({...formData, industryRecognition: checked})}
-          />
-          <Label htmlFor="industryRecognition">Industry recognized certification</Label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="validity">Certificate Validity (months)</Label>
+            <Input
+              id="validity"
+              type="number"
+              value={formData.validity}
+              onChange={(e) => setFormData({...formData, validity: parseInt(e.target.value)})}
+              min="1"
+            />
+          </div>
+          
+          <div className="flex items-center space-x-2 pt-8">
+            <Checkbox 
+              id="industryRecognition" 
+              checked={formData.industryRecognition}
+              onCheckedChange={(checked) => setFormData({...formData, industryRecognition: checked})}
+            />
+            <Label htmlFor="industryRecognition">Industry recognized certification</Label>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const PublishingSettingsStep = ({ formData, setFormData }) => (
   <div className="space-y-6">
