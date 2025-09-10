@@ -15,6 +15,9 @@ import LearningPaths from "./pages/LearningPaths";
 import Organization from "./pages/Organization";
 import Processes from "./pages/Processes";
 import Assessments from "./pages/Assessments";
+import CreateAssessment from "./pages/assessments/CreateAssessment";
+import QuestionBank from "./pages/assessments/QuestionBank";
+import AssessmentResults from "./pages/assessments/AssessmentResults";
 import NotFound from "./pages/NotFound";
 
 // User pages
@@ -144,6 +147,9 @@ const App = () => (
                   <Route path="/training-needs/analytics" element={<Analytics />} />
                   
                   <Route path="/assessments" element={<Assessments />} />
+                  <Route path="/assessments/create" element={<CreateAssessment />} />
+                  <Route path="/assessments/questions" element={<QuestionBank />} />
+                  <Route path="/assessments/results" element={<AssessmentResults />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>

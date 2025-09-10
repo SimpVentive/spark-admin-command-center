@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      assessment_questions: {
+        Row: {
+          assessment_id: string
+          created_at: string | null
+          id: string
+          points: number | null
+          question_id: string
+          question_order: number
+          randomize_options: boolean | null
+        }
+        Insert: {
+          assessment_id: string
+          created_at?: string | null
+          id?: string
+          points?: number | null
+          question_id: string
+          question_order: number
+          randomize_options?: boolean | null
+        }
+        Update: {
+          assessment_id?: string
+          created_at?: string | null
+          id?: string
+          points?: number | null
+          question_id?: string
+          question_order?: number
+          randomize_options?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_questions_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessment_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessments: {
         Row: {
           assessment_type: string
@@ -246,6 +291,33 @@ export type Database = {
           title?: string
           updated_at?: string
           validity_months?: number | null
+        }
+        Relationships: []
+      }
+      competencies: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1136,6 +1208,104 @@ export type Database = {
           venue?: string | null
         }
         Relationships: []
+      }
+      question_bank: {
+        Row: {
+          competency_id: string | null
+          correct_answer: string | null
+          created_at: string | null
+          created_by: string | null
+          difficulty_level: string
+          explanation: string | null
+          id: string
+          is_active: boolean | null
+          points: number | null
+          program_id: string | null
+          question_text: string
+          question_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          competency_id?: string | null
+          correct_answer?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          difficulty_level: string
+          explanation?: string | null
+          id?: string
+          is_active?: boolean | null
+          points?: number | null
+          program_id?: string | null
+          question_text: string
+          question_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          competency_id?: string | null
+          correct_answer?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          difficulty_level?: string
+          explanation?: string | null
+          id?: string
+          is_active?: boolean | null
+          points?: number | null
+          program_id?: string | null
+          question_text?: string
+          question_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_bank_competency_id_fkey"
+            columns: ["competency_id"]
+            isOneToOne: false
+            referencedRelation: "competencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_bank_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_options: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_correct: boolean | null
+          option_order: number
+          option_text: string
+          question_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_correct?: boolean | null
+          option_order: number
+          option_text: string
+          question_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_correct?: boolean | null
+          option_order?: number
+          option_text?: string
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sso_configurations: {
         Row: {
