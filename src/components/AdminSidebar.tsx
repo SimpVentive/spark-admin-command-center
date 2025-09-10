@@ -64,7 +64,8 @@ const navigationItems = [
     subItems: [
       { title: "All Users", url: "/users" },
       { title: "Add Employee", url: "/users/add" },
-      { title: "Bulk Enrollment", url: "/users/bulk" }
+      { title: "Bulk Enrollment", url: "/users/bulk" },
+      { title: "Learning Profiles", url: "/users/learning-profiles" }
     ]
   },
   { 

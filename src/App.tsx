@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 // User pages
 import AddEmployee from "./pages/users/AddEmployee";
 import BulkEnrollment from "./pages/users/BulkEnrollment";
+import EmployeeLearningProfiles from "./pages/users/EmployeeLearningProfiles";
 
 // Program pages
 import CreateProgram from "./pages/programs/CreateProgram";
@@ -100,6 +101,7 @@ const App = () => (
                   <Route path="/users" element={<Users />} />
                   <Route path="/users/add-employee" element={<AddEmployee />} />
                   <Route path="/users/bulk-enrollment" element={<BulkEnrollment />} />
+                  <Route path="/users/learning-profiles" element={<EmployeeLearningProfiles />} />
                   
                   <Route path="/programs" element={<Programs />} />
                   <Route path="/programs/create" element={<CreateProgram />} />
