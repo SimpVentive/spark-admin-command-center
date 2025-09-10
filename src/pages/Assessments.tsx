@@ -27,6 +27,12 @@ const Assessments = () => {
     maxAttempts: 3,
     questions: []
   });
+  const [currentQuestion, setCurrentQuestion] = useState({
+    text: "",
+    type: "multiple-choice",
+    options: ["", "", "", ""],
+    correctAnswer: 0
+  });
   const handleCreateAssessment = () => {
     setIsCreateDialogOpen(true);
     setCurrentStep(1);
@@ -51,11 +57,31 @@ const Assessments = () => {
   };
 
   const nextStep = () => {
-    if (currentStep < 3) setCurrentStep(currentStep + 1);
+    if (currentStep < 4) setCurrentStep(currentStep + 1);
   };
 
   const prevStep = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+
+  const addQuestion = () => {
+    if (currentQuestion.text.trim() && currentQuestion.options.some(opt => opt.trim())) {
+      setAssessmentData({
+        ...assessmentData,
+        questions: [...assessmentData.questions, { ...currentQuestion }]
+      });
+      setCurrentQuestion({
+        text: "",
+        type: "multiple-choice",
+        options: ["", "", "", ""],
+        correctAnswer: 0
+      });
+    }
+  };
+
+  const removeQuestion = (index: number) => {
+    const updatedQuestions = assessmentData.questions.filter((_, i) => i !== index);
+    setAssessmentData({ ...assessmentData, questions: updatedQuestions });
   };
 
   const handleViewResults = (assessmentId: number, assessmentTitle: string) => {
@@ -160,7 +186,7 @@ const Assessments = () => {
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Create Assessment - Step {currentStep} of 3</DialogTitle>
+              <DialogTitle>Create Assessment - Step {currentStep} of 4</DialogTitle>
             </DialogHeader>
             
             <div className="space-y-6">
@@ -245,6 +271,109 @@ const Assessments = () => {
 
               {currentStep === 3 && (
                 <div className="space-y-4">
+                  <h3 className="font-medium">Add Questions</h3>
+                  
+                  <div className="space-y-4 border rounded-lg p-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="questionText">Question</Label>
+                      <Textarea
+                        id="questionText"
+                        value={currentQuestion.text}
+                        onChange={(e) => setCurrentQuestion({...currentQuestion, text: e.target.value})}
+                        placeholder="Enter your question"
+                        rows={2}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Question Type</Label>
+                      <Select 
+                        value={currentQuestion.type} 
+                        onValueChange={(value) => setCurrentQuestion({...currentQuestion, type: value})}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="multiple-choice">Multiple Choice</SelectItem>
+                          <SelectItem value="true-false">True/False</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {currentQuestion.type === "multiple-choice" && (
+                      <div className="space-y-2">
+                        <Label>Answer Options</Label>
+                        {currentQuestion.options.map((option, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <Input
+                              value={option}
+                              onChange={(e) => {
+                                const newOptions = [...currentQuestion.options];
+                                newOptions[index] = e.target.value;
+                                setCurrentQuestion({...currentQuestion, options: newOptions});
+                              }}
+                              placeholder={`Option ${index + 1}`}
+                            />
+                            <Checkbox
+                              checked={currentQuestion.correctAnswer === index}
+                              onCheckedChange={(checked) => {
+                                if (checked) setCurrentQuestion({...currentQuestion, correctAnswer: index});
+                              }}
+                            />
+                            <Label className="text-sm">Correct</Label>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {currentQuestion.type === "true-false" && (
+                      <div className="space-y-2">
+                        <Label>Correct Answer</Label>
+                        <Select 
+                          value={currentQuestion.correctAnswer.toString()} 
+                          onValueChange={(value) => setCurrentQuestion({...currentQuestion, correctAnswer: parseInt(value)})}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="0">True</SelectItem>
+                            <SelectItem value="1">False</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
+                    <Button onClick={addQuestion} className="w-full">
+                      Add Question
+                    </Button>
+                  </div>
+
+                  {assessmentData.questions.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Added Questions ({assessmentData.questions.length})</Label>
+                      <div className="space-y-2 max-h-40 overflow-y-auto">
+                        {assessmentData.questions.map((question, index) => (
+                          <div key={index} className="flex items-center justify-between p-2 border rounded">
+                            <span className="text-sm truncate">{question.text}</span>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeQuestion(index)}
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {currentStep === 4 && (
+                <div className="space-y-4">
                   <h3 className="font-medium">Assessment Summary</h3>
                   <div className="space-y-2 text-sm">
                     <div><strong>Title:</strong> {assessmentData.title}</div>
@@ -252,6 +381,7 @@ const Assessments = () => {
                     <div><strong>Time Limit:</strong> {assessmentData.timeLimit} minutes</div>
                     <div><strong>Passing Score:</strong> {assessmentData.passingScore}%</div>
                     <div><strong>Max Attempts:</strong> {assessmentData.maxAttempts}</div>
+                    <div><strong>Questions:</strong> {assessmentData.questions.length}</div>
                   </div>
                   
                   <div className="space-y-2">
@@ -273,7 +403,7 @@ const Assessments = () => {
                   Previous
                 </Button>
                 
-                {currentStep === 3 ? (
+                {currentStep === 4 ? (
                   <Button onClick={handleSaveAssessment}>
                     Create Assessment
                   </Button>
