@@ -40,10 +40,10 @@ const QuestionBank = () => {
   const [programs, setPrograms] = useState<Program[]>([]);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterCompetency, setFilterCompetency] = useState("");
-  const [filterProgram, setFilterProgram] = useState("");
-  const [filterLevel, setFilterLevel] = useState("");
-  const [filterType, setFilterType] = useState("");
+  const [filterCompetency, setFilterCompetency] = useState("all");
+  const [filterProgram, setFilterProgram] = useState("all");
+  const [filterLevel, setFilterLevel] = useState("all");
+  const [filterType, setFilterType] = useState("all");
   
   const [newQuestion, setNewQuestion] = useState({
     question_text: "",
@@ -238,10 +238,10 @@ const QuestionBank = () => {
 
   const filteredQuestions = questions.filter(question => {
     const matchesSearch = question.question_text.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCompetency = !filterCompetency || question.competency?.name === filterCompetency;
-    const matchesProgram = !filterProgram || question.program?.title === filterProgram;
-    const matchesLevel = !filterLevel || question.difficulty_level === filterLevel;
-    const matchesType = !filterType || question.question_type === filterType;
+    const matchesCompetency = filterCompetency === "all" || question.competency?.name === filterCompetency;
+    const matchesProgram = filterProgram === "all" || question.program?.title === filterProgram;
+    const matchesLevel = filterLevel === "all" || question.difficulty_level === filterLevel;
+    const matchesType = filterType === "all" || question.question_type === filterType;
     
     return matchesSearch && matchesCompetency && matchesProgram && matchesLevel && matchesType;
   });
@@ -450,7 +450,7 @@ const QuestionBank = () => {
                 <SelectValue placeholder="All Competencies" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Competencies</SelectItem>
+                <SelectItem value="all">All Competencies</SelectItem>
                 {competencies.map(comp => (
                   <SelectItem key={comp.id} value={comp.name}>{comp.name}</SelectItem>
                 ))}
@@ -462,7 +462,7 @@ const QuestionBank = () => {
                 <SelectValue placeholder="All Programs" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Programs</SelectItem>
+                <SelectItem value="all">All Programs</SelectItem>
                 {programs.map(prog => (
                   <SelectItem key={prog.id} value={prog.title}>{prog.title}</SelectItem>
                 ))}
@@ -474,7 +474,7 @@ const QuestionBank = () => {
                 <SelectValue placeholder="All Levels" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Levels</SelectItem>
+                <SelectItem value="all">All Levels</SelectItem>
                 <SelectItem value="L1">L1 (Basic)</SelectItem>
                 <SelectItem value="L2">L2 (Intermediate)</SelectItem>
                 <SelectItem value="L3">L3 (Advanced)</SelectItem>
@@ -491,7 +491,7 @@ const QuestionBank = () => {
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="multiple_choice">Multiple Choice</SelectItem>
                 <SelectItem value="true_false">True/False</SelectItem>
                 <SelectItem value="essay">Essay</SelectItem>

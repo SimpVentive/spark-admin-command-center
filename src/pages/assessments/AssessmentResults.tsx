@@ -11,8 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 const AssessmentResults = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [filterAssessment, setFilterAssessment] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [filterAssessment, setFilterAssessment] = useState("all");
 
   // Mock data - replace with actual API calls
   const assessmentResults = [
@@ -110,8 +110,8 @@ const AssessmentResults = () => {
       result.participantEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
       result.assessmentTitle.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = !filterStatus || result.status === filterStatus;
-    const matchesAssessment = !filterAssessment || result.assessmentTitle === filterAssessment;
+    const matchesStatus = filterStatus === "all" || result.status === filterStatus;
+    const matchesAssessment = filterAssessment === "all" || result.assessmentTitle === filterAssessment;
     
     return matchesSearch && matchesStatus && matchesAssessment;
   });
@@ -208,7 +208,7 @@ const AssessmentResults = () => {
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="Passed">Passed</SelectItem>
                 <SelectItem value="Failed">Failed</SelectItem>
                 <SelectItem value="In Progress">In Progress</SelectItem>
@@ -220,7 +220,7 @@ const AssessmentResults = () => {
                 <SelectValue placeholder="All Assessments" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Assessments</SelectItem>
+                <SelectItem value="all">All Assessments</SelectItem>
                 {uniqueAssessments.map(assessment => (
                   <SelectItem key={assessment} value={assessment}>{assessment}</SelectItem>
                 ))}
