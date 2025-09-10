@@ -60,24 +60,28 @@ const EmployeeLearningProfiles = () => {
         .from('profiles')
         .select(`
           *,
-          learning_preferences (*),
           user_skills (*)
         `);
 
       if (error) throw error;
 
+      // Get learning preferences separately to handle the relationship properly
+      const { data: preferences } = await supabase
+        .from('learning_preferences')
+        .select('*');
+
       const employeesWithStats = profiles.map((profile: any) => {
-        const preferences = profile.learning_preferences?.[0];
+        const userPrefs = preferences?.find(pref => pref.user_id === profile.id);
         return {
           id: profile.id,
           name: profile.full_name || profile.email,
           email: profile.email,
           department: profile.department || 'Unassigned',
           role: profile.position || 'Not specified',
-          profileStatus: preferences ? 'Complete' : 'Not Started',
+          profileStatus: userPrefs ? 'Complete' : 'Not Started',
           skillsCount: profile.user_skills?.length || 0,
-          learningGoals: preferences?.career_goals?.length || 0,
-          lastUpdated: preferences?.updated_at || null
+          learningGoals: userPrefs?.career_goals?.length || 0,
+          lastUpdated: userPrefs?.updated_at || null
         };
       });
 
@@ -287,7 +291,7 @@ const EmployeeLearningProfiles = () => {
                   <h3 className="font-semibold mb-3">{template.name}</h3>
                   <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
                   <div className="space-y-2">
-                    {JSON.parse(template.skills).map((skill) => (
+                    {(Array.isArray(template.skills) ? template.skills : JSON.parse(template.skills || '[]')).map((skill) => (
                       <Badge key={skill.name} variant="secondary" className="mr-2 mb-2">
                         {skill.name} ({skill.level})
                       </Badge>
@@ -390,7 +394,7 @@ const BulkSetupForm = () => {
     setLoading(true);
     try {
       const template = skillTemplates.find(t => t.id === selectedTemplate);
-      const skills = JSON.parse(template.skills);
+      const skills = Array.isArray(template.skills) ? template.skills : JSON.parse(template.skills || '[]');
 
       // Apply skills to selected employees
       const skillInserts = [];
