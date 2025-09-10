@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { LibraryProvider } from "@/contexts/LibraryContext";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 import Index from "./pages/Index";
@@ -78,10 +79,11 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <SidebarProvider>
+      <LibraryProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <SidebarProvider>
           <div className="flex h-screen w-full">
             <AdminSidebar />
             <div className="flex-1 flex flex-col overflow-hidden">
@@ -150,6 +152,7 @@ const App = () => (
           </div>
         </SidebarProvider>
       </BrowserRouter>
+      </LibraryProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
