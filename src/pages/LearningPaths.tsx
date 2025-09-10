@@ -216,10 +216,10 @@ const LearningPaths = () => {
               </div>
               
               <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1" onClick={() => navigate(`/learning-paths/${path.id}/details`)}>
+                <Button variant="outline" size="sm" className="flex-1" onClick={() => navigate(`/learning-paths/details/${path.id}`)}>
                   View Details
                 </Button>
-                <Button size="sm" className="flex-1" onClick={() => navigate(`/learning-paths/${path.id}/manage`)}>
+                <Button size="sm" className="flex-1" onClick={() => navigate(`/learning-paths/management`)}>
                   Manage
                 </Button>
               </div>
