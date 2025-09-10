@@ -502,6 +502,51 @@ export type Database = {
         }
         Relationships: []
       }
+      learning_preferences: {
+        Row: {
+          career_goals: string[] | null
+          created_at: string | null
+          difficulty_preference: string | null
+          id: string
+          job_role: string | null
+          learning_schedule: Json | null
+          preferred_duration_minutes: number | null
+          preferred_learning_style: string | null
+          timezone: string | null
+          topics_of_interest: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          career_goals?: string[] | null
+          created_at?: string | null
+          difficulty_preference?: string | null
+          id?: string
+          job_role?: string | null
+          learning_schedule?: Json | null
+          preferred_duration_minutes?: number | null
+          preferred_learning_style?: string | null
+          timezone?: string | null
+          topics_of_interest?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          career_goals?: string[] | null
+          created_at?: string | null
+          difficulty_preference?: string | null
+          id?: string
+          job_role?: string | null
+          learning_schedule?: Json | null
+          preferred_duration_minutes?: number | null
+          preferred_learning_style?: string | null
+          timezone?: string | null
+          topics_of_interest?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       lti_content_items: {
         Row: {
           created_at: string
@@ -1078,6 +1123,62 @@ export type Database = {
           },
         ]
       }
+      path_recommendations: {
+        Row: {
+          clicked_at: string | null
+          confidence_score: number
+          created_at: string | null
+          enrolled_at: string | null
+          expires_at: string | null
+          id: string
+          is_clicked: boolean | null
+          is_enrolled: boolean | null
+          learning_path_id: string | null
+          metadata: Json | null
+          reasoning: string | null
+          recommendation_type: string
+          user_id: string
+        }
+        Insert: {
+          clicked_at?: string | null
+          confidence_score?: number
+          created_at?: string | null
+          enrolled_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_clicked?: boolean | null
+          is_enrolled?: boolean | null
+          learning_path_id?: string | null
+          metadata?: Json | null
+          reasoning?: string | null
+          recommendation_type: string
+          user_id: string
+        }
+        Update: {
+          clicked_at?: string | null
+          confidence_score?: number
+          created_at?: string | null
+          enrolled_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_clicked?: boolean | null
+          is_enrolled?: boolean | null
+          learning_path_id?: string | null
+          metadata?: Json | null
+          reasoning?: string | null
+          recommendation_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "path_recommendations_learning_path_id_fkey"
+            columns: ["learning_path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -1306,6 +1407,71 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      recommendation_feedback: {
+        Row: {
+          comments: string | null
+          created_at: string | null
+          feedback_type: string
+          id: string
+          rating: number | null
+          recommendation_id: string | null
+          user_id: string
+        }
+        Insert: {
+          comments?: string | null
+          created_at?: string | null
+          feedback_type: string
+          id?: string
+          rating?: number | null
+          recommendation_id?: string | null
+          user_id: string
+        }
+        Update: {
+          comments?: string | null
+          created_at?: string | null
+          feedback_type?: string
+          id?: string
+          rating?: number | null
+          recommendation_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendation_feedback_recommendation_id_fkey"
+            columns: ["recommendation_id"]
+            isOneToOne: false
+            referencedRelation: "path_recommendations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      similar_users: {
+        Row: {
+          calculated_at: string | null
+          id: string
+          similar_user_id: string
+          similarity_factors: string[] | null
+          similarity_score: number
+          user_id: string
+        }
+        Insert: {
+          calculated_at?: string | null
+          id?: string
+          similar_user_id: string
+          similarity_factors?: string[] | null
+          similarity_score: number
+          user_id: string
+        }
+        Update: {
+          calculated_at?: string | null
+          id?: string
+          similar_user_id?: string
+          similarity_factors?: string[] | null
+          similarity_score?: number
+          user_id?: string
+        }
+        Relationships: []
       }
       sso_configurations: {
         Row: {
@@ -1573,6 +1739,59 @@ export type Database = {
           },
         ]
       }
+      user_learning_analytics: {
+        Row: {
+          completion_percentage: number | null
+          created_at: string | null
+          engagement_score: number | null
+          id: string
+          interaction_count: number | null
+          learning_path_id: string | null
+          learning_velocity: number | null
+          preferred_content_types: string[] | null
+          session_end: string | null
+          session_start: string | null
+          total_time_minutes: number | null
+          user_id: string
+        }
+        Insert: {
+          completion_percentage?: number | null
+          created_at?: string | null
+          engagement_score?: number | null
+          id?: string
+          interaction_count?: number | null
+          learning_path_id?: string | null
+          learning_velocity?: number | null
+          preferred_content_types?: string[] | null
+          session_end?: string | null
+          session_start?: string | null
+          total_time_minutes?: number | null
+          user_id: string
+        }
+        Update: {
+          completion_percentage?: number | null
+          created_at?: string | null
+          engagement_score?: number | null
+          id?: string
+          interaction_count?: number | null
+          learning_path_id?: string | null
+          learning_velocity?: number | null
+          preferred_content_types?: string[] | null
+          session_end?: string | null
+          session_start?: string | null
+          total_time_minutes?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_learning_analytics_learning_path_id_fkey"
+            columns: ["learning_path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_learning_path_enrollments: {
         Row: {
           completed_at: string | null
@@ -1781,6 +2000,53 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_skills: {
+        Row: {
+          competency_id: string | null
+          confidence_score: number | null
+          created_at: string | null
+          id: string
+          last_assessed_at: string | null
+          proficiency_level: string
+          skill_name: string
+          source: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          competency_id?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          last_assessed_at?: string | null
+          proficiency_level: string
+          skill_name: string
+          source?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          competency_id?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          last_assessed_at?: string | null
+          proficiency_level?: string
+          skill_name?: string
+          source?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_skills_competency_id_fkey"
+            columns: ["competency_id"]
+            isOneToOne: false
+            referencedRelation: "competencies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
