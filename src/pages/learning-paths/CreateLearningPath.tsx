@@ -262,47 +262,104 @@ const BasicInformationStep = ({ formData, setFormData }) => (
   </div>
 );
 
-const PrerequisitesStep = ({ formData, setFormData }) => (
-  <div className="space-y-6">
-    <div className="space-y-4">
-      <div className="flex items-center space-x-2">
-        <Checkbox 
-          id="skillsAssessment" 
-          checked={formData.skillsAssessment}
-          onCheckedChange={(checked) => setFormData({...formData, skillsAssessment: checked})}
-        />
-        <Label htmlFor="skillsAssessment">Require skills assessment before enrollment</Label>
-      </div>
-      
-      <div className="space-y-2">
-        <Label htmlFor="experienceLevel">Required Experience Level</Label>
-        <Select value={formData.experienceLevel} onValueChange={(value) => setFormData({...formData, experienceLevel: value})}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select experience level" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="none">No experience required</SelectItem>
-            <SelectItem value="0-1">0-1 years</SelectItem>
-            <SelectItem value="1-3">1-3 years</SelectItem>
-            <SelectItem value="3-5">3-5 years</SelectItem>
-            <SelectItem value="5+">5+ years</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
+const PrerequisitesStep = ({ formData, setFormData }) => {
+  const [prerequisiteInput, setPrerequisiteInput] = useState("");
 
-    <div className="space-y-4">
-      <Label>Prerequisites and Requirements</Label>
-      <div className="space-y-2">
-        <Input placeholder="Add a prerequisite (e.g., Basic computer skills)" />
-        <Button variant="outline" size="sm" className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Prerequisite
-        </Button>
+  const addPrerequisite = () => {
+    if (prerequisiteInput.trim()) {
+      const newPrerequisites = [...formData.prerequisites, prerequisiteInput.trim()];
+      setFormData({ ...formData, prerequisites: newPrerequisites });
+      setPrerequisiteInput("");
+    }
+  };
+
+  const removePrerequisite = (index) => {
+    const newPrerequisites = formData.prerequisites.filter((_, i) => i !== index);
+    setFormData({ ...formData, prerequisites: newPrerequisites });
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addPrerequisite();
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <div className="flex items-center space-x-2">
+          <Checkbox 
+            id="skillsAssessment" 
+            checked={formData.skillsAssessment}
+            onCheckedChange={(checked) => setFormData({...formData, skillsAssessment: checked})}
+          />
+          <Label htmlFor="skillsAssessment">Require skills assessment before enrollment</Label>
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="experienceLevel">Required Experience Level</Label>
+          <Select value={formData.experienceLevel} onValueChange={(value) => setFormData({...formData, experienceLevel: value})}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select experience level" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">No experience required</SelectItem>
+              <SelectItem value="0-1">0-1 years</SelectItem>
+              <SelectItem value="1-3">1-3 years</SelectItem>
+              <SelectItem value="3-5">3-5 years</SelectItem>
+              <SelectItem value="5+">5+ years</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <Label>Prerequisites and Requirements</Label>
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <Input 
+              placeholder="Add a prerequisite (e.g., Basic computer skills)" 
+              value={prerequisiteInput}
+              onChange={(e) => setPrerequisiteInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="flex-1"
+            />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2" 
+              onClick={addPrerequisite}
+              disabled={!prerequisiteInput.trim()}
+            >
+              <Plus className="h-4 w-4" />
+              Add Prerequisite
+            </Button>
+          </div>
+          
+          {formData.prerequisites.length > 0 && (
+            <div className="space-y-2 mt-4">
+              <Label className="text-sm font-medium">Added Prerequisites:</Label>
+              {formData.prerequisites.map((prerequisite, index) => (
+                <div key={index} className="flex items-center justify-between p-2 border rounded-md bg-muted/50">
+                  <span className="text-sm">{prerequisite}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => removePrerequisite(index)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const CourseSelectionStep = ({ formData, setFormData, availableCourses }) => {
   const [selectedCourses, setSelectedCourses] = useState([]);
