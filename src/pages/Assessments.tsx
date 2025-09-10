@@ -4,8 +4,53 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Clock, Users, FileText, BarChart, Target } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 const Assessments = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const handleCreateAssessment = () => {
+    toast({
+      title: "Create Assessment",
+      description: "Opening assessment creation wizard...",
+    });
+    // Navigate to create assessment page when implemented
+    console.log("Navigate to create assessment");
+  };
+
+  const handleViewResults = (assessmentId: number, assessmentTitle: string) => {
+    toast({
+      title: "View Results",
+      description: `Loading results for ${assessmentTitle}...`,
+    });
+    console.log("View results for assessment:", assessmentId);
+  };
+
+  const handleEditAssessment = (assessmentId: number, assessmentTitle: string) => {
+    toast({
+      title: "Edit Assessment",
+      description: `Opening editor for ${assessmentTitle}...`,
+    });
+    console.log("Edit assessment:", assessmentId);
+  };
+
+  const handleManageQuestionBank = () => {
+    toast({
+      title: "Question Bank",
+      description: "Opening question bank management...",
+    });
+    console.log("Navigate to question bank");
+  };
+
+  const handleViewAnalytics = () => {
+    toast({
+      title: "Analytics Dashboard",
+      description: "Loading detailed analytics...",
+    });
+    console.log("Navigate to analytics dashboard");
+  };
+
   const assessments = [
     {
       id: 1,
@@ -67,7 +112,7 @@ const Assessments = () => {
           <h1 className="text-2xl font-bold">Assessment Management</h1>
           <p className="text-muted-foreground">Create and manage assessments, quizzes, and exams</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={handleCreateAssessment}>
           <Plus className="h-4 w-4" />
           Create Assessment
         </Button>
@@ -94,8 +139,19 @@ const Assessments = () => {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">View Results</Button>
-                  <Button size="sm">Edit</Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleViewResults(assessment.id, assessment.title)}
+                  >
+                    View Results
+                  </Button>
+                  <Button 
+                    size="sm"
+                    onClick={() => handleEditAssessment(assessment.id, assessment.title)}
+                  >
+                    Edit
+                  </Button>
                 </div>
               </div>
             </CardHeader>
@@ -168,7 +224,7 @@ const Assessments = () => {
               <span>Fill in the Blank</span>
               <Badge variant="outline">67</Badge>
             </div>
-            <Button variant="outline" className="w-full mt-4">
+            <Button variant="outline" className="w-full mt-4" onClick={handleManageQuestionBank}>
               Manage Question Bank
             </Button>
           </CardContent>
@@ -197,7 +253,7 @@ const Assessments = () => {
                 {Math.round(assessments.reduce((sum, a) => sum + a.avgScore, 0) / assessments.length)}%
               </Badge>
             </div>
-            <Button variant="outline" className="w-full mt-4">
+            <Button variant="outline" className="w-full mt-4" onClick={handleViewAnalytics}>
               View Detailed Analytics
             </Button>
           </CardContent>
