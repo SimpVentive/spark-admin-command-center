@@ -50,3 +50,12 @@ verify_jwt = false
 
 [functions.scorm-package-creator]
 verify_jwt = false
+
+[functions.learning-path-recommendations]
+verify_jwt = true
+
+[functions.recommendation-feedback]
+verify_jwt = true
+
+[functions.similar-users]
+verify_jwt = true
