@@ -81,6 +81,10 @@ import Auth from "./pages/auth/Auth";
 // AI pages
 import AIRecommendationsPage from "./pages/AIRecommendations";
 
+// Settings and Security pages
+import Security from "./pages/Security";
+import Settings from "./pages/Settings";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -156,6 +160,8 @@ const App = () => (
                   <Route path="/assessments/questions" element={<QuestionBank />} />
                   <Route path="/assessments/results" element={<AssessmentResults />} />
                   <Route path="/ai-recommendations" element={<AIRecommendationsPage />} />
+                  <Route path="/security" element={<Security />} />
+                  <Route path="/settings" element={<Settings />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
