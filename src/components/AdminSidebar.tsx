@@ -206,7 +206,7 @@ export function AdminSidebar() {
 
   return (
     <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
-      <SidebarHeader className="border-b border-border p-4">
+      <SidebarHeader className="border-b border-border p-4 flex-shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Shield className="w-4 h-4 text-primary-foreground" />
@@ -220,7 +220,7 @@ export function AdminSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="p-2 overflow-y-auto">
+      <SidebarContent className="p-2 overflow-y-auto flex-1 min-h-0">
         <SidebarGroup>
           <SidebarGroupLabel className={isCollapsed ? "sr-only" : ""}>
             Navigation
