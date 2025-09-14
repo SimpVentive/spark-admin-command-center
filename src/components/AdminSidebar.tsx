@@ -49,6 +49,11 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
   { 
+    title: "AI Recommendations", 
+    icon: Zap,
+    url: "/ai-recommendations"
+  },
+  { 
     title: "Organization", 
     icon: Building2,
     subItems: [
@@ -109,11 +114,6 @@ const navigationItems = [
       { title: "Analytics Dashboard", url: "/learning-paths/analytics" },
       { title: "Status Tracking", url: "/learning-paths/status" }
     ]
-  },
-  { 
-    title: "AI Recommendations", 
-    icon: Zap,
-    url: "/ai-recommendations"
   },
   { 
     title: "Assessments", 
