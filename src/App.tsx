@@ -80,6 +80,9 @@ import Auth from "./pages/auth/Auth";
 // AI pages
 import AIRecommendationsPage from "./pages/AIRecommendations";
 
+// Workflow Guide
+import WorkflowGuide from "./pages/WorkflowGuide";
+
 // Settings and Security pages
 import Security from "./pages/Security";
 import Settings from "./pages/Settings";
@@ -100,6 +103,7 @@ const App = () => (
               <main className="flex-1 overflow-auto p-6">
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/workflow-guide" element={<WorkflowGuide />} />
                   <Route path="/users" element={<Users />} />
                   <Route path="/users/add-employee" element={<AddEmployee />} />
                   <Route path="/users/bulk-enrollment" element={<BulkEnrollment />} />
