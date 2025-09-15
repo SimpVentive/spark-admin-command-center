@@ -32,134 +32,182 @@ const Reservations = () => {
   };
 
   const activeReservations = reservations.filter(r => r.status === 'active');
+  const historyReservations = reservations.filter(r => r.status !== 'active');
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-2 text-muted-foreground">Loading reservations...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Reservations</h1>
-        <p className="text-muted-foreground">Manage book reservations and waiting lists</p>
+        <h1 className="text-2xl font-bold">Book Reservations</h1>
+        <p className="text-muted-foreground">Manage your book reservations</p>
       </div>
 
+      {/* Active Reservations */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Active Reservations ({state.reservations.length})
+            Active Reservations ({activeReservations.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {state.reservations.length === 0 ? (
+          {activeReservations.length === 0 ? (
             <div className="text-center py-8">
-              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">No active reservations.</p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Book reservations will appear here when users reserve unavailable books.
+              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">No Active Reservations</h3>
+              <p className="text-muted-foreground">
+                You don't have any active book reservations at the moment.
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4 font-medium">Book Title</th>
-                    <th className="text-left py-3 px-4 font-medium">Reserved By</th>
-                    <th className="text-left py-3 px-4 font-medium">Reservation Date</th>
-                    <th className="text-left py-3 px-4 font-medium">Status</th>
-                    <th className="text-left py-3 px-4 font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {state.reservations.map((reservation) => (
-                    <tr key={reservation.id} className="border-b hover:bg-accent/50 transition-colors">
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <BookOpen className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">{reservation.bookTitle}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          <span>{reservation.reservedBy}</span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-4 text-muted-foreground">
-                        {new Date(reservation.reservationDate).toLocaleDateString()}
-                      </td>
-                      <td className="py-3 px-4">
-                        <Badge className="bg-orange-100 text-orange-800">
-                          Pending
-                        </Badge>
-                      </td>
-                      <td className="py-3 px-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCancelReservation(reservation.id, reservation.bookTitle)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Cancel
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="space-y-4">
+              {activeReservations.map((reservation) => (
+                <div key={reservation.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <BookOpen className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <h4 className="font-medium">
+                          {reservation.library_books?.title || 'Unknown Book'}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          by {reservation.library_books?.author || 'Unknown Author'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <User className="h-3 w-3" />
+                        <span>{reservation.profiles?.full_name || reservation.profiles?.email || 'Unknown User'}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        <span>Reserved: {new Date(reservation.reservation_date).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3" />
+                        <span>Expires: {new Date(reservation.expiry_date).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {getStatusBadge(reservation.status)}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleCancelReservation(reservation.id)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Reservation Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Reservation History */}
+      {historyReservations.length > 0 && (
         <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-primary">{state.reservations.length}</div>
-            <div className="text-sm text-muted-foreground">Active Reservations</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-orange-600">
-              {state.reservations.filter(r => {
-                const reservationDate = new Date(r.reservationDate);
-                const today = new Date();
-                const diffTime = today.getTime() - reservationDate.getTime();
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                return diffDays > 7;
-              }).length}
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Reservation History ({historyReservations.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {historyReservations.slice(0, 10).map((reservation) => (
+                <div key={reservation.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-1">
+                      <BookOpen className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <h5 className="font-medium text-sm">
+                          {reservation.library_books?.title || 'Unknown Book'}
+                        </h5>
+                        <p className="text-xs text-muted-foreground">
+                          by {reservation.library_books?.author || 'Unknown Author'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>Reserved: {new Date(reservation.reservation_date).toLocaleDateString()}</span>
+                      <span>User: {reservation.profiles?.full_name || reservation.profiles?.email || 'Unknown User'}</span>
+                    </div>
+                  </div>
+                  <div>
+                    {getStatusBadge(reservation.status)}
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="text-sm text-muted-foreground">Overdue ({'>'}7 days)</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-green-600">
-              {new Set(state.reservations.map(r => r.reservedBy)).size}
-            </div>
-            <div className="text-sm text-muted-foreground">Unique Users</div>
-          </CardContent>
-        </Card>
-      </div>
+      )}
 
-      {/* Recent Activity */}
+      {/* Statistics */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Reservation Statistics</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-primary">{reservations.length}</div>
+              <div className="text-sm text-muted-foreground">Total Reservations</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">
+                {reservations.filter(r => r.status === 'active').length}
+              </div>
+              <div className="text-sm text-muted-foreground">Active</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">
+                {reservations.filter(r => r.status === 'fulfilled').length}
+              </div>
+              <div className="text-sm text-muted-foreground">Fulfilled</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-600">
+                {reservations.filter(r => r.status === 'expired').length}
+              </div>
+              <div className="text-sm text-muted-foreground">Expired</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Guidelines */}
       <Card>
         <CardHeader>
           <CardTitle>Reservation Guidelines</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <p className="text-sm text-muted-foreground">
-            • Reservations are automatically created when users try to borrow unavailable books
+            • Reservations are automatically created when you try to reserve available books
           </p>
           <p className="text-sm text-muted-foreground">
-            • Users are notified when their reserved book becomes available
+            • You will be notified when your reserved book becomes available for checkout
           </p>
           <p className="text-sm text-muted-foreground">
             • Reservations expire after 7 days if not claimed
           </p>
           <p className="text-sm text-muted-foreground">
-            • Users can have up to 3 active reservations at a time
+            • You can have up to 3 active reservations at a time
           </p>
         </CardContent>
       </Card>

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from "lucide-react";
-import { useLibrary } from "@/contexts/LibraryContext";
+import { useLibrary } from "@/hooks/useLibrary";
 import { useToast } from "@/hooks/use-toast";
 
 interface AddResourceDialogProps {
@@ -14,20 +14,21 @@ interface AddResourceDialogProps {
 }
 
 const AddResourceDialog: React.FC<AddResourceDialogProps> = ({ trigger }) => {
-  const { addResource } = useLibrary();
+  const { addResource, loading } = useLibrary();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    type: '' as 'eBook' | 'Article' | 'Video' | 'Document' | '',
+    resource_type: '' as 'eBook' | 'Article' | 'Video' | 'Document' | 'Audio' | 'Software' | '',
     url: '',
+    tags: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.title || !formData.description || !formData.type) {
+    if (!formData.title || !formData.description || !formData.resource_type) {
       toast({
         title: "Error",
         description: "Please fill in all required fields.",
@@ -36,26 +37,28 @@ const AddResourceDialog: React.FC<AddResourceDialogProps> = ({ trigger }) => {
       return;
     }
 
-    addResource({
-      title: formData.title,
-      description: formData.description,
-      type: formData.type,
-      url: formData.url,
-    });
+    try {
+      await addResource({
+        title: formData.title,
+        description: formData.description,
+        resource_type: formData.resource_type,
+        url: formData.url || undefined,
+        tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean) : [],
+        is_active: true,
+      });
 
-    toast({
-      title: "Success",
-      description: "Resource added successfully!",
-    });
-
-    // Reset form and close dialog
-    setFormData({
-      title: '',
-      description: '',
-      type: '',
-      url: '',
-    });
-    setOpen(false);
+      // Reset form and close dialog
+      setFormData({
+        title: '',
+        description: '',
+        resource_type: '',
+        url: '',
+        tags: '',
+      });
+      setOpen(false);
+    } catch (error) {
+      // Error is handled in the addResource function
+    }
   };
 
   return (
@@ -85,10 +88,10 @@ const AddResourceDialog: React.FC<AddResourceDialogProps> = ({ trigger }) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="type">Type *</Label>
+            <Label htmlFor="resource_type">Type *</Label>
             <Select
-              value={formData.type}
-              onValueChange={(value) => setFormData({ ...formData, type: value as 'eBook' | 'Article' | 'Video' | 'Document' })}
+              value={formData.resource_type}
+              onValueChange={(value) => setFormData({ ...formData, resource_type: value as any })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select resource type" />
@@ -98,6 +101,8 @@ const AddResourceDialog: React.FC<AddResourceDialogProps> = ({ trigger }) => {
                 <SelectItem value="Article">Article</SelectItem>
                 <SelectItem value="Video">Video</SelectItem>
                 <SelectItem value="Document">Document</SelectItem>
+                <SelectItem value="Audio">Audio</SelectItem>
+                <SelectItem value="Software">Software</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -124,12 +129,25 @@ const AddResourceDialog: React.FC<AddResourceDialogProps> = ({ trigger }) => {
             />
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="tags">Tags (Optional)</Label>
+            <Input
+              id="tags"
+              placeholder="Enter tags separated by commas"
+              value={formData.tags}
+              onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+            />
+            <p className="text-xs text-muted-foreground">
+              Example: leadership, management, skills
+            </p>
+          </div>
+
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit">
-              Add Resource
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Adding...' : 'Add Resource'}
             </Button>
           </div>
         </form>
