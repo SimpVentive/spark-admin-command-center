@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -7,10 +9,28 @@ import {
   Users, Building2, Workflow, Target, GraduationCap, BookOpen, 
   FileText, Video, DollarSign, Library, Globe, Monitor, Shield, 
   Settings, ArrowRight, CheckCircle, Clock, AlertTriangle,
-  BarChart3, Zap
+  BarChart3, Zap, ChevronDown, ChevronRight
 } from "lucide-react";
 
 const WorkflowGuide = () => {
+  const [expandedWorkflows, setExpandedWorkflows] = useState<string[]>([]);
+  const [expandedSteps, setExpandedSteps] = useState<string[]>([]);
+
+  const toggleWorkflow = (workflowId: string) => {
+    setExpandedWorkflows(prev => 
+      prev.includes(workflowId) 
+        ? prev.filter(id => id !== workflowId)
+        : [...prev, workflowId]
+    );
+  };
+
+  const toggleStep = (stepId: string) => {
+    setExpandedSteps(prev => 
+      prev.includes(stepId) 
+        ? prev.filter(id => id !== stepId)
+        : [...prev, stepId]
+    );
+  };
   const workflows = [
     {
       id: "setup",
@@ -489,18 +509,58 @@ const WorkflowGuide = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {workflow.steps.map((step, index) => (
-                      <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                        <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
-                          {index + 1}
+                    {workflow.steps.map((step, index) => {
+                      const stepId = `${workflow.id}-step-${index}`;
+                      const isExpanded = expandedSteps.includes(stepId);
+                      
+                      return (
+                        <div key={index} className="border rounded-lg">
+                          <button 
+                            onClick={() => toggleStep(stepId)}
+                            className="w-full flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                          >
+                            <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center font-medium">
+                              {index + 1}
+                            </div>
+                            <div className="flex-1 text-left">
+                              <h4 className="font-medium">{step.title}</h4>
+                              <p className="text-sm text-muted-foreground">{step.description}</p>
+                            </div>
+                            {isExpanded ? (
+                              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                            )}
+                          </button>
+                          
+                          {isExpanded && (
+                            <div className="p-4 border-t bg-background">
+                              <div className="space-y-2">
+                                <h5 className="font-medium text-sm">Key Actions:</h5>
+                                <ul className="space-y-1">
+                                  {step.details.map((detail, detailIndex) => (
+                                    <li key={detailIndex} className="text-sm text-muted-foreground flex items-start gap-2">
+                                      <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
+                                      {detail}
+                                    </li>
+                                  ))}
+                                </ul>
+                                {step.path && (
+                                  <div className="mt-3 pt-3 border-t">
+                                    <Button variant="outline" size="sm" asChild>
+                                      <Link to={step.path} className="gap-2">
+                                        <ArrowRight className="w-3 h-3" />
+                                        Go to Module
+                                      </Link>
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <div className="flex-1">
-                          <h4 className="font-medium">{step.title}</h4>
-                          <p className="text-sm text-muted-foreground">{step.description}</p>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
@@ -534,8 +594,10 @@ const WorkflowGuide = () => {
                           <div>
                             <h3 className="text-lg font-semibold">{step.title}</h3>
                             <p className="text-muted-foreground">{step.description}</p>
-                            <Button variant="outline" size="sm" className="mt-2">
-                              Go to {step.path}
+                            <Button variant="outline" size="sm" asChild>
+                              <Link to={step.path}>
+                                Go to Module
+                              </Link>
                             </Button>
                           </div>
                           
