@@ -24,6 +24,7 @@ import {
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
   { title: "Workflow Guide", url: "/workflow-guide", icon: Workflow },
+  { title: "User Documentation", url: "/user-documentation", icon: FileText },
   { title: "AI Recommendations", icon: Zap, url: "/ai-recommendations" },
   { 
     title: "Organization", 

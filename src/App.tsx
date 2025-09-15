@@ -82,6 +82,7 @@ import AIRecommendationsPage from "./pages/AIRecommendations";
 
 // Workflow Guide
 import WorkflowGuide from "./pages/WorkflowGuide";
+import UserDocumentation from "./pages/UserDocumentation";
 
 // Settings and Security pages
 import Security from "./pages/Security";
@@ -103,7 +104,8 @@ const App = () => (
               <main className="flex-1 overflow-auto p-6">
                 <Routes>
                   <Route path="/" element={<Index />} />
-                  <Route path="/workflow-guide" element={<WorkflowGuide />} />
+          <Route path="/workflow-guide" element={<WorkflowGuide />} />
+          <Route path="/user-documentation" element={<UserDocumentation />} />
                   <Route path="/users" element={<Users />} />
                   <Route path="/users/add-employee" element={<AddEmployee />} />
                   <Route path="/users/bulk-enrollment" element={<BulkEnrollment />} />
