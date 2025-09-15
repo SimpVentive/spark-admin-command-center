@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -7,11 +6,6 @@ import {
   BarChart3,
   Settings,
   Shield,
-  Award,
-  Calendar,
-  Bell,
-  Menu,
-  X,
   Building2,
   GraduationCap,
   FileText,
@@ -19,32 +13,17 @@ import {
   DollarSign,
   Library,
   Globe,
-  Lock,
   Monitor,
   ChevronDown,
   ChevronRight,
   Workflow,
-  UserCog,
-  CheckCircle,
-  Brain,
-  ShieldCheck,
   Target,
   Zap
 } from "lucide-react";
 
-import {
-  Collapsible, 
-  CollapsibleContent, 
-  CollapsibleTrigger
-} from "@/components/ui/collapsible";
-
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
-  { 
-    title: "AI Recommendations", 
-    icon: Zap,
-    url: "/ai-recommendations"
-  },
+  { title: "AI Recommendations", icon: Zap, url: "/ai-recommendations" },
   { 
     title: "Organization", 
     icon: Building2,
@@ -69,11 +48,11 @@ const navigationItems = [
     title: "Processes", 
     icon: Workflow,
     subItems: [
-      { title: "Workflow Management", url: "/processes/workflow", icon: Workflow },
-      { title: "User and Role Management", url: "/processes/user-roles", icon: UserCog },
-      { title: "Approval Framework", url: "/processes/approval", icon: CheckCircle },
-      { title: "Business Rules", url: "/processes/business-rules", icon: Brain },
-      { title: "Security & Access Control", url: "/processes/security", icon: ShieldCheck }
+      { title: "Workflow Management", url: "/processes/workflow" },
+      { title: "User and Role Management", url: "/processes/user-roles" },
+      { title: "Approval Framework", url: "/processes/approval" },
+      { title: "Business Rules", url: "/processes/business-rules" },
+      { title: "Security & Access Control", url: "/processes/security" }
     ]
   },
   { 
@@ -91,8 +70,7 @@ const navigationItems = [
       { title: "All Programs", url: "/programs" },
       { title: "Create Program", url: "/programs/create" },
       { title: "Program Sessions", url: "/programs/sessions" },
-      { title: "Trainers", url: "/programs/trainers" },
-      { title: "Venues", url: "/programs/venues" }
+      { title: "Trainers", url: "/programs/trainers" }
     ]
   },
   { 
@@ -175,10 +153,8 @@ export function AdminSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const [openGroups, setOpenGroups] = useState<string[]>([]);
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const isActive = (path: string) => currentPath === path;
-  const isGroupActive = (subItems: any[]) => subItems.some(item => currentPath.startsWith(item.url));
   
   const toggleGroup = (title: string) => {
     setOpenGroups(prev => 
@@ -188,84 +164,74 @@ export function AdminSidebar() {
     );
   };
 
-  const getNavClass = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors w-full text-left ${
-      isActive 
-        ? "bg-primary text-primary-foreground font-medium" 
-        : "hover:bg-accent hover:text-accent-foreground"
-    }`;
-
   return (
-    <div className={`${isCollapsed ? "w-16" : "w-64"} h-screen bg-background border-r border-border flex flex-col`}>
+    <div className="w-64 h-screen bg-background border-r border-border flex flex-col">
       {/* Header */}
-      <div className="border-b border-border p-4 flex-shrink-0">
+      <div className="p-4 border-b border-border flex-shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Shield className="w-4 h-4 text-primary-foreground" />
           </div>
-          {!isCollapsed && (
-            <div>
-              <h1 className="font-bold text-lg">LMSAdmin</h1>
-              <p className="text-xs text-muted-foreground">Skill Spark Manager</p>
-            </div>
-          )}
+          <div>
+            <h1 className="font-bold text-lg">LMSAdmin</h1>
+            <p className="text-xs text-muted-foreground">Skill Spark Manager</p>
+          </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto p-2">
-        <div className="space-y-1">
-          {navigationItems.map((item) => (
-            <div key={item.title}>
+      {/* Navigation - simplified scrolling */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-2 space-y-1">
+          {navigationItems.map((item, index) => (
+            <div key={`${item.title}-${index}`} className="w-full">
               {item.subItems ? (
-                <Collapsible 
-                  open={openGroups.includes(item.title)} 
-                  onOpenChange={() => toggleGroup(item.title)}
-                >
-                  <CollapsibleTrigger asChild>
-                    <button 
-                      className={`w-full justify-between hover:bg-accent hover:text-accent-foreground flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isGroupActive(item.subItems) ? 'bg-accent' : ''}`}
-                      title={isCollapsed ? item.title : undefined}
-                    >
-                      <div className="flex items-center gap-3">
-                        <item.icon className="w-4 h-4 flex-shrink-0" />
-                        {!isCollapsed && <span>{item.title}</span>}
-                      </div>
-                      {!isCollapsed && (
-                        <div className="flex-shrink-0">
-                          {openGroups.includes(item.title) ? 
-                            <ChevronDown className="w-4 h-4" /> : 
-                            <ChevronRight className="w-4 h-4" />
+                <div>
+                  <button 
+                    onClick={() => toggleGroup(item.title)}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <item.icon className="w-4 h-4" />
+                      <span className="text-sm font-medium">{item.title}</span>
+                    </div>
+                    {openGroups.includes(item.title) ? 
+                      <ChevronDown className="w-4 h-4" /> : 
+                      <ChevronRight className="w-4 h-4" />
+                    }
+                  </button>
+                  {openGroups.includes(item.title) && (
+                    <div className="ml-6 mt-1 space-y-1 border-l border-border pl-4">
+                      {item.subItems.map((subItem, subIndex) => (
+                        <NavLink 
+                          key={`${subItem.url}-${subIndex}`}
+                          to={subItem.url} 
+                          className={({ isActive }) => 
+                            `flex items-center px-3 py-2 rounded-lg text-sm transition-colors ${
+                              isActive 
+                                ? "bg-primary text-primary-foreground font-medium" 
+                                : "hover:bg-accent hover:text-accent-foreground"
+                            }`
                           }
-                        </div>
-                      )}
-                    </button>
-                  </CollapsibleTrigger>
-                  {!isCollapsed && (
-                    <CollapsibleContent className="ml-6 mt-1 space-y-1 border-l border-border pl-4">
-                      {item.subItems.map(subItem => (
-                        <div key={subItem.url}>
-                          <NavLink 
-                            to={subItem.url} 
-                            end 
-                            className={getNavClass}
-                          >
-                            <span className="text-sm">{subItem.title}</span>
-                          </NavLink>
-                        </div>
+                        >
+                          {subItem.title}
+                        </NavLink>
                       ))}
-                    </CollapsibleContent>
+                    </div>
                   )}
-                </Collapsible>
+                </div>
               ) : item.url ? (
                 <NavLink 
                   to={item.url} 
-                  end 
-                  className={getNavClass}
-                  title={isCollapsed ? item.title : undefined}
+                  className={({ isActive }) => 
+                    `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${
+                      isActive 
+                        ? "bg-primary text-primary-foreground" 
+                        : "hover:bg-accent hover:text-accent-foreground"
+                    }`
+                  }
                 >
-                  <item.icon className="w-4 h-4 flex-shrink-0" />
-                  {!isCollapsed && <span>{item.title}</span>}
+                  <item.icon className="w-4 h-4" />
+                  {item.title}
                 </NavLink>
               ) : null}
             </div>
