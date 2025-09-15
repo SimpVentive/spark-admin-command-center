@@ -3,21 +3,35 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, BookOpen, Trash2 } from "lucide-react";
-import { useLibrary } from "@/contexts/LibraryContext";
-import { useToast } from "@/hooks/use-toast";
+import { useLibrary } from "@/hooks/useLibrary";
 
 const Reservations = () => {
-  const { state, cancelReservation } = useLibrary();
-  const { toast } = useToast();
+  const { reservations, loading, cancelReservation } = useLibrary();
 
-  const handleCancelReservation = (id: string, bookTitle: string) => {
-    cancelReservation(id);
-    console.log('Reservation cancelled:', { id, bookTitle, timestamp: new Date().toISOString() });
-    toast({
-      title: "Reservation Cancelled",
-      description: `Reservation for "${bookTitle}" has been cancelled successfully.`,
-    });
+  const handleCancelReservation = async (reservationId: string) => {
+    try {
+      await cancelReservation(reservationId);
+    } catch (error) {
+      // Error is handled in the hook
+    }
   };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <Badge className="bg-green-100 text-green-800">Active</Badge>;
+      case 'fulfilled':
+        return <Badge className="bg-blue-100 text-blue-800">Fulfilled</Badge>;
+      case 'expired':
+        return <Badge className="bg-red-100 text-red-800">Expired</Badge>;
+      case 'cancelled':
+        return <Badge className="bg-gray-100 text-gray-800">Cancelled</Badge>;
+      default:
+        return <Badge variant="secondary">{status}</Badge>;
+    }
+  };
+
+  const activeReservations = reservations.filter(r => r.status === 'active');
 
   return (
     <div className="space-y-6">

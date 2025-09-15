@@ -120,7 +120,7 @@ const navigationItems = [
     icon: Library,
     subItems: [
       { title: "Resources", url: "/library" },
-      { title: "Check In/Out", url: "/library/checkout" },
+      { title: "Check In/Out", url: "/library/check-in-out" },
       { title: "Reservations", url: "/library/reservations" },
       { title: "Catalog", url: "/library/catalog" }
     ]

@@ -547,6 +547,198 @@ export type Database = {
         }
         Relationships: []
       }
+      library_books: {
+        Row: {
+          author: string
+          availability: string
+          category: string | null
+          condition: string | null
+          created_at: string
+          id: string
+          isbn: string | null
+          location: string | null
+          notes: string | null
+          purchase_date: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author: string
+          availability?: string
+          category?: string | null
+          condition?: string | null
+          created_at?: string
+          id?: string
+          isbn?: string | null
+          location?: string | null
+          notes?: string | null
+          purchase_date?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          availability?: string
+          category?: string | null
+          condition?: string | null
+          created_at?: string
+          id?: string
+          isbn?: string | null
+          location?: string | null
+          notes?: string | null
+          purchase_date?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      library_checkout_records: {
+        Row: {
+          book_id: string
+          checkout_date: string
+          created_at: string
+          due_date: string | null
+          id: string
+          notes: string | null
+          renewal_count: number | null
+          return_date: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          checkout_date?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          renewal_count?: number | null
+          return_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          checkout_date?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          notes?: string | null
+          renewal_count?: number | null
+          return_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_checkout_records_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "library_books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "library_checkout_records_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_reservations: {
+        Row: {
+          book_id: string
+          created_at: string
+          expiry_date: string
+          id: string
+          notification_sent: boolean | null
+          reservation_date: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          book_id: string
+          created_at?: string
+          expiry_date?: string
+          id?: string
+          notification_sent?: boolean | null
+          reservation_date?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          book_id?: string
+          created_at?: string
+          expiry_date?: string
+          id?: string
+          notification_sent?: boolean | null
+          reservation_date?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_reservations_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "library_books"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "library_reservations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_resources: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_path: string | null
+          id: string
+          is_active: boolean
+          resource_type: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_path?: string | null
+          id?: string
+          is_active?: boolean
+          resource_type: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_path?: string | null
+          id?: string
+          is_active?: boolean
+          resource_type?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       lti_content_items: {
         Row: {
           created_at: string
