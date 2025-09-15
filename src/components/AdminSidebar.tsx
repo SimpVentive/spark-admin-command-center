@@ -33,18 +33,10 @@ import {
 } from "lucide-react";
 
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarHeader,
-  useSidebar,
-} from "@/components/ui/sidebar";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+  Collapsible, 
+  CollapsibleContent, 
+  CollapsibleTrigger
+} from "@/components/ui/collapsible";
 
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
@@ -180,11 +172,10 @@ const navigationItems = [
 ];
 
 export function AdminSidebar() {
-  const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
-  const isCollapsed = state === "collapsed";
   const [openGroups, setOpenGroups] = useState<string[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const isActive = (path: string) => currentPath === path;
   const isGroupActive = (subItems: any[]) => subItems.some(item => currentPath.startsWith(item.url));
@@ -205,8 +196,9 @@ export function AdminSidebar() {
     }`;
 
   return (
-    <Sidebar className={isCollapsed ? "w-16" : "w-64"} collapsible="icon">
-      <SidebarHeader className="border-b border-border p-4 flex-shrink-0">
+    <div className={`${isCollapsed ? "w-16" : "w-64"} h-screen bg-background border-r border-border flex flex-col`}>
+      {/* Header */}
+      <div className="border-b border-border p-4 flex-shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
             <Shield className="w-4 h-4 text-primary-foreground" />
@@ -218,74 +210,69 @@ export function AdminSidebar() {
             </div>
           )}
         </div>
-      </SidebarHeader>
+      </div>
 
-      <SidebarContent className="overflow-y-auto h-full p-2">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              {navigationItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  {item.subItems ? (
-                    <Collapsible 
-                      open={openGroups.includes(item.title)} 
-                      onOpenChange={() => toggleGroup(item.title)}
+      {/* Navigation */}
+      <div className="flex-1 overflow-y-auto p-2">
+        <div className="space-y-1">
+          {navigationItems.map((item) => (
+            <div key={item.title}>
+              {item.subItems ? (
+                <Collapsible 
+                  open={openGroups.includes(item.title)} 
+                  onOpenChange={() => toggleGroup(item.title)}
+                >
+                  <CollapsibleTrigger asChild>
+                    <button 
+                      className={`w-full justify-between hover:bg-accent hover:text-accent-foreground flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isGroupActive(item.subItems) ? 'bg-accent' : ''}`}
+                      title={isCollapsed ? item.title : undefined}
                     >
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton 
-                          className={`w-full justify-between hover:bg-accent hover:text-accent-foreground ${isGroupActive(item.subItems) ? 'bg-accent' : ''}`}
-                          title={isCollapsed ? item.title : undefined}
-                        >
-                          <div className="flex items-center gap-3">
-                            <item.icon className="w-4 h-4 flex-shrink-0" />
-                            {!isCollapsed && <span>{item.title}</span>}
-                          </div>
-                          {!isCollapsed && (
-                            <div className="flex-shrink-0">
-                              {openGroups.includes(item.title) ? 
-                                <ChevronDown className="w-4 h-4" /> : 
-                                <ChevronRight className="w-4 h-4" />
-                              }
-                            </div>
-                          )}
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      {!isCollapsed && (
-                        <CollapsibleContent className="ml-6 mt-1 space-y-1 border-l border-border pl-4">
-                          {item.subItems.map(subItem => (
-                            <div key={subItem.url}>
-                              <NavLink 
-                                to={subItem.url} 
-                                end 
-                                className={getNavClass}
-                              >
-                                <span className="text-sm">{subItem.title}</span>
-                              </NavLink>
-                            </div>
-                          ))}
-                        </CollapsibleContent>
-                      )}
-                    </Collapsible>
-                  ) : item.url ? (
-                    <SidebarMenuButton asChild>
-                      <NavLink 
-                        to={item.url} 
-                        end 
-                        className={getNavClass}
-                        title={isCollapsed ? item.title : undefined}
-                      >
+                      <div className="flex items-center gap-3">
                         <item.icon className="w-4 h-4 flex-shrink-0" />
                         {!isCollapsed && <span>{item.title}</span>}
-                      </NavLink>
-                    </SidebarMenuButton>
-                  ) : null}
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+                      </div>
+                      {!isCollapsed && (
+                        <div className="flex-shrink-0">
+                          {openGroups.includes(item.title) ? 
+                            <ChevronDown className="w-4 h-4" /> : 
+                            <ChevronRight className="w-4 h-4" />
+                          }
+                        </div>
+                      )}
+                    </button>
+                  </CollapsibleTrigger>
+                  {!isCollapsed && (
+                    <CollapsibleContent className="ml-6 mt-1 space-y-1 border-l border-border pl-4">
+                      {item.subItems.map(subItem => (
+                        <div key={subItem.url}>
+                          <NavLink 
+                            to={subItem.url} 
+                            end 
+                            className={getNavClass}
+                          >
+                            <span className="text-sm">{subItem.title}</span>
+                          </NavLink>
+                        </div>
+                      ))}
+                    </CollapsibleContent>
+                  )}
+                </Collapsible>
+              ) : item.url ? (
+                <NavLink 
+                  to={item.url} 
+                  end 
+                  className={getNavClass}
+                  title={isCollapsed ? item.title : undefined}
+                >
+                  <item.icon className="w-4 h-4 flex-shrink-0" />
+                  {!isCollapsed && <span>{item.title}</span>}
+                </NavLink>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
