@@ -24,7 +24,6 @@ import {
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
   { title: "Workflow Guide", url: "/workflow-guide", icon: Workflow },
-  { title: "User Documentation", url: "/user-documentation", icon: FileText },
   { title: "AI Recommendations", icon: Zap, url: "/ai-recommendations" },
   { 
     title: "Organization", 
@@ -149,6 +148,9 @@ const navigationItems = [
   },
   { title: "Security", url: "/security", icon: Shield },
   { title: "Settings", url: "/settings", icon: Settings },
+  // Separator for documentation
+  { separator: true },
+  { title: "User Documentation", url: "/user-documentation", icon: FileText },
 ];
 
 export function AdminSidebar() {
@@ -185,8 +187,12 @@ export function AdminSidebar() {
       <div className="flex-1 overflow-y-auto">
         <div className="p-2 space-y-1">
           {navigationItems.map((item, index) => (
-            <div key={`${item.title}-${index}`} className="w-full">
-              {item.subItems ? (
+            <div key={`${item.title || 'separator'}-${index}`} className="w-full">
+              {item.separator ? (
+                <div className="my-4">
+                  <div className="border-t border-border"></div>
+                </div>
+              ) : item.subItems ? (
                 <div>
                   <button 
                     onClick={() => toggleGroup(item.title)}
