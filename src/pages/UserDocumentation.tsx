@@ -1272,7 +1272,635 @@ const UserDocumentation: React.FC = () => {
           </div>
         </div>
 
-        {/* Final sections with contact and footer */}
+        {/* Chapter 6: Training Program Management */}
+        <div className="page-break mb-12">
+          <h1 className="text-3xl font-bold mb-6">6. Training Program Management</h1>
+          
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">6.1 Program Creation & Design</h2>
+            
+            <div className="space-y-6">
+              <div className="bg-green-50 border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Creating New Training Programs</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-medium mb-3">Basic Program Setup</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Program title and description</li>
+                      <li>• Learning objectives and outcomes</li>
+                      <li>• Target audience and prerequisites</li>
+                      <li>• Duration and format selection</li>
+                      <li>• Category and subcategory assignment</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-3">Advanced Configuration</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Multi-session program structure</li>
+                      <li>• Assessment integration</li>
+                      <li>• Certification requirements</li>
+                      <li>• Resource attachments</li>
+                      <li>• Enrollment limits and waitlists</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">6.2 Category Management</h2>
+            
+            <div className="space-y-4">
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold mb-2">Program Categories</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                    <span>Technical Skills</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span>Leadership</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                    <span>Compliance</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                    <span>Soft Skills</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">6.3 Trainer & Session Management</h2>
+            
+            <div className="space-y-4">
+              <div className="bg-blue-50 border rounded-lg p-4">
+                <h3 className="font-semibold mb-2">Trainer Assignment</h3>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>• Trainer profile management</li>
+                  <li>• Expertise and qualification tracking</li>
+                  <li>• Calendar integration and availability</li>
+                  <li>• Performance ratings and feedback</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chapter 7: Learning Paths */}
+        <div className="page-break mb-12">
+          <h1 className="text-3xl font-bold mb-6">7. Learning Paths</h1>
+          
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">7.1 Learning Path Design</h2>
+            
+            <div className="space-y-6">
+              <div className="bg-purple-50 border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Creating Structured Learning Journeys</h3>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
+                    <div>
+                      <h4 className="font-medium">Define Learning Objectives</h4>
+                      <p className="text-sm text-gray-600">Set clear, measurable goals for the learning path</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">2</div>
+                    <div>
+                      <h4 className="font-medium">Structure Content Sequence</h4>
+                      <p className="text-sm text-gray-600">Arrange content in logical progression with dependencies</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">3</div>
+                    <div>
+                      <h4 className="font-medium">Add Assessments & Milestones</h4>
+                      <p className="text-sm text-gray-600">Include checkpoints to validate learning progress</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">7.2 Content Management & Integration</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold mb-3">Content Types</h3>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>• Training programs and sessions</li>
+                  <li>• E-learning modules and videos</li>
+                  <li>• Documents and resources</li>
+                  <li>• External MOOC integrations</li>
+                  <li>• Assessments and evaluations</li>
+                </ul>
+              </div>
+              
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold mb-3">Management Features</h3>
+                <ul className="text-sm text-gray-700 space-y-1">
+                  <li>• Drag-and-drop path builder</li>
+                  <li>• Content versioning and updates</li>
+                  <li>• Prerequisite management</li>
+                  <li>• Adaptive path adjustments</li>
+                  <li>• Multi-format content support</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chapter 8: Assessment & Evaluation */}
+        <div className="page-break mb-12">
+          <h1 className="text-3xl font-bold mb-6">8. Assessment & Evaluation</h1>
+          
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">8.1 Assessment Creation</h2>
+            
+            <div className="space-y-6">
+              <div className="bg-orange-50 border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Building Comprehensive Assessments</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 border rounded-lg bg-white">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <h4 className="font-medium mb-2">Multiple Choice</h4>
+                    <p className="text-xs text-gray-600">Traditional single and multiple answer questions</p>
+                  </div>
+                  
+                  <div className="text-center p-4 border rounded-lg bg-white">
+                    <div className="w-12 h-12 bg-green-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                      <CheckCircle className="w-6 h-6 text-green-600" />
+                    </div>
+                    <h4 className="font-medium mb-2">True/False</h4>
+                    <p className="text-xs text-gray-600">Simple binary choice questions</p>
+                  </div>
+                  
+                  <div className="text-center p-4 border rounded-lg bg-white">
+                    <div className="w-12 h-12 bg-purple-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <h4 className="font-medium mb-2">Essay Questions</h4>
+                    <p className="text-xs text-gray-600">Open-ended text responses</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">8.2 Question Bank Management</h2>
+            
+            <div className="space-y-4">
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold mb-3">Question Organization</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    <li>• Categorization by subject/topic</li>
+                    <li>• Difficulty level tagging</li>
+                    <li>• Learning objective mapping</li>
+                    <li>• Question versioning and history</li>
+                  </ul>
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    <li>• Import/export functionality</li>
+                    <li>• Bulk question operations</li>
+                    <li>• Quality review workflows</li>
+                    <li>• Usage analytics and performance</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chapter 9: Content Management */}
+        <div className="page-break mb-12">
+          <h1 className="text-3xl font-bold mb-6">9. Content Management</h1>
+          
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">9.1 Content Library Organization</h2>
+            
+            <div className="space-y-6">
+              <div className="bg-indigo-50 border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Digital Asset Management</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-medium mb-3">Content Types Supported</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Video className="w-4 h-4 text-red-500" />
+                        <span className="text-sm">Video files (MP4, AVI, MOV)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-blue-500" />
+                        <span className="text-sm">Documents (PDF, DOC, PPT)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Monitor className="w-4 h-4 text-green-500" />
+                        <span className="text-sm">Interactive content (SCORM)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Globe className="w-4 h-4 text-purple-500" />
+                        <span className="text-sm">Web links and resources</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-3">Organization Features</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Hierarchical folder structure</li>
+                      <li>• Advanced tagging system</li>
+                      <li>• Search and filtering capabilities</li>
+                      <li>• Version control and history</li>
+                      <li>• Access permissions and sharing</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">9.2 Content Creation Tools</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="border rounded-lg p-4 text-center">
+                <div className="w-12 h-12 bg-blue-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                  <Video className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="font-semibold mb-2">Video Converter</h3>
+                <p className="text-xs text-gray-600">Convert various video formats for optimal delivery</p>
+              </div>
+              
+              <div className="border rounded-lg p-4 text-center">
+                <div className="w-12 h-12 bg-green-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="font-semibold mb-2">SCORM Package Creator</h3>
+                <p className="text-xs text-gray-600">Generate SCORM-compliant learning packages</p>
+              </div>
+              
+              <div className="border rounded-lg p-4 text-center">
+                <div className="w-12 h-12 bg-purple-100 rounded-full mx-auto mb-3 flex items-center justify-center">
+                  <Monitor className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="font-semibold mb-2">PPT to Video</h3>
+                <p className="text-xs text-gray-600">Convert presentations to video format automatically</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chapter 10: Digital Library */}
+        <div className="page-break mb-12">
+          <h1 className="text-3xl font-bold mb-6">10. Digital Library</h1>
+          
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">10.1 Resource Management</h2>
+            
+            <div className="space-y-6">
+              <div className="bg-green-50 border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Library Resource Types</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-medium mb-3">Physical Resources</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Books and reference materials</li>
+                      <li>• Training manuals and guides</li>
+                      <li>• Equipment and tools</li>
+                      <li>• Audio/video materials</li>
+                      <li>• Certification study materials</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-3">Digital Resources</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• E-books and digital publications</li>
+                      <li>• Online course subscriptions</li>
+                      <li>• Software licenses</li>
+                      <li>• Digital media collections</li>
+                      <li>• Research databases</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">10.2 Check-in/Check-out System</h2>
+            
+            <div className="space-y-4">
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold mb-3">Circulation Management</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">For Librarians:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Process check-outs and returns</li>
+                      <li>• Manage overdue items and fines</li>
+                      <li>• Track resource utilization</li>
+                      <li>• Handle reservations and holds</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">For Users:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Browse and search catalog</li>
+                      <li>• Make reservations online</li>
+                      <li>• View borrowing history</li>
+                      <li>• Receive automated reminders</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chapter 11: Advanced Features */}
+        <div className="page-break mb-12">
+          <h1 className="text-3xl font-bold mb-6">11. Advanced Features</h1>
+          
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">11.1 AI Recommendations</h2>
+            
+            <div className="space-y-6">
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Intelligent Learning Recommendations</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-medium mb-3">AI-Powered Features</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Personalized content suggestions</li>
+                      <li>• Learning path optimization</li>
+                      <li>• Similar user pattern analysis</li>
+                      <li>• Predictive learning outcomes</li>
+                      <li>• Adaptive content delivery</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-3">Data Sources</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• User learning history</li>
+                      <li>• Performance metrics</li>
+                      <li>• Skill gap analysis</li>
+                      <li>• Peer learning patterns</li>
+                      <li>• Business objectives alignment</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">11.2 MOOC Integration</h2>
+            
+            <div className="space-y-4">
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold mb-3">Supported Platforms</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="text-center p-3 bg-blue-50 rounded-lg">
+                    <div className="font-medium text-sm">Coursera</div>
+                    <div className="text-xs text-gray-600">Business</div>
+                  </div>
+                  <div className="text-center p-3 bg-green-50 rounded-lg">
+                    <div className="font-medium text-sm">edX</div>
+                    <div className="text-xs text-gray-600">for Business</div>
+                  </div>
+                  <div className="text-center p-3 bg-purple-50 rounded-lg">
+                    <div className="font-medium text-sm">Udemy</div>
+                    <div className="text-xs text-gray-600">Business</div>
+                  </div>
+                  <div className="text-center p-3 bg-orange-50 rounded-lg">
+                    <div className="font-medium text-sm">LinkedIn</div>
+                    <div className="text-xs text-gray-600">Learning</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">11.3 LTI Tools Integration</h2>
+            
+            <div className="space-y-4">
+              <div className="bg-gray-50 border rounded-lg p-4">
+                <h3 className="font-semibold mb-3">Learning Tools Interoperability</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Supported Tools:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Virtual classroom platforms</li>
+                      <li>• Assessment and quiz tools</li>
+                      <li>• Collaboration software</li>
+                      <li>• Content authoring tools</li>
+                      <li>• Analytics and reporting tools</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Features:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Single sign-on integration</li>
+                      <li>• Grade passback functionality</li>
+                      <li>• Seamless content embedding</li>
+                      <li>• User provisioning automation</li>
+                      <li>• Progress tracking sync</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chapter 12: Analytics & ROI */}
+        <div className="page-break mb-12">
+          <h1 className="text-3xl font-bold mb-6">12. Analytics & ROI</h1>
+          
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">12.1 Learning Analytics Dashboard</h2>
+            
+            <div className="space-y-6">
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 border rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4">Comprehensive Learning Insights</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-white border rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <BarChart3 className="w-5 h-5 text-blue-600" />
+                      <h4 className="font-medium">Engagement Metrics</h4>
+                    </div>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Course completion rates</li>
+                      <li>• Time spent learning</li>
+                      <li>• Resource utilization</li>
+                      <li>• Assessment scores</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-white border rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Target className="w-5 h-5 text-green-600" />
+                      <h4 className="font-medium">Performance Analysis</h4>
+                    </div>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Skill development progress</li>
+                      <li>• Learning objective achievement</li>
+                      <li>• Competency gap closure</li>
+                      <li>• Knowledge retention rates</li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-white border rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Users className="w-5 h-5 text-purple-600" />
+                      <h4 className="font-medium">Organizational Impact</h4>
+                    </div>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Department-wise analytics</li>
+                      <li>• Training effectiveness</li>
+                      <li>• Cost per learner</li>
+                      <li>• Business outcome correlation</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">12.2 ROI Computation Models</h2>
+            
+            <div className="space-y-4">
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold mb-3">Kirkpatrick Model Implementation</h3>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                  <div className="text-center p-3 border rounded">
+                    <div className="font-medium text-sm mb-1">Level 1</div>
+                    <div className="text-xs text-gray-600">Reaction</div>
+                  </div>
+                  <div className="text-center p-3 border rounded">
+                    <div className="font-medium text-sm mb-1">Level 2</div>
+                    <div className="text-xs text-gray-600">Learning</div>
+                  </div>
+                  <div className="text-center p-3 border rounded">
+                    <div className="font-medium text-sm mb-1">Level 3</div>
+                    <div className="text-xs text-gray-600">Behavior</div>
+                  </div>
+                  <div className="text-center p-3 border rounded">
+                    <div className="font-medium text-sm mb-1">Level 4</div>
+                    <div className="text-xs text-gray-600">Results</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chapter 13: System Administration */}
+        <div className="page-break mb-12">
+          <h1 className="text-3xl font-bold mb-6">13. System Administration</h1>
+          
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">13.1 Security & Access Control</h2>
+            
+            <div className="space-y-6">
+              <div className="bg-red-50 border-l-4 border-red-500 p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-red-600" />
+                  Security Framework
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-medium mb-3">Authentication Methods</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Multi-factor authentication (MFA)</li>
+                      <li>• Single Sign-On (SSO) integration</li>
+                      <li>• LDAP/Active Directory sync</li>
+                      <li>• Role-based access control (RBAC)</li>
+                      <li>• Session management and timeouts</li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-3">Data Protection</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Data encryption at rest and in transit</li>
+                      <li>• Regular security audits</li>
+                      <li>• Compliance monitoring (GDPR, SOC2)</li>
+                      <li>• Backup and disaster recovery</li>
+                      <li>• Access logging and monitoring</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">13.2 System Settings</h2>
+            
+            <div className="space-y-4">
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold mb-3">Configuration Options</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">General Settings:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Organization profile</li>
+                      <li>• Branding and themes</li>
+                      <li>• Language preferences</li>
+                      <li>• Time zone configuration</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Learning Settings:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Assessment policies</li>
+                      <li>• Certification rules</li>
+                      <li>• Enrollment workflows</li>
+                      <li>• Progress tracking</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Integration Settings:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• API configurations</li>
+                      <li>• External system connections</li>
+                      <li>• Notification preferences</li>
+                      <li>• Data synchronization</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chapter 14: Best Practices & Troubleshooting */}
         <div className="page-break mb-12">
           <h1 className="text-3xl font-bold mb-6">14. Best Practices & Troubleshooting</h1>
           
