@@ -110,8 +110,15 @@ const navigationItems = [
     title: "ROI & Analytics", 
     icon: DollarSign,
     subItems: [
+      { 
+        title: "Computation Models", 
+        url: "/roi/models",
+        subItems: [
+          { title: "Kirkpatrick Model", url: "/roi/models/kirkpatrick" },
+          { title: "Phillips Model", url: "/roi/models/phillips" }
+        ]
+      },
       { title: "ROI Dashboard", url: "/roi" },
-      { title: "Computation Models", url: "/roi/models" },
       { title: "Cost Analysis", url: "/roi/costs" },
       { title: "Impact Reports", url: "/roi/impact" }
     ]
@@ -210,19 +217,54 @@ export function AdminSidebar() {
                   {openGroups.includes(item.title) && (
                     <div className="ml-6 mt-1 space-y-1 border-l border-border pl-4">
                       {item.subItems.map((subItem, subIndex) => (
-                        <NavLink 
-                          key={`${subItem.url}-${subIndex}`}
-                          to={subItem.url} 
-                          className={({ isActive }) => 
-                            `flex items-center px-3 py-2 rounded-lg text-sm transition-colors ${
-                              isActive 
-                                ? "bg-primary text-primary-foreground font-medium" 
-                                : "hover:bg-accent hover:text-accent-foreground"
-                            }`
-                          }
-                        >
-                          {subItem.title}
-                        </NavLink>
+                        <div key={`${subItem.url || subItem.title}-${subIndex}`}>
+                          {subItem.subItems ? (
+                            <div>
+                              <button 
+                                onClick={() => toggleGroup(`${item.title}-${subItem.title}`)}
+                                className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors text-sm"
+                              >
+                                <span>{subItem.title}</span>
+                                {openGroups.includes(`${item.title}-${subItem.title}`) ? 
+                                  <ChevronDown className="w-3 h-3" /> : 
+                                  <ChevronRight className="w-3 h-3" />
+                                }
+                              </button>
+                              {openGroups.includes(`${item.title}-${subItem.title}`) && (
+                                <div className="ml-4 mt-1 space-y-1 border-l border-border pl-3">
+                                  {subItem.subItems.map((nestedItem, nestedIndex) => (
+                                    <NavLink 
+                                      key={`${nestedItem.url}-${nestedIndex}`}
+                                      to={nestedItem.url} 
+                                      className={({ isActive }) => 
+                                        `flex items-center px-3 py-1 rounded-lg text-xs transition-colors ${
+                                          isActive 
+                                            ? "bg-primary text-primary-foreground font-medium" 
+                                            : "hover:bg-accent hover:text-accent-foreground"
+                                        }`
+                                      }
+                                    >
+                                      {nestedItem.title}
+                                    </NavLink>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <NavLink 
+                              to={subItem.url} 
+                              className={({ isActive }) => 
+                                `flex items-center px-3 py-2 rounded-lg text-sm transition-colors ${
+                                  isActive 
+                                    ? "bg-primary text-primary-foreground font-medium" 
+                                    : "hover:bg-accent hover:text-accent-foreground"
+                                }`
+                              }
+                            >
+                              {subItem.title}
+                            </NavLink>
+                          )}
+                        </div>
                       ))}
                     </div>
                   )}
