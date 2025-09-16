@@ -84,6 +84,11 @@ import AIRecommendationsPage from "./pages/AIRecommendations";
 import WorkflowGuide from "./pages/WorkflowGuide";
 import UserDocumentation from "./pages/UserDocumentation";
 
+// ROI pages
+import ComputationModels from "./pages/roi/ComputationModels";
+import KirkpatrickModel from "./pages/roi/KirkpatrickModel";
+import PhillipsModel from "./pages/roi/PhillipsModel";
+
 // Settings and Security pages
 import Security from "./pages/Security";
 import Settings from "./pages/Settings";
@@ -164,6 +169,12 @@ const App = () => (
                   <Route path="/assessments/questions" element={<QuestionBank />} />
                   <Route path="/assessments/results" element={<AssessmentResults />} />
                   <Route path="/ai-recommendations" element={<AIRecommendationsPage />} />
+                  
+                  {/* ROI Routes */}
+                  <Route path="/roi/models" element={<ComputationModels />} />
+                  <Route path="/roi/models/kirkpatrick" element={<KirkpatrickModel />} />
+                  <Route path="/roi/models/phillips" element={<PhillipsModel />} />
+                  
                   <Route path="/security" element={<Security />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/auth" element={<Auth />} />
