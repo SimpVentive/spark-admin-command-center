@@ -88,6 +88,7 @@ import UserDocumentation from "./pages/UserDocumentation";
 import ComputationModels from "./pages/roi/ComputationModels";
 import KirkpatrickModel from "./pages/roi/KirkpatrickModel";
 import PhillipsModel from "./pages/roi/PhillipsModel";
+import KirkpatrickEvaluations from "./pages/roi/KirkpatrickEvaluations";
 
 // Settings and Security pages
 import Security from "./pages/Security";
@@ -174,6 +175,7 @@ const App = () => (
                   <Route path="/roi/models" element={<ComputationModels />} />
                   <Route path="/roi/models/kirkpatrick" element={<KirkpatrickModel />} />
                   <Route path="/roi/models/phillips" element={<PhillipsModel />} />
+                  <Route path="/roi/kirkpatrick-evaluations" element={<KirkpatrickEvaluations />} />
                   
                   <Route path="/security" element={<Security />} />
                   <Route path="/settings" element={<Settings />} />

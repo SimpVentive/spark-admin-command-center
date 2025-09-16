@@ -118,6 +118,7 @@ const navigationItems = [
           { title: "Phillips Model", url: "/roi/models/phillips" }
         ]
       },
+      { title: "Kirkpatrick Evaluations", url: "/roi/kirkpatrick-evaluations" },
       { title: "ROI Dashboard", url: "/roi" },
       { title: "Cost Analysis", url: "/roi/costs" },
       { title: "Impact Reports", url: "/roi/impact" }

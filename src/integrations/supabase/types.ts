@@ -416,6 +416,42 @@ export type Database = {
           },
         ]
       }
+      kirkpatrick_evaluations: {
+        Row: {
+          created_at: string
+          enrollment_id: string
+          evaluation_date: string
+          id: string
+          level: string
+          metric_name: string
+          notes: string | null
+          score: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enrollment_id: string
+          evaluation_date?: string
+          id?: string
+          level: string
+          metric_name: string
+          notes?: string | null
+          score: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enrollment_id?: string
+          evaluation_date?: string
+          id?: string
+          level?: string
+          metric_name?: string
+          notes?: string | null
+          score?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       learning_path_modules: {
         Row: {
           created_at: string
