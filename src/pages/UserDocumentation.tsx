@@ -16,7 +16,66 @@ const UserDocumentation: React.FC = () => {
   };
 
   const handleExportPDF = () => {
-    window.print();
+    // Add instructions for better PDF generation
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>L-Kurve Training Management System - User Documentation</title>
+            <style>
+              @media print {
+                * { 
+                  -webkit-print-color-adjust: exact !important;
+                  color-adjust: exact !important;
+                  print-color-adjust: exact !important;
+                }
+                html, body { 
+                  font-family: 'Times New Roman', serif !important;
+                  font-size: 12pt !important;
+                  line-height: 1.4 !important;
+                  color: #000 !important;
+                  background: white !important;
+                  margin: 0 !important;
+                  padding: 0 !important;
+                }
+                .new-page {
+                  page-break-before: always !important;
+                  break-before: page !important;
+                  min-height: 100vh !important;
+                }
+                h1 { 
+                  font-size: 18pt !important; 
+                  margin: 20pt 0 12pt 0 !important; 
+                  page-break-after: avoid !important;
+                }
+                h2 { 
+                  font-size: 16pt !important; 
+                  margin: 16pt 0 10pt 0 !important; 
+                  page-break-after: avoid !important;
+                }
+                .avoid-break { 
+                  page-break-inside: avoid !important; 
+                  break-inside: avoid !important;
+                }
+              }
+              @page {
+                size: A4;
+                margin: 0.75in;
+              }
+            </style>
+          </head>
+          <body>
+            ${document.querySelector('.max-w-4xl')?.innerHTML || ''}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    } else {
+      // Fallback to regular print
+      window.print();
+    }
   };
 
   return (
@@ -25,36 +84,86 @@ const UserDocumentation: React.FC = () => {
       <style dangerouslySetInnerHTML={{
         __html: `
           @media print {
-            body { 
+            * { 
+              -webkit-print-color-adjust: exact !important;
+              color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            html, body { 
               font-family: 'Times New Roman', serif !important;
               font-size: 12pt !important;
-              line-height: 1.5 !important;
+              line-height: 1.4 !important;
               color: #000 !important;
               background: white !important;
+              margin: 0 !important;
+              padding: 0 !important;
             }
             .no-print { display: none !important; }
             .print-only { display: block !important; }
-            .page-break { page-break-before: always !important; }
-            .page-break-after { page-break-after: always !important; }
-            .avoid-break { page-break-inside: avoid !important; }
-            h1 { font-size: 18pt !important; margin: 20pt 0 12pt 0 !important; }
-            h2 { font-size: 16pt !important; margin: 16pt 0 10pt 0 !important; }
-            h3 { font-size: 14pt !important; margin: 12pt 0 8pt 0 !important; }
-            h4 { font-size: 13pt !important; margin: 10pt 0 6pt 0 !important; }
+            .page-break { 
+              page-break-before: always !important; 
+              break-before: page !important;
+              display: block !important;
+            }
+            .page-break-after { 
+              page-break-after: always !important; 
+              break-after: page !important;
+            }
+            .avoid-break { 
+              page-break-inside: avoid !important; 
+              break-inside: avoid !important;
+            }
+            .new-page {
+              page-break-before: always !important;
+              break-before: page !important;
+              min-height: 100vh !important;
+            }
+            h1 { 
+              font-size: 18pt !important; 
+              margin: 20pt 0 12pt 0 !important; 
+              page-break-after: avoid !important;
+              break-after: avoid !important;
+            }
+            h2 { 
+              font-size: 16pt !important; 
+              margin: 16pt 0 10pt 0 !important; 
+              page-break-after: avoid !important;
+              break-after: avoid !important;
+            }
+            h3 { 
+              font-size: 14pt !important; 
+              margin: 12pt 0 8pt 0 !important; 
+              page-break-after: avoid !important;
+              break-after: avoid !important;
+            }
+            h4 { 
+              font-size: 13pt !important; 
+              margin: 10pt 0 6pt 0 !important; 
+              page-break-after: avoid !important;
+              break-after: avoid !important;
+            }
             p, li { margin-bottom: 6pt !important; }
             ul, ol { margin: 6pt 0 12pt 20pt !important; }
-            .card { border: 1px solid #ddd !important; margin: 10pt 0 !important; }
-            .border { border: 1px solid #ddd !important; }
-            .bg-muted { background-color: #f5f5f5 !important; }
+            .card, .border { 
+              border: 1px solid #ddd !important; 
+              margin: 8pt 0 !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+            }
+            .bg-muted, .bg-blue-50 { 
+              background-color: #f5f5f5 !important; 
+              -webkit-print-color-adjust: exact !important;
+            }
             .text-primary { color: #0066cc !important; }
             .text-muted-foreground { color: #666 !important; }
+            .border-l-4 { border-left: 4px solid #3b82f6 !important; }
+            .grid { display: block !important; }
+            .grid > * { margin-bottom: 10pt !important; }
           }
           .print-only { display: none; }
           @page {
-            margin: 1in;
-            @bottom-center {
-              content: counter(page) " of " counter(pages);
-            }
+            size: A4;
+            margin: 0.75in;
           }
         `
       }} />
@@ -76,6 +185,19 @@ const UserDocumentation: React.FC = () => {
               <Download className="h-4 w-4" />
               Export PDF
             </Button>
+          </div>
+        </div>
+        
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md">
+          <div className="flex items-start gap-2">
+            <Info className="w-5 h-5 text-blue-600 mt-0.5" />
+            <div>
+              <h4 className="font-medium text-blue-800 mb-1">PDF Export Instructions</h4>
+              <p className="text-blue-700 text-sm">
+                For best results when generating PDF: Use Chrome/Edge browser, ensure "Print backgrounds" is enabled in print settings, 
+                and select "Save as PDF" as destination. This will generate a multi-page document with proper formatting.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -123,7 +245,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Table of Contents */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">Table of Contents</h1>
           
           <div className="space-y-3">
@@ -409,7 +531,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 1: System Overview */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">1. System Overview</h1>
           
           <div className="mb-8">
@@ -750,7 +872,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 2: Getting Started */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">2. Getting Started</h1>
           
           <div className="mb-8">
@@ -1078,7 +1200,7 @@ const UserDocumentation: React.FC = () => {
         {/* Continue with remaining chapters - I'll include a few more key sections due to length constraints */}
 
         {/* Chapter 5: Training Needs Analysis */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">5. Training Needs Analysis (TNA)</h1>
           
           <div className="mb-8">
@@ -1273,7 +1395,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 6: Training Program Management */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">6. Training Program Management</h1>
           
           <div className="mb-8">
@@ -1356,7 +1478,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 7: Learning Paths */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">7. Learning Paths</h1>
           
           <div className="mb-8">
@@ -1423,7 +1545,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 8: Assessment & Evaluation */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">8. Assessment & Evaluation</h1>
           
           <div className="mb-8">
@@ -1488,7 +1610,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 9: Content Management */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">9. Content Management</h1>
           
           <div className="mb-8">
@@ -1568,7 +1690,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 10: Digital Library */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">10. Digital Library</h1>
           
           <div className="mb-8">
@@ -1637,7 +1759,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 11: Advanced Features */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">11. Advanced Features</h1>
           
           <div className="mb-8">
@@ -1736,7 +1858,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 12: Analytics & ROI */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">12. Analytics & ROI</h1>
           
           <div className="mb-8">
@@ -1820,7 +1942,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 13: System Administration */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">13. System Administration</h1>
           
           <div className="mb-8">
@@ -1901,7 +2023,7 @@ const UserDocumentation: React.FC = () => {
         </div>
 
         {/* Chapter 14: Best Practices & Troubleshooting */}
-        <div className="page-break mb-12">
+        <div className="new-page mb-12">
           <h1 className="text-3xl font-bold mb-6">14. Best Practices & Troubleshooting</h1>
           
           <div className="mb-8">
