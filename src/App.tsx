@@ -19,6 +19,12 @@ import QuestionBank from "./pages/assessments/QuestionBank";
 import AssessmentResults from "./pages/assessments/AssessmentResults";
 import NotFound from "./pages/NotFound";
 
+// LTI pages
+import LTIProviders from "./pages/lti/LTIProviders";
+import LTITools from "./pages/lti/LTITools";
+import LTILaunches from "./pages/lti/LTILaunches";
+import GradePassback from "./pages/lti/GradePassback";
+
 // User pages
 import AddEmployee from "./pages/users/AddEmployee";
 import BulkEnrollment from "./pages/users/BulkEnrollment";
@@ -184,10 +190,10 @@ const App = () => (
                   <Route path="/mooc/budget" element={<BudgetLicensing />} />
                   
                   {/* LTI Routes */}
-                  <Route path="/lti/providers" element={<div className="p-6"><h1 className="text-2xl">LTI Providers</h1><p>Coming soon...</p></div>} />
-                  <Route path="/lti/tools" element={<div className="p-6"><h1 className="text-2xl">LTI Tools</h1><p>Coming soon...</p></div>} />
-                  <Route path="/lti/launches" element={<div className="p-6"><h1 className="text-2xl">LTI Launches</h1><p>Coming soon...</p></div>} />
-                  <Route path="/lti/grades" element={<div className="p-6"><h1 className="text-2xl">Grade Passback</h1><p>Coming soon...</p></div>} />
+                  <Route path="/lti/providers" element={<LTIProviders />} />
+                  <Route path="/lti/tools" element={<LTITools />} />
+                  <Route path="/lti/launches" element={<LTILaunches />} />
+                  <Route path="/lti/grades" element={<GradePassback />} />
                   
                   {/* ROI Routes */}
                   <Route path="/roi/models" element={<ComputationModels />} />
