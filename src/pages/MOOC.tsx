@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { ConfigureProviderDialog } from "@/components/mooc/ConfigureProviderDialog";
 
 const MOOC = () => {
   const [platforms, setPlatforms] = useState([]);
@@ -309,14 +310,10 @@ const MOOC = () => {
                     {syncing === platform.id ? 'Syncing...' : 'Sync Now'}
                   </Button>
                 )}
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => handleConfigure(platform.id, platform.name)}
-                >
-                  <Settings className="w-4 h-4 mr-2" />
-                  Configure
-                </Button>
+                <ConfigureProviderDialog 
+                  platform={platform} 
+                  onConfigurationUpdate={fetchPlatforms} 
+                />
                 <Button variant="ghost" size="sm">
                   <MoreVertical className="w-4 h-4" />
                 </Button>

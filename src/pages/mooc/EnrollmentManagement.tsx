@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { EnrollmentDetailsDialog } from "@/components/mooc/EnrollmentDetailsDialog";
+import { SendReminderDialog } from "@/components/mooc/SendReminderDialog";
 
 const EnrollmentManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -260,13 +262,9 @@ const EnrollmentManagement = () => {
                 </div>
                 
                 <div className="flex flex-col gap-2 ml-4">
-                  <Button variant="outline" size="sm">
-                    View Details
-                  </Button>
+                  <EnrollmentDetailsDialog enrollment={enrollment} />
                   {enrollment.status === "overdue" && (
-                    <Button variant="destructive" size="sm">
-                      Send Reminder
-                    </Button>
+                    <SendReminderDialog enrollment={enrollment} />
                   )}
                 </div>
               </div>

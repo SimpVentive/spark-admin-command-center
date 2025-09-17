@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { CoursePreviewDialog } from "@/components/mooc/CoursePreviewDialog";
+import { CourseManageDialog } from "@/components/mooc/CourseManageDialog";
 
 const CourseCatalog = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -104,11 +106,7 @@ const CourseCatalog = () => {
   };
 
   const handleManage = (course) => {
-    toast({
-      title: "Course Management",
-      description: `Opening management tools for ${course.title}...`
-    });
-    // In a real implementation, this would open course management interface
+    // This function is now handled by the CourseManageDialog component
   };
 
   if (loading) {
@@ -299,23 +297,9 @@ const CourseCatalog = () => {
               )}
               
               <div className="flex gap-2 pt-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="flex-1"
-                  onClick={() => handlePreview(course)}
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  Preview
-                </Button>
+                <CoursePreviewDialog course={course} />
                 {course.in_catalog ? (
-                  <Button 
-                    size="sm" 
-                    className="flex-1"
-                    onClick={() => handleManage(course)}
-                  >
-                    Manage
-                  </Button>
+                  <CourseManageDialog course={course} onUpdate={fetchCourses} />
                 ) : (
                   <Button 
                     size="sm" 
