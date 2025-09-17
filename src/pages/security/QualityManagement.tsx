@@ -49,7 +49,11 @@ export default function QualityManagement() {
                 <span>Avg Resolution</span>
                 <Badge variant="secondary">15 days</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("CAPA Dashboard")}
+              >
                 CAPA Dashboard
               </Button>
             </div>
@@ -80,7 +84,11 @@ export default function QualityManagement() {
                 <span>Closed This Month</span>
                 <Badge variant="secondary">47</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Deviation Reports System")}
+              >
                 Deviation Reports
               </Button>
             </div>
@@ -111,7 +119,11 @@ export default function QualityManagement() {
                 <span>Mitigation Plans</span>
                 <Badge variant="secondary">15</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Risk Assessment Register")}
+              >
                 Risk Register
               </Button>
             </div>
@@ -142,7 +154,11 @@ export default function QualityManagement() {
                 <span>Assessment Rate</span>
                 <Badge variant="default">94.7%</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Training Effectiveness Reports")}
+              >
                 Effectiveness Reports
               </Button>
             </div>
@@ -173,7 +189,11 @@ export default function QualityManagement() {
                 <span>Audit Schedule</span>
                 <Badge variant="secondary">Quarterly</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Supplier Management Portal")}
+              >
                 Supplier Portal
               </Button>
             </div>
@@ -204,7 +224,11 @@ export default function QualityManagement() {
                 <span>Version Control</span>
                 <Badge variant="default">Active</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Document Control System")}
+              >
                 Document System
               </Button>
             </div>

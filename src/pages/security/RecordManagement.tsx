@@ -49,7 +49,11 @@ export default function RecordManagement() {
                 <span>Default Period</span>
                 <Badge variant="secondary">7 years</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Retention Policy Manager")}
+              >
                 Manage Policies
               </Button>
             </div>
@@ -80,7 +84,11 @@ export default function RecordManagement() {
                 <span>Compliance Rate</span>
                 <Badge variant="default">98.7%</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Policy Enforcement Engine")}
+              >
                 Run Enforcement
               </Button>
             </div>
@@ -111,7 +119,11 @@ export default function RecordManagement() {
                 <span>Hold Status</span>
                 <Badge variant="default">Enforced</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Legal Hold Manager")}
+              >
                 Manage Holds
               </Button>
             </div>
@@ -142,7 +154,11 @@ export default function RecordManagement() {
                 <span>Retrieval Time</span>
                 <Badge variant="secondary">&lt; 5 min</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Secure Archive Manager")}
+              >
                 Archive Manager
               </Button>
             </div>
@@ -173,7 +189,11 @@ export default function RecordManagement() {
                 <span>Data Integrity</span>
                 <Badge variant="default">Verified</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Record Export System")}
+              >
                 Export Records
               </Button>
             </div>
@@ -204,7 +224,11 @@ export default function RecordManagement() {
                 <span>Disposal Logs</span>
                 <Badge variant="secondary">2,847</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Secure Disposal Manager")}
+              >
                 Disposal Manager
               </Button>
             </div>

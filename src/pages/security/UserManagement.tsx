@@ -49,7 +49,11 @@ export default function UserManagement() {
                 <span>Auto-Provisioning</span>
                 <Badge variant="secondary">Disabled</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("User Provisioning Requests")}
+              >
                 Manage Requests
               </Button>
             </div>
@@ -80,7 +84,11 @@ export default function UserManagement() {
                 <span>Completion Rate</span>
                 <Badge variant="default">94%</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Access Review Process")}
+              >
                 Start Review
               </Button>
             </div>
@@ -111,7 +119,11 @@ export default function UserManagement() {
                 <span>Grace Period</span>
                 <Badge variant="secondary">30 days</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Deprovisioning Review Queue")}
+              >
                 Review Queue
               </Button>
             </div>
@@ -142,7 +154,11 @@ export default function UserManagement() {
                 <span>Training Modules</span>
                 <Badge variant="secondary">23</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Training Status Tracker")}
+              >
                 Track Training
               </Button>
             </div>
@@ -173,7 +189,11 @@ export default function UserManagement() {
                 <span>Authority Levels</span>
                 <Badge variant="secondary">5</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Authority Level Management")}
+              >
                 Manage Authority
               </Button>
             </div>
@@ -204,7 +224,11 @@ export default function UserManagement() {
                 <span>Enhanced Logging</span>
                 <Badge variant="default">Active</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Emergency Access Procedures")}
+              >
                 Emergency Procedures
               </Button>
             </div>

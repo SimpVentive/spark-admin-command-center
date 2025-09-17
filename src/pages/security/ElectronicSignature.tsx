@@ -49,7 +49,11 @@ export default function ElectronicSignature() {
                 <span>Signature Meaning</span>
                 <Badge variant="default">Captured</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Signature Capture Configuration")}
+              >
                 Configure Capture
               </Button>
             </div>
@@ -80,7 +84,11 @@ export default function ElectronicSignature() {
                 <span>Auth Methods</span>
                 <Badge variant="secondary">3</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Authentication Management")}
+              >
                 Manage Auth
               </Button>
             </div>
@@ -111,7 +119,11 @@ export default function ElectronicSignature() {
                 <span>Reuse Detection</span>
                 <Badge variant="default">Monitoring</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Security Settings Configuration")}
+              >
                 Security Settings
               </Button>
             </div>
@@ -142,7 +154,11 @@ export default function ElectronicSignature() {
                 <span>Legal Binding</span>
                 <Badge variant="default">Compliant</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Signature Events Viewer")}
+              >
                 View Events
               </Button>
             </div>
@@ -173,7 +189,11 @@ export default function ElectronicSignature() {
                 <span>Backup Status</span>
                 <Badge variant="default">Current</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Metadata Storage Management")}
+              >
                 Manage Storage
               </Button>
             </div>
@@ -204,7 +224,11 @@ export default function ElectronicSignature() {
                 <span>Failed Validations</span>
                 <Badge variant="destructive">3</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Signature Validation System")}
+              >
                 Run Validation
               </Button>
             </div>

@@ -50,7 +50,11 @@ export default function SystemAccess() {
                 <span>Password Expiry</span>
                 <Badge variant="secondary">90 days</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Password Policy Configuration")}
+              >
                 Configure Policy
               </Button>
             </div>
@@ -81,7 +85,11 @@ export default function SystemAccess() {
                 <span>Auto Unlock</span>
                 <Switch defaultChecked />
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Account Lockout Management")}
+              >
                 Manage Lockouts
               </Button>
             </div>
@@ -112,7 +120,11 @@ export default function SystemAccess() {
                 <span>Active Sessions</span>
                 <Badge variant="secondary">147</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Session Management Settings")}
+              >
                 Session Settings
               </Button>
             </div>
@@ -143,7 +155,11 @@ export default function SystemAccess() {
                 <span>Granular Control</span>
                 <Badge variant="default">Active</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Role-Based Access Control Manager")}
+              >
                 Manage RBAC
               </Button>
             </div>
@@ -174,7 +190,11 @@ export default function SystemAccess() {
                 <span>Methods Available</span>
                 <Badge variant="secondary">3</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Multi-Factor Authentication Configuration")}
+              >
                 Configure MFA
               </Button>
             </div>
@@ -205,7 +225,11 @@ export default function SystemAccess() {
                 <span>Total Users</span>
                 <Badge variant="secondary">1,247</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("User ID Management")}
+              >
                 View User IDs
               </Button>
             </div>

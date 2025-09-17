@@ -49,7 +49,11 @@ export default function SystemValidation() {
                 <span>Change Requests</span>
                 <Badge variant="secondary">23</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Configuration Management Database")}
+              >
                 Manage CMDB
               </Button>
             </div>
@@ -80,7 +84,11 @@ export default function SystemValidation() {
                 <span>Emergency Changes</span>
                 <Badge variant="destructive">2</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Change Control Board")}
+              >
                 Change Board
               </Button>
             </div>
@@ -111,7 +119,11 @@ export default function SystemValidation() {
                 <span>Failed Tests</span>
                 <Badge variant="destructive">12</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Test Case Manager")}
+              >
                 Test Manager
               </Button>
             </div>
@@ -142,7 +154,11 @@ export default function SystemValidation() {
                 <span>Active Alerts</span>
                 <Badge variant="secondary">3</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Performance Monitoring Dashboard")}
+              >
                 Performance Dashboard
               </Button>
             </div>
@@ -173,7 +189,11 @@ export default function SystemValidation() {
                 <span>Data Masking</span>
                 <Badge variant="default">Active</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Environment Control Panel")}
+              >
                 Environment Control
               </Button>
             </div>
@@ -204,7 +224,11 @@ export default function SystemValidation() {
                 <span>Validation Packages</span>
                 <Badge variant="secondary">47</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Validation Document Generator")}
+              >
                 Document Generator
               </Button>
             </div>

@@ -49,7 +49,11 @@ export default function ReportingCompliance() {
                 <span>This Month</span>
                 <Badge variant="secondary">47</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("FDA-Ready Report Generator")}
+              >
                 Generate Report
               </Button>
             </div>
@@ -80,7 +84,11 @@ export default function ReportingCompliance() {
                 <span>Performance</span>
                 <Badge variant="default">Excellent</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("System Health Dashboard")}
+              >
                 Health Dashboard
               </Button>
             </div>
@@ -111,7 +119,11 @@ export default function ReportingCompliance() {
                 <span>Certifications</span>
                 <Badge variant="secondary">1,247</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Training Completion Reports")}
+              >
                 Training Reports
               </Button>
             </div>
@@ -142,7 +154,11 @@ export default function ReportingCompliance() {
                 <span>Error Rate</span>
                 <Badge variant="default">&lt;0.1%</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("System Performance Reports")}
+              >
                 Performance Reports
               </Button>
             </div>
@@ -173,7 +189,11 @@ export default function ReportingCompliance() {
                 <span>Compliance Score</span>
                 <Badge variant="default">94.7%</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Security Event Dashboard")}
+              >
                 Security Dashboard
               </Button>
             </div>
@@ -204,7 +224,11 @@ export default function ReportingCompliance() {
                 <span>Action Items</span>
                 <Badge variant="secondary">8</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Executive Compliance View")}
+              >
                 Executive View
               </Button>
             </div>
