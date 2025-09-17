@@ -1797,9 +1797,9 @@ const UserDocumentation: React.FC = () => {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">11.2 MOOC Integration</h2>
+            <h2 className="text-2xl font-semibold mb-4">11.2 MOOC Integration & Management</h2>
             
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div className="border rounded-lg p-4">
                 <h3 className="font-semibold mb-3">Supported Platforms</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -1818,6 +1818,257 @@ const UserDocumentation: React.FC = () => {
                   <div className="text-center p-3 bg-orange-50 rounded-lg">
                     <div className="font-medium text-sm">LinkedIn</div>
                     <div className="text-xs text-gray-600">Learning</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border rounded-lg p-4">
+                <h3 className="font-semibold mb-4">Complete Training Manager Workflow</h3>
+                <p className="text-sm text-gray-700 mb-4">
+                  This comprehensive guide outlines the step-by-step process for managing MOOC integrations, 
+                  from initial setup to ongoing optimization.
+                </p>
+
+                <div className="space-y-4">
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-blue-800">Phase 1: Initial Platform Setup</h4>
+                    
+                    <div className="space-y-3">
+                      <div className="border-l-4 border-blue-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 1: Platform Integration</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Navigate to MOOC → Platform Management</li>
+                          <li>• Click "Add Platform" for each provider</li>
+                          <li>• Enter API credentials and client authentication details</li>
+                          <li>• Configure automated sync schedules (daily/weekly)</li>
+                          <li>• Test connections and monitor sync status</li>
+                        </ul>
+                      </div>
+
+                      <div className="border-l-4 border-blue-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 2: Budget Planning</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Access Budget & Licensing section</li>
+                          <li>• Set annual MOOC budget allocation</li>
+                          <li>• Negotiate enterprise subscriptions with providers</li>
+                          <li>• Allocate seat licenses per department</li>
+                          <li>• Configure renewal alerts and spending thresholds</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-green-800">Phase 2: Course Catalog Curation</h4>
+                    
+                    <div className="space-y-3">
+                      <div className="border-l-4 border-green-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 3: Course Discovery & Selection</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Browse 7,700+ courses in Course Catalog</li>
+                          <li>• Use filters by provider, category, ratings, duration</li>
+                          <li>• Preview courses to assess quality and relevance</li>
+                          <li>• Add high-value courses to organizational catalog</li>
+                          <li>• Map courses to job roles and skill requirements</li>
+                        </ul>
+                      </div>
+
+                      <div className="border-l-4 border-green-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 4: Learning Path Creation</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Group related MOOC courses into structured paths</li>
+                          <li>• Create role-based learning journeys</li>
+                          <li>• Define prerequisites and recommended sequences</li>
+                          <li>• Set completion timeframes and milestones</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-purple-800">Phase 3: Enrollment Management</h4>
+                    
+                    <div className="space-y-3">
+                      <div className="border-l-4 border-purple-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 5: Strategic Enrollment Planning</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Navigate to Enrollment Management dashboard</li>
+                          <li>• Review organizational skill gaps and training needs</li>
+                          <li>• Identify target audiences for specific courses</li>
+                          <li>• Plan bulk enrollments by department or role</li>
+                        </ul>
+                      </div>
+
+                      <div className="border-l-4 border-purple-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 6: Bulk Enrollment Execution</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Use "Bulk Enroll" feature for mass enrollments</li>
+                          <li>• Set enrollment deadlines and completion targets</li>
+                          <li>• Assign mandatory vs. optional course statuses</li>
+                          <li>• Communicate learning expectations to managers</li>
+                        </ul>
+                      </div>
+
+                      <div className="border-l-4 border-purple-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 7: Individual Management</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Handle ad-hoc enrollment requests from employees</li>
+                          <li>• Approve manager-nominated enrollments</li>
+                          <li>• Manage seat allocation across departments</li>
+                          <li>• Track seat utilization efficiency</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-orange-800">Phase 4: Progress Monitoring</h4>
+                    
+                    <div className="space-y-3">
+                      <div className="border-l-4 border-orange-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 8: Real-time Progress Tracking</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Monitor active enrollments across organization</li>
+                          <li>• Review individual progress percentages</li>
+                          <li>• Identify at-risk learners with overdue status</li>
+                          <li>• Send automated reminders for overdue courses</li>
+                        </ul>
+                      </div>
+
+                      <div className="border-l-4 border-orange-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 9: Intervention & Support</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Contact learners with low progress after 2 weeks</li>
+                          <li>• Provide additional resources or study groups</li>
+                          <li>• Adjust deadlines based on business priorities</li>
+                          <li>• Escalate completion issues to line managers</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-red-800">Phase 5: Analytics & Optimization</h4>
+                    
+                    <div className="space-y-3">
+                      <div className="border-l-4 border-red-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 10: Performance Analysis</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Access Analytics Dashboard for insights</li>
+                          <li>• Review completion rates by department</li>
+                          <li>• Analyze popular courses and engagement patterns</li>
+                          <li>• Identify peak learning times for optimization</li>
+                        </ul>
+                      </div>
+
+                      <div className="border-l-4 border-red-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 11: Data-Driven Decisions</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Adjust course offerings based on completion data</li>
+                          <li>• Reallocate budgets to high-performing programs</li>
+                          <li>• Negotiate better rates during renewal periods</li>
+                          <li>• Remove low-engagement courses from catalog</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-teal-800">Phase 6: Continuous Optimization</h4>
+                    
+                    <div className="space-y-3">
+                      <div className="border-l-4 border-teal-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 12: Monthly Reviews</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Generate comprehensive reports for leadership</li>
+                          <li>• Review budget utilization and projections</li>
+                          <li>• Analyze seat utilization efficiency</li>
+                          <li>• Plan next quarter learning initiatives</li>
+                        </ul>
+                      </div>
+
+                      <div className="border-l-4 border-teal-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 13: Platform Optimization</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Monitor platform sync status and API health</li>
+                          <li>• Review new course releases from providers</li>
+                          <li>• Update learning path recommendations</li>
+                          <li>• Optimize seat distribution across departments</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-indigo-800">Phase 7: Reporting & Compliance</h4>
+                    
+                    <div className="space-y-3">
+                      <div className="border-l-4 border-indigo-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 14: Stakeholder Reporting</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Create executive dashboards showing learning metrics</li>
+                          <li>• Report certification achievements and ROI</li>
+                          <li>• Demonstrate business impact of learning programs</li>
+                          <li>• Provide compliance reports for mandatory training</li>
+                        </ul>
+                      </div>
+
+                      <div className="border-l-4 border-indigo-400 pl-3">
+                        <h5 className="font-medium text-sm">Step 15: Strategic Planning</h5>
+                        <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                          <li>• Forecast future learning needs based on business strategy</li>
+                          <li>• Plan budget requirements for next fiscal year</li>
+                          <li>• Evaluate new MOOC provider opportunities</li>
+                          <li>• Align learning strategy with organizational goals</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <h3 className="font-semibold mb-3 text-yellow-800">Daily Activities for Training Managers</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Morning Routine:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Check platform sync status</li>
+                      <li>• Review overnight course completions</li>
+                      <li>• Monitor system alerts and notifications</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Ongoing Activities:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Process new enrollment requests</li>
+                      <li>• Monitor overdue learners and send reminders</li>
+                      <li>• Analyze engagement data for interventions</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h3 className="font-semibold mb-3 text-green-800">Best Practices & Tips</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Enrollment Management:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Set realistic completion deadlines (6-8 weeks optimal)</li>
+                      <li>• Communicate clear expectations to learners</li>
+                      <li>• Monitor seat utilization to optimize costs</li>
+                      <li>• Use department-specific learning paths</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-sm mb-2">Budget Optimization:</h4>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• Negotiate multi-year contracts for better rates</li>
+                      <li>• Track ROI through completion and performance metrics</li>
+                      <li>• Right-size seat allocations based on usage data</li>
+                      <li>• Plan renewals 90 days in advance</li>
+                    </ul>
                   </div>
                 </div>
               </div>
