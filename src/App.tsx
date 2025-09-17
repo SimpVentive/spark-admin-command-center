@@ -84,6 +84,9 @@ import AIRecommendationsPage from "./pages/AIRecommendations";
 import WorkflowGuide from "./pages/WorkflowGuide";
 import UserDocumentation from "./pages/UserDocumentation";
 
+// MOOC Integration
+import MOOC from "./pages/MOOC";
+
 // ROI pages
 import ComputationModels from "./pages/roi/ComputationModels";
 import KirkpatrickModel from "./pages/roi/KirkpatrickModel";
@@ -170,6 +173,7 @@ const App = () => (
                   <Route path="/assessments/questions" element={<QuestionBank />} />
                   <Route path="/assessments/results" element={<AssessmentResults />} />
                   <Route path="/ai-recommendations" element={<AIRecommendationsPage />} />
+                  <Route path="/mooc" element={<MOOC />} />
                   
                   {/* ROI Routes */}
                   <Route path="/roi/models" element={<ComputationModels />} />
