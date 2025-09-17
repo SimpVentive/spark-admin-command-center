@@ -107,6 +107,19 @@ import KirkpatrickEvaluations from "./pages/roi/KirkpatrickEvaluations";
 import Security from "./pages/Security";
 import Settings from "./pages/Settings";
 
+// Security subpages
+import SystemAccess from "./pages/security/SystemAccess";
+import AuditTrail from "./pages/security/AuditTrail";
+import ElectronicSignature from "./pages/security/ElectronicSignature";
+import DataIntegrity from "./pages/security/DataIntegrity";
+import UserManagement from "./pages/security/UserManagement";
+import RecordManagement from "./pages/security/RecordManagement";
+import SystemValidation from "./pages/security/SystemValidation";
+import ReportingCompliance from "./pages/security/ReportingCompliance";
+import SecurityInfrastructure from "./pages/security/SecurityInfrastructure";
+import IntegrationSecurity from "./pages/security/IntegrationSecurity";
+import QualityManagement from "./pages/security/QualityManagement";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -202,6 +215,17 @@ const App = () => (
                   <Route path="/roi/kirkpatrick-evaluations" element={<KirkpatrickEvaluations />} />
                   
                   <Route path="/security" element={<Security />} />
+                  <Route path="/security/system-access" element={<SystemAccess />} />
+                  <Route path="/security/audit-trail" element={<AuditTrail />} />
+                  <Route path="/security/electronic-signature" element={<ElectronicSignature />} />
+                  <Route path="/security/data-integrity" element={<DataIntegrity />} />
+                  <Route path="/security/user-management" element={<UserManagement />} />
+                  <Route path="/security/record-management" element={<RecordManagement />} />
+                  <Route path="/security/system-validation" element={<SystemValidation />} />
+                  <Route path="/security/reporting-compliance" element={<ReportingCompliance />} />
+                  <Route path="/security/infrastructure" element={<SecurityInfrastructure />} />
+                  <Route path="/security/integration-security" element={<IntegrationSecurity />} />
+                  <Route path="/security/quality-management" element={<QualityManagement />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="*" element={<NotFound />} />

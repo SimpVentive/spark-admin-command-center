@@ -155,7 +155,24 @@ const navigationItems = [
       { title: "Grade Passback", url: "/lti/grades" }
     ]
   },
-  { title: "Security", url: "/security", icon: Shield },
+  { 
+    title: "Security", 
+    url: "/security", 
+    icon: Shield,
+    subItems: [
+      { title: "System Access & Authentication", url: "/security/system-access" },
+      { title: "Audit Trail", url: "/security/audit-trail" },
+      { title: "Electronic Signature", url: "/security/electronic-signature" },
+      { title: "Data Integrity & Validation", url: "/security/data-integrity" },
+      { title: "User Management", url: "/security/user-management" },
+      { title: "Record Management", url: "/security/record-management" },
+      { title: "System Validation", url: "/security/system-validation" },
+      { title: "Reporting & Compliance", url: "/security/reporting-compliance" },
+      { title: "Security & Infrastructure", url: "/security/infrastructure" },
+      { title: "Integration & API Security", url: "/security/integration-security" },
+      { title: "Quality Management", url: "/security/quality-management" }
+    ]
+  },
   { title: "Settings", url: "/settings", icon: Settings },
   // Separator for documentation
   { separator: true },
