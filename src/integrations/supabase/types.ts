@@ -1256,6 +1256,292 @@ export type Database = {
           },
         ]
       }
+      mooc_courses: {
+        Row: {
+          category: string | null
+          course_url: string | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          duration_weeks: number | null
+          external_course_id: string
+          id: string
+          image_url: string | null
+          in_catalog: boolean | null
+          instructor: string | null
+          is_active: boolean | null
+          level: string | null
+          organization_enrollments: number | null
+          prerequisites: string[] | null
+          price: number | null
+          provider_id: string
+          provider_name: string
+          rating: number | null
+          skills_covered: string[] | null
+          student_count: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          course_url?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          duration_weeks?: number | null
+          external_course_id: string
+          id?: string
+          image_url?: string | null
+          in_catalog?: boolean | null
+          instructor?: string | null
+          is_active?: boolean | null
+          level?: string | null
+          organization_enrollments?: number | null
+          prerequisites?: string[] | null
+          price?: number | null
+          provider_id: string
+          provider_name: string
+          rating?: number | null
+          skills_covered?: string[] | null
+          student_count?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          course_url?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          duration_weeks?: number | null
+          external_course_id?: string
+          id?: string
+          image_url?: string | null
+          in_catalog?: boolean | null
+          instructor?: string | null
+          is_active?: boolean | null
+          level?: string | null
+          organization_enrollments?: number | null
+          prerequisites?: string[] | null
+          price?: number | null
+          provider_id?: string
+          provider_name?: string
+          rating?: number | null
+          skills_covered?: string[] | null
+          student_count?: number | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mooc_courses_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "mooc_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mooc_enrollments: {
+        Row: {
+          certificate_earned: boolean | null
+          certificate_url: string | null
+          completed_at: string | null
+          course_id: string
+          created_at: string | null
+          due_date: string | null
+          enrolled_at: string | null
+          enrollment_type: string | null
+          external_enrollment_id: string | null
+          grade_received: string | null
+          id: string
+          progress_percentage: number | null
+          provider_id: string
+          started_at: string | null
+          status: string | null
+          time_spent_hours: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          certificate_earned?: boolean | null
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id: string
+          created_at?: string | null
+          due_date?: string | null
+          enrolled_at?: string | null
+          enrollment_type?: string | null
+          external_enrollment_id?: string | null
+          grade_received?: string | null
+          id?: string
+          progress_percentage?: number | null
+          provider_id: string
+          started_at?: string | null
+          status?: string | null
+          time_spent_hours?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          certificate_earned?: boolean | null
+          certificate_url?: string | null
+          completed_at?: string | null
+          course_id?: string
+          created_at?: string | null
+          due_date?: string | null
+          enrolled_at?: string | null
+          enrollment_type?: string | null
+          external_enrollment_id?: string | null
+          grade_received?: string | null
+          id?: string
+          progress_percentage?: number | null
+          provider_id?: string
+          started_at?: string | null
+          status?: string | null
+          time_spent_hours?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mooc_enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "mooc_courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mooc_enrollments_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "mooc_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mooc_providers: {
+        Row: {
+          active_enrollments: number | null
+          annual_cost: number | null
+          api_endpoint: string | null
+          client_id: string | null
+          client_secret_encrypted: string | null
+          config_data: Json | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          is_connected: boolean | null
+          last_sync_at: string | null
+          monthly_cost: number | null
+          name: string
+          provider_type: string
+          renewal_date: string | null
+          seat_limit: number | null
+          seats_used: number | null
+          status: string | null
+          sync_frequency: string | null
+          total_courses: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          active_enrollments?: number | null
+          annual_cost?: number | null
+          api_endpoint?: string | null
+          client_id?: string | null
+          client_secret_encrypted?: string | null
+          config_data?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_connected?: boolean | null
+          last_sync_at?: string | null
+          monthly_cost?: number | null
+          name: string
+          provider_type: string
+          renewal_date?: string | null
+          seat_limit?: number | null
+          seats_used?: number | null
+          status?: string | null
+          sync_frequency?: string | null
+          total_courses?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          active_enrollments?: number | null
+          annual_cost?: number | null
+          api_endpoint?: string | null
+          client_id?: string | null
+          client_secret_encrypted?: string | null
+          config_data?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_connected?: boolean | null
+          last_sync_at?: string | null
+          monthly_cost?: number | null
+          name?: string
+          provider_type?: string
+          renewal_date?: string | null
+          seat_limit?: number | null
+          seats_used?: number | null
+          status?: string | null
+          sync_frequency?: string | null
+          total_courses?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      mooc_sync_logs: {
+        Row: {
+          completed_at: string | null
+          error_message: string | null
+          id: string
+          provider_id: string
+          records_created: number | null
+          records_processed: number | null
+          records_updated: number | null
+          started_at: string | null
+          status: string | null
+          sync_data: Json | null
+          sync_type: string
+        }
+        Insert: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          provider_id: string
+          records_created?: number | null
+          records_processed?: number | null
+          records_updated?: number | null
+          started_at?: string | null
+          status?: string | null
+          sync_data?: Json | null
+          sync_type: string
+        }
+        Update: {
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          provider_id?: string
+          records_created?: number | null
+          records_processed?: number | null
+          records_updated?: number | null
+          started_at?: string | null
+          status?: string | null
+          sync_data?: Json | null
+          sync_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mooc_sync_logs_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "mooc_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           achievement_notifications: boolean | null

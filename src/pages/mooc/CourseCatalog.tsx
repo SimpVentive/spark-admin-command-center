@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,59 +15,109 @@ import {
   Eye,
   ShoppingCart
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const CourseCatalog = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const courses = [
-    {
-      id: 1,
-      title: "Machine Learning Specialization",
-      provider: "Coursera",
-      instructor: "Andrew Ng",
-      rating: 4.9,
-      students: 185000,
-      duration: "11 weeks",
-      category: "Technology",
-      price: "$49/month",
-      description: "Master machine learning fundamentals and build real-world applications.",
-      image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400",
-      inCatalog: true,
-      enrollments: 45
-    },
-    {
-      id: 2,
-      title: "Digital Marketing Strategy",
-      provider: "LinkedIn Learning",
-      instructor: "Sarah Miller",
-      rating: 4.7,
-      students: 67000,
-      duration: "6 weeks",
-      category: "Marketing",
-      price: "$29.99/month",
-      description: "Learn to create effective digital marketing campaigns.",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400",
-      inCatalog: false,
-      enrollments: 0
-    },
-    {
-      id: 3,
-      title: "Project Management Professional",
-      provider: "Coursera",
-      instructor: "Google",
-      rating: 4.8,
-      students: 120000,
-      duration: "8 weeks",
-      category: "Management",
-      price: "$39/month",
-      description: "Prepare for PMP certification with Google's comprehensive course.",
-      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400",
-      inCatalog: true,
-      enrollments: 23
+  useEffect(() => {
+    fetchCourses();
+  }, []);
+
+  const fetchCourses = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('mooc_courses')
+        .select(`
+          *,
+          mooc_providers (
+            name,
+            provider_type
+          )
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching courses:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load courses.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setCourses(data || []);
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const handlePreview = (course) => {
+    toast({
+      title: "Course Preview",
+      description: `Opening preview for ${course.title}...`
+    });
+    // In a real implementation, this would open a course preview modal or navigate to course details
+  };
+
+  const handleAddToCatalog = async (courseId, courseTitle) => {
+    try {
+      const { error } = await supabase
+        .from('mooc_courses')
+        .update({ in_catalog: true })
+        .eq('id', courseId);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Success",
+        description: `${courseTitle} added to organization catalog.`
+      });
+
+      // Refresh courses
+      fetchCourses();
+    } catch (error) {
+      console.error('Error adding to catalog:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add course to catalog.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleManage = (course) => {
+    toast({
+      title: "Course Management",
+      description: `Opening management tools for ${course.title}...`
+    });
+    // In a real implementation, this would open course management interface
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   const providers = ["Coursera", "LinkedIn Learning", "Udemy Business"];
   const categories = ["Technology", "Marketing", "Management", "Finance", "Design"];
@@ -75,10 +125,16 @@ const CourseCatalog = () => {
   const filteredCourses = courses.filter(course => {
     return (
       course.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedProvider === "all" || course.provider === selectedProvider) &&
+      (selectedProvider === "all" || course.provider_name === selectedProvider) &&
       (selectedCategory === "all" || course.category === selectedCategory)
     );
   });
+
+  const totalAvailable = courses.length;
+  const inCatalog = courses.filter(c => c.in_catalog).length;
+  const totalEnrollments = courses.reduce((sum, c) => sum + (c.organization_enrollments || 0), 0);
+  const avgRating = courses.length > 0 ? 
+    (courses.reduce((sum, c) => sum + (c.rating || 0), 0) / courses.length).toFixed(1) : 0;
 
   return (
     <div className="space-y-6">
@@ -103,7 +159,7 @@ const CourseCatalog = () => {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">7,700</div>
+            <div className="text-2xl font-bold">{totalAvailable}</div>
             <p className="text-xs text-muted-foreground">From all providers</p>
           </CardContent>
         </Card>
@@ -113,7 +169,7 @@ const CourseCatalog = () => {
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">156</div>
+            <div className="text-2xl font-bold">{inCatalog}</div>
             <p className="text-xs text-muted-foreground">Organization catalog</p>
           </CardContent>
         </Card>
@@ -123,7 +179,7 @@ const CourseCatalog = () => {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">390</div>
+            <div className="text-2xl font-bold">{totalEnrollments}</div>
             <p className="text-xs text-muted-foreground">Current learners</p>
           </CardContent>
         </Card>
@@ -133,7 +189,7 @@ const CourseCatalog = () => {
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">4.6</div>
+            <div className="text-2xl font-bold">{avgRating}</div>
             <p className="text-xs text-muted-foreground">Catalog courses</p>
           </CardContent>
         </Card>
@@ -192,7 +248,7 @@ const CourseCatalog = () => {
           <Card key={course.id} className="overflow-hidden">
             <div className="aspect-video bg-gradient-to-r from-primary/20 to-secondary/20">
               <img
-                src={course.image}
+                src={course.image_url}
                 alt={course.title}
                 className="w-full h-full object-cover"
               />
@@ -201,8 +257,8 @@ const CourseCatalog = () => {
             <CardHeader>
               <div className="flex items-start justify-between">
                 <CardTitle className="text-lg line-clamp-2">{course.title}</CardTitle>
-                <Badge variant={course.inCatalog ? "default" : "secondary"}>
-                  {course.inCatalog ? "In Catalog" : "Available"}
+                <Badge variant={course.in_catalog ? "default" : "secondary"}>
+                  {course.in_catalog ? "In Catalog" : "Available"}
                 </Badge>
               </div>
               <CardDescription className="line-clamp-2">
@@ -212,8 +268,8 @@ const CourseCatalog = () => {
             
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">{course.provider}</span>
-                <span className="text-muted-foreground">{course.price}</span>
+                <span className="font-medium">{course.provider_name}</span>
+                <span className="text-muted-foreground">${course.price}/month</span>
               </div>
               
               <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -227,32 +283,45 @@ const CourseCatalog = () => {
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  <span>{course.duration}</span>
+                  <span>{course.duration_weeks} weeks</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Users className="h-3 w-3" />
-                  <span>{course.students.toLocaleString()}</span>
+                  <span>{course.student_count?.toLocaleString()}</span>
                 </div>
               </div>
 
-              {course.inCatalog && (
+              {course.in_catalog && (
                 <div className="text-sm">
                   <span className="text-muted-foreground">Organization enrollments: </span>
-                  <span className="font-medium">{course.enrollments}</span>
+                  <span className="font-medium">{course.organization_enrollments}</span>
                 </div>
               )}
               
               <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={() => handlePreview(course)}
+                >
                   <Eye className="w-4 h-4 mr-2" />
                   Preview
                 </Button>
-                {course.inCatalog ? (
-                  <Button size="sm" className="flex-1">
+                {course.in_catalog ? (
+                  <Button 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => handleManage(course)}
+                  >
                     Manage
                   </Button>
                 ) : (
-                  <Button size="sm" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => handleAddToCatalog(course.id, course.title)}
+                  >
                     <Plus className="w-4 h-4 mr-2" />
                     Add to Catalog
                   </Button>

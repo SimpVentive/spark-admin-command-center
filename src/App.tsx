@@ -183,6 +183,12 @@ const App = () => (
                   <Route path="/mooc/analytics" element={<MOOCAnalytics />} />
                   <Route path="/mooc/budget" element={<BudgetLicensing />} />
                   
+                  {/* LTI Routes */}
+                  <Route path="/lti/providers" element={<div className="p-6"><h1 className="text-2xl">LTI Providers</h1><p>Coming soon...</p></div>} />
+                  <Route path="/lti/tools" element={<div className="p-6"><h1 className="text-2xl">LTI Tools</h1><p>Coming soon...</p></div>} />
+                  <Route path="/lti/launches" element={<div className="p-6"><h1 className="text-2xl">LTI Launches</h1><p>Coming soon...</p></div>} />
+                  <Route path="/lti/grades" element={<div className="p-6"><h1 className="text-2xl">Grade Passback</h1><p>Coming soon...</p></div>} />
+                  
                   {/* ROI Routes */}
                   <Route path="/roi/models" element={<ComputationModels />} />
                   <Route path="/roi/models/kirkpatrick" element={<KirkpatrickModel />} />
