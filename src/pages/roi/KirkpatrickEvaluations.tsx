@@ -10,7 +10,8 @@ import Level2LearningForm from "@/components/kirkpatrick/Level2LearningForm";
 import Level3BehaviorForm from "@/components/kirkpatrick/Level3BehaviorForm";
 import Level4ResultsForm from "@/components/kirkpatrick/Level4ResultsForm";
 import KirkpatrickCalculator from "@/components/kirkpatrick/KirkpatrickCalculator";
-import { ClipboardList, BarChart2 } from "lucide-react";
+import { ClipboardList, BarChart2, LogIn } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const KirkpatrickEvaluations = () => {
   const [enrollments, setEnrollments] = useState<any[]>([]);
@@ -18,15 +19,29 @@ const KirkpatrickEvaluations = () => {
   const [selectedProgram, setSelectedProgram] = useState<string>("");
   const [programs, setPrograms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchEnrollments();
-    fetchPrograms();
+    checkAuth();
   }, []);
+
+  const checkAuth = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setUser(user);
+    
+    if (user) {
+      fetchEnrollments();
+      fetchPrograms();
+    } else {
+      setLoading(false);
+    }
+  };
 
   const fetchEnrollments = async () => {
     try {
+      console.log('Fetching enrollments for user:', user?.id);
       const { data, error } = await supabase
         .from('user_program_enrollments')
         .select(`
@@ -39,6 +54,7 @@ const KirkpatrickEvaluations = () => {
         `)
         .eq('status', 'enrolled');
 
+      console.log('Enrollments response:', { data, error });
       if (error) throw error;
       setEnrollments(data || []);
     } catch (error) {
@@ -81,6 +97,33 @@ const KirkpatrickEvaluations = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 mb-6">
+          <ClipboardList className="w-8 h-8 text-primary" />
+          <div>
+            <h1 className="text-3xl font-bold">Kirkpatrick Evaluations</h1>
+            <p className="text-muted-foreground">Measure training effectiveness across all four levels</p>
+          </div>
+        </div>
+        
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <LogIn className="w-12 h-12 text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium mb-2">Authentication Required</h3>
+            <p className="text-sm text-muted-foreground text-center mb-4">
+              You need to be logged in to access your Kirkpatrick evaluations.
+            </p>
+            <Button onClick={() => navigate('/auth')}>
+              Sign In
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
