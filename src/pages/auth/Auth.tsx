@@ -168,8 +168,8 @@ export default function Auth() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-xl mb-4">
             <Building2 className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Training Portal</h1>
-          <p className="text-gray-600 mt-2">Access your training management system</p>
+          <h1 className="text-3xl font-bold text-gray-900">L-Kurve</h1>
+          <p className="text-gray-600 mt-2">Enterprise Learning Management System</p>
         </div>
 
         <Card>
