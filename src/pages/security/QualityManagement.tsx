@@ -2,8 +2,18 @@ import { CheckCircle, AlertTriangle, TrendingUp, Users, FileText, Settings } fro
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export default function QualityManagement() {
+  const { toast } = useToast();
+
+  const handleAction = (action: string) => {
+    toast({
+      title: `${action} opened`,
+      description: `${action} interface is now accessible.`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">

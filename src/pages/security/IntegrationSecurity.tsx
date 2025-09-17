@@ -2,8 +2,18 @@ import { Plug, Key, Activity, Shield, AlertTriangle, Upload } from "lucide-react
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export default function IntegrationSecurity() {
+  const { toast } = useToast();
+
+  const handleAction = (action: string) => {
+    toast({
+      title: `${action} opened`,
+      description: `${action} management interface is now available.`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
@@ -39,7 +49,11 @@ export default function IntegrationSecurity() {
                 <span>Certificate Auth</span>
                 <Badge variant="default">Enabled</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("API Authentication Manager")}
+              >
                 Manage Auth
               </Button>
             </div>
@@ -70,7 +84,11 @@ export default function IntegrationSecurity() {
                 <span>Throttled Today</span>
                 <Badge variant="secondary">23</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Rate Limiting Settings")}
+              >
                 Rate Settings
               </Button>
             </div>
@@ -101,7 +119,11 @@ export default function IntegrationSecurity() {
                 <span>Audit Coverage</span>
                 <Badge variant="default">100%</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Integration Audit Log")}
+              >
                 View Audit Log
               </Button>
             </div>
@@ -132,7 +154,11 @@ export default function IntegrationSecurity() {
                 <span>Failed Validations</span>
                 <Badge variant="destructive">12</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Data Validation Rules")}
+              >
                 Validation Rules
               </Button>
             </div>
@@ -163,7 +189,11 @@ export default function IntegrationSecurity() {
                 <span>Transfer History</span>
                 <Badge variant="secondary">2,847</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Secure File Transfer Manager")}
+              >
                 Transfer Manager
               </Button>
             </div>
@@ -194,7 +224,11 @@ export default function IntegrationSecurity() {
                 <span>Security Tokens</span>
                 <Badge variant="secondary">34</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Web Service Security Configuration")}
+              >
                 WS Configuration
               </Button>
             </div>

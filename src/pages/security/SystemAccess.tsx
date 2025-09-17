@@ -3,8 +3,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SystemAccess() {
+  const { toast } = useToast();
+
+  const handleAction = (action: string) => {
+    toast({
+      title: `${action} updated`,
+      description: `${action} settings have been modified.`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">

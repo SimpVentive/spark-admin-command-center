@@ -2,8 +2,18 @@ import { Archive, Clock, Lock, Download, Trash2, Shield } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export default function RecordManagement() {
+  const { toast } = useToast();
+
+  const handleAction = (action: string) => {
+    toast({
+      title: `${action} initiated`,
+      description: `${action} process has been started.`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">

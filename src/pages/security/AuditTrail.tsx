@@ -3,8 +3,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AuditTrail() {
+  const [viewLogsOpen, setViewLogsOpen] = useState(false);
+  const [verifyIntegrityOpen, setVerifyIntegrityOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleAction = (action: string) => {
+    toast({
+      title: `${action} initiated`,
+      description: `${action} process has been started successfully.`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
@@ -40,9 +55,38 @@ export default function AuditTrail() {
                 <span>Timestamp Format</span>
                 <Badge variant="default">UTC</Badge>
               </div>
-              <Button className="w-full" variant="outline">
-                View Logs
-              </Button>
+              <Dialog open={viewLogsOpen} onOpenChange={setViewLogsOpen}>
+                <DialogTrigger asChild>
+                  <Button className="w-full" variant="outline">
+                    View Logs
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Audit Logs</DialogTitle>
+                    <DialogDescription>
+                      Recent audit log entries with timestamps and user actions
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="border rounded-lg p-3 text-sm">
+                      <div className="font-semibold">2024-01-15 14:30:22 UTC</div>
+                      <div>User: admin@company.com | Action: LOGIN_SUCCESS</div>
+                      <div className="text-muted-foreground">IP: 192.168.1.100</div>
+                    </div>
+                    <div className="border rounded-lg p-3 text-sm">
+                      <div className="font-semibold">2024-01-15 14:25:15 UTC</div>
+                      <div>User: user@company.com | Action: RECORD_UPDATE</div>
+                      <div className="text-muted-foreground">Record ID: 12345 | Table: training_programs</div>
+                    </div>
+                    <div className="border rounded-lg p-3 text-sm">
+                      <div className="font-semibold">2024-01-15 14:20:08 UTC</div>
+                      <div>User: manager@company.com | Action: REPORT_GENERATE</div>
+                      <div className="text-muted-foreground">Report: Monthly Compliance</div>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardContent>
         </Card>
@@ -71,9 +115,48 @@ export default function AuditTrail() {
                 <span>Last Check</span>
                 <Badge variant="secondary">2 min ago</Badge>
               </div>
-              <Button className="w-full" variant="outline">
-                Verify Integrity
-              </Button>
+              <Dialog open={verifyIntegrityOpen} onOpenChange={setVerifyIntegrityOpen}>
+                <DialogTrigger asChild>
+                  <Button className="w-full" variant="outline">
+                    Verify Integrity
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Data Integrity Verification</DialogTitle>
+                    <DialogDescription>
+                      Running comprehensive integrity checks on audit trail data
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span>Digital Signatures</span>
+                      <Badge variant="default">✓ Valid</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Checksums</span>
+                      <Badge variant="default">✓ Verified</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Timestamp Integrity</span>
+                      <Badge variant="default">✓ Consistent</Badge>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Record Count</span>
+                      <Badge variant="secondary">1,247,892</Badge>
+                    </div>
+                    <Button 
+                      className="w-full" 
+                      onClick={() => {
+                        handleAction("Integrity Verification");
+                        setVerifyIntegrityOpen(false);
+                      }}
+                    >
+                      Run Full Verification
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardContent>
         </Card>
@@ -99,9 +182,36 @@ export default function AuditTrail() {
                 <span>Date Range</span>
                 <Badge variant="secondary">30 days</Badge>
               </div>
-              <Button className="w-full" variant="outline">
-                Advanced Search
-              </Button>
+              <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
+                <DialogTrigger asChild>
+                  <Button className="w-full" variant="outline">
+                    Advanced Search
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Advanced Audit Search</DialogTitle>
+                    <DialogDescription>
+                      Search and filter audit records with advanced criteria
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <Input placeholder="User ID or Email" />
+                    <Input placeholder="Action Type" />
+                    <Input placeholder="Date Range (YYYY-MM-DD to YYYY-MM-DD)" />
+                    <Input placeholder="IP Address" />
+                    <Button 
+                      className="w-full" 
+                      onClick={() => {
+                        handleAction("Advanced Search");
+                        setSearchOpen(false);
+                      }}
+                    >
+                      Search Records
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </CardContent>
         </Card>
@@ -130,7 +240,11 @@ export default function AuditTrail() {
                 <span>Scheduled Reports</span>
                 <Badge variant="secondary">5</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Report Generation")}
+              >
                 Generate Report
               </Button>
             </div>
@@ -161,7 +275,11 @@ export default function AuditTrail() {
                 <span>Security Events</span>
                 <Badge variant="secondary">47</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("System Events View")}
+              >
                 View Events
               </Button>
             </div>
@@ -192,7 +310,11 @@ export default function AuditTrail() {
                 <span>Field Changes</span>
                 <Badge variant="secondary">892</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Record Changes View")}
+              >
                 View Changes
               </Button>
             </div>

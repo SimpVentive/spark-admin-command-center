@@ -2,8 +2,18 @@ import { Database, Shield, CheckCircle, AlertTriangle, RefreshCw, Archive } from
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DataIntegrity() {
+  const { toast } = useToast();
+
+  const handleAction = (action: string) => {
+    toast({
+      title: `${action} executed`,
+      description: `${action} operation completed successfully.`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
@@ -39,7 +49,11 @@ export default function DataIntegrity() {
                 <span>Range Validation</span>
                 <Badge variant="default">Enabled</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Input Validation Rules Management")}
+              >
                 Manage Rules
               </Button>
             </div>
@@ -70,7 +84,11 @@ export default function DataIntegrity() {
                 <span>Check Constraints</span>
                 <Badge variant="secondary">67</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Database Constraints Viewer")}
+              >
                 View Constraints
               </Button>
             </div>
@@ -101,7 +119,11 @@ export default function DataIntegrity() {
                 <span>Integrity Status</span>
                 <Badge variant="default">100%</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Hash Verification Process")}
+              >
                 Run Verification
               </Button>
             </div>
@@ -132,7 +154,11 @@ export default function DataIntegrity() {
                 <span>Change Tracking</span>
                 <Badge variant="default">Active</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Version History Viewer")}
+              >
                 View Versions
               </Button>
             </div>
@@ -163,7 +189,11 @@ export default function DataIntegrity() {
                 <span>Recovery Tests</span>
                 <Badge variant="secondary">Monthly</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Recovery Test Execution")}
+              >
                 Run Recovery Test
               </Button>
             </div>
@@ -194,7 +224,11 @@ export default function DataIntegrity() {
                 <span>Data Integrity</span>
                 <Badge variant="default">Verified</Badge>
               </div>
-              <Button className="w-full" variant="outline">
+              <Button 
+                className="w-full" 
+                variant="outline"
+                onClick={() => handleAction("Migration Validation Process")}
+              >
                 Validate Migration
               </Button>
             </div>
