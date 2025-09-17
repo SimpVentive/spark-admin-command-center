@@ -31,7 +31,7 @@ const KirkpatrickEvaluations = () => {
         .from('user_program_enrollments')
         .select(`
           *,
-          training_programs (
+          training_programs!program_id (
             id,
             title,
             description
