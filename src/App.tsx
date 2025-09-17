@@ -86,6 +86,10 @@ import UserDocumentation from "./pages/UserDocumentation";
 
 // MOOC Integration
 import MOOC from "./pages/MOOC";
+import CourseCatalog from "./pages/mooc/CourseCatalog";
+import MOOCEnrollmentManagement from "./pages/mooc/EnrollmentManagement";
+import MOOCAnalytics from "./pages/mooc/MOOCAnalytics";
+import BudgetLicensing from "./pages/mooc/BudgetLicensing";
 
 // ROI pages
 import ComputationModels from "./pages/roi/ComputationModels";
@@ -174,6 +178,10 @@ const App = () => (
                   <Route path="/assessments/results" element={<AssessmentResults />} />
                   <Route path="/ai-recommendations" element={<AIRecommendationsPage />} />
                   <Route path="/mooc" element={<MOOC />} />
+                  <Route path="/mooc/catalog" element={<CourseCatalog />} />
+                  <Route path="/mooc/enrollments" element={<MOOCEnrollmentManagement />} />
+                  <Route path="/mooc/analytics" element={<MOOCAnalytics />} />
+                  <Route path="/mooc/budget" element={<BudgetLicensing />} />
                   
                   {/* ROI Routes */}
                   <Route path="/roi/models" element={<ComputationModels />} />

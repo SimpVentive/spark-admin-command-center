@@ -138,10 +138,11 @@ const navigationItems = [
     title: "MOOC Integration", 
     icon: Globe,
     subItems: [
-      { title: "Connected Platforms", url: "/mooc" },
-      { title: "Course Sync", url: "/mooc/sync" },
-      { title: "Certificates", url: "/mooc/certificates" },
-      { title: "Integrations", url: "/mooc/integrations" }
+      { title: "Platform Management", url: "/mooc" },
+      { title: "Course Catalog", url: "/mooc/catalog" },
+      { title: "Enrollment Management", url: "/mooc/enrollments" },
+      { title: "Analytics Dashboard", url: "/mooc/analytics" },
+      { title: "Budget & Licensing", url: "/mooc/budget" }
     ]
   },
   { 

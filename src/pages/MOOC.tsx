@@ -2,179 +2,206 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { BookOpen, Users, Clock, Star, Play, Download } from "lucide-react";
+import { 
+  Settings, 
+  Globe, 
+  CheckCircle, 
+  XCircle, 
+  Users, 
+  BookOpen, 
+  TrendingUp, 
+  DollarSign,
+  Plus,
+  MoreVertical,
+  Activity
+} from "lucide-react";
 
 const MOOC = () => {
-  const courses = [
+  const platforms = [
     {
       id: 1,
-      title: "Digital Marketing Fundamentals",
-      description: "Learn the basics of digital marketing including SEO, social media, and content marketing.",
-      instructor: "Sarah Johnson",
-      duration: "8 weeks",
-      students: 1234,
-      rating: 4.8,
-      progress: 65,
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400",
-      enrolled: true
+      name: "Coursera Business",
+      status: "connected",
+      coursesCount: 4500,
+      activeEnrollments: 234,
+      lastSync: "2 minutes ago",
+      logo: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=40&h=40&fit=crop&crop=center"
     },
     {
       id: 2,
-      title: "Data Science with Python",
-      description: "Master data analysis, visualization, and machine learning with Python.",
-      instructor: "Dr. Michael Chen",
-      duration: "12 weeks",
-      students: 892,
-      rating: 4.9,
-      progress: 0,
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400",
-      enrolled: false
+      name: "LinkedIn Learning",
+      status: "connected",
+      coursesCount: 3200,
+      activeEnrollments: 156,
+      lastSync: "1 hour ago",
+      logo: "https://images.unsplash.com/photo-1611606063065-ee7946f0787a?w=40&h=40&fit=crop&crop=center"
     },
     {
       id: 3,
-      title: "Project Management Professional",
-      description: "Comprehensive PMP certification preparation course.",
-      instructor: "Lisa Rodriguez",
-      duration: "10 weeks",
-      students: 567,
-      rating: 4.7,
-      progress: 100,
-      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400",
-      enrolled: true
+      name: "Udemy Business",
+      status: "disconnected",
+      coursesCount: 0,
+      activeEnrollments: 0,
+      lastSync: "Never",
+      logo: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=40&h=40&fit=crop&crop=center"
     }
   ];
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">MOOC Integration</h1>
-        <p className="text-muted-foreground mt-2">
-          Access and manage Massive Open Online Courses integrated with your learning platform.
-        </p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">MOOC Platform Management</h1>
+          <p className="text-muted-foreground mt-2">
+            Manage connections to MOOC providers and monitor platform integrations.
+          </p>
+        </div>
+        <Button>
+          <Plus className="w-4 h-4 mr-2" />
+          Add Platform
+        </Button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Courses</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">Available MOOCs</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Enrolled</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Connected Platforms</CardTitle>
+            <Globe className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">2</div>
-            <p className="text-xs text-muted-foreground">Active enrollments</p>
+            <p className="text-xs text-muted-foreground">Active integrations</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <Star className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Available Courses</CardTitle>
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div>
-            <p className="text-xs text-muted-foreground">Completed courses</p>
+            <div className="text-2xl font-bold">7,700</div>
+            <p className="text-xs text-muted-foreground">Total courses</p>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Hours Learned</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Active Enrollments</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">127</div>
-            <p className="text-xs text-muted-foreground">Total learning time</p>
+            <div className="text-2xl font-bold">390</div>
+            <p className="text-xs text-muted-foreground">Organization-wide</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Monthly Budget</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">$2,850</div>
+            <p className="text-xs text-muted-foreground">$1,200 remaining</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Courses Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {courses.map((course) => (
-          <Card key={course.id} className="overflow-hidden">
-            <div className="aspect-video bg-gradient-to-r from-primary/20 to-secondary/20 flex items-center justify-center">
-              <img
-                src={course.image}
-                alt={course.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <CardTitle className="text-lg line-clamp-2">{course.title}</CardTitle>
-                <Badge variant={course.enrolled ? "default" : "secondary"}>
-                  {course.enrolled ? "Enrolled" : "Available"}
-                </Badge>
-              </div>
-              <CardDescription className="line-clamp-2">
-                {course.description}
-              </CardDescription>
-            </CardHeader>
-            
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>{course.instructor}</span>
-                <div className="flex items-center gap-1">
-                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                  <span>{course.rating}</span>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  <span>{course.duration}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Users className="h-3 w-3" />
-                  <span>{course.students.toLocaleString()}</span>
-                </div>
-              </div>
-              
-              {course.enrolled && (
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Progress</span>
-                    <span>{course.progress}%</span>
+      {/* Platform Connections */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="w-5 h-5" />
+            Platform Connections
+          </CardTitle>
+          <CardDescription>
+            Manage your MOOC platform integrations and monitor connection status.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {platforms.map((platform) => (
+            <div key={platform.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="flex items-center gap-4">
+                <img
+                  src={platform.logo}
+                  alt={platform.name}
+                  className="w-10 h-10 rounded-lg object-cover"
+                />
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium">{platform.name}</h3>
+                    <Badge variant={platform.status === "connected" ? "default" : "secondary"}>
+                      {platform.status === "connected" ? (
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                      ) : (
+                        <XCircle className="w-3 h-3 mr-1" />
+                      )}
+                      {platform.status}
+                    </Badge>
                   </div>
-                  <Progress value={course.progress} className="h-2" />
+                  <div className="flex gap-4 text-sm text-muted-foreground mt-1">
+                    <span>{platform.coursesCount.toLocaleString()} courses</span>
+                    <span>{platform.activeEnrollments} enrollments</span>
+                    <span>Last sync: {platform.lastSync}</span>
+                  </div>
                 </div>
-              )}
-              
-              <div className="flex gap-2 pt-2">
-                {course.enrolled ? (
-                  <>
-                    <Button className="flex-1" size="sm">
-                      <Play className="w-4 h-4 mr-2" />
-                      Continue
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Download className="w-4 h-4" />
-                    </Button>
-                  </>
-                ) : (
-                  <Button className="w-full" size="sm">
-                    Enroll Now
+              </div>
+              <div className="flex items-center gap-2">
+                {platform.status === "connected" && (
+                  <Button variant="outline" size="sm">
+                    <Activity className="w-4 h-4 mr-2" />
+                    Sync Now
                   </Button>
                 )}
+                <Button variant="ghost" size="sm">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Configure
+                </Button>
+                <Button variant="ghost" size="sm">
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Recent Activity */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5" />
+            Recent Activity
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <div>
+                <p className="font-medium">Course catalog sync completed</p>
+                <p className="text-sm text-muted-foreground">Coursera Business - 45 new courses added</p>
+              </div>
+              <span className="text-sm text-muted-foreground">2 min ago</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <div>
+                <p className="font-medium">Bulk enrollment processed</p>
+                <p className="text-sm text-muted-foreground">25 employees enrolled in Data Science track</p>
+              </div>
+              <span className="text-sm text-muted-foreground">1 hour ago</span>
+            </div>
+            <div className="flex justify-between items-center py-2">
+              <div>
+                <p className="font-medium">New platform connection</p>
+                <p className="text-sm text-muted-foreground">LinkedIn Learning integration configured</p>
+              </div>
+              <span className="text-sm text-muted-foreground">3 hours ago</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
