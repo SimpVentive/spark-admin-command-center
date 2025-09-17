@@ -1840,8 +1840,11 @@ const UserDocumentation: React.FC = () => {
                           <li>• Navigate to MOOC → Platform Management</li>
                           <li>• Click "Add Platform" for each provider</li>
                           <li>• Enter API credentials and client authentication details</li>
-                          <li>• Configure automated sync schedules (daily/weekly)</li>
-                          <li>• Test connections and monitor sync status</li>
+                          <li>• Click "Configure" button to open platform settings dialog</li>
+                          <li>• Set API endpoint, sync frequency (manual/daily/weekly)</li>
+                          <li>• Enable auto-enrollment and notification preferences</li>
+                          <li>• Click "Sync Now" to test connection and perform initial sync</li>
+                          <li>• Monitor sync status and logs in real-time</li>
                         </ul>
                       </div>
 
@@ -1867,9 +1870,11 @@ const UserDocumentation: React.FC = () => {
                         <ul className="text-xs text-gray-700 mt-2 space-y-1">
                           <li>• Browse 7,700+ courses in Course Catalog</li>
                           <li>• Use filters by provider, category, ratings, duration</li>
-                          <li>• Preview courses to assess quality and relevance</li>
-                          <li>• Add high-value courses to organizational catalog</li>
+                          <li>• Click "Preview" button to view detailed course information</li>
+                          <li>• Review course description, duration, skills, and requirements</li>
+                          <li>• Click "Manage" to add courses to organizational catalog</li>
                           <li>• Map courses to job roles and skill requirements</li>
+                          <li>• Set course visibility and enrollment permissions</li>
                         </ul>
                       </div>
 
@@ -1914,8 +1919,12 @@ const UserDocumentation: React.FC = () => {
                         <ul className="text-xs text-gray-700 mt-2 space-y-1">
                           <li>• Handle ad-hoc enrollment requests from employees</li>
                           <li>• Approve manager-nominated enrollments</li>
-                          <li>• Manage seat allocation across departments</li>
-                          <li>• Track seat utilization efficiency</li>
+                          <li>• Click "View Details" to see comprehensive enrollment information</li>
+                          <li>• Review progress, completion status, and learning time</li>
+                          <li>• Use "Send Reminder" for overdue or low-progress enrollments</li>
+                          <li>• Choose email or SMS reminder delivery method</li>
+                          <li>• Customize reminder messages for specific situations</li>
+                          <li>• Track seat utilization efficiency across departments</li>
                         </ul>
                       </div>
                     </div>
@@ -2023,6 +2032,70 @@ const UserDocumentation: React.FC = () => {
                         </ul>
                       </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                <h3 className="font-semibold mb-3 text-indigo-800">Interactive Features & Dialogs</h3>
+                <p className="text-sm text-gray-700 mb-4">
+                  The MOOC system includes powerful interactive dialogs for efficient management of platforms, courses, and enrollments.
+                </p>
+
+                <div className="space-y-4">
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-indigo-700">Platform Configuration Dialog</h4>
+                    <p className="text-xs text-gray-600 mb-2">Access via "Configure" button on any platform card</p>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• <strong>API Endpoint:</strong> Set or update platform API connection URL</li>
+                      <li>• <strong>Sync Frequency:</strong> Choose manual, daily, or weekly synchronization</li>
+                      <li>• <strong>Auto Enrollment:</strong> Enable automatic user enrollment for new courses</li>
+                      <li>• <strong>Notifications:</strong> Configure sync completion and enrollment update alerts</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-green-700">Course Preview Dialog</h4>
+                    <p className="text-xs text-gray-600 mb-2">Access via "Preview" button in Course Catalog</p>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• <strong>Course Overview:</strong> Detailed description, duration, and difficulty level</li>
+                      <li>• <strong>Skills & Outcomes:</strong> Learning objectives and competencies gained</li>
+                      <li>• <strong>Prerequisites:</strong> Required knowledge or prior course completion</li>
+                      <li>• <strong>Provider Info:</strong> Platform, instructor, and rating details</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-purple-700">Enrollment Details Dialog</h4>
+                    <p className="text-xs text-gray-600 mb-2">Access via "View Details" button in Enrollment Management</p>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• <strong>Progress Tracking:</strong> Real-time completion percentage and status</li>
+                      <li>• <strong>Timeline Info:</strong> Enrollment date, due date, and time spent</li>
+                      <li>• <strong>Performance Metrics:</strong> Quiz scores, assignment grades, and badges</li>
+                      <li>• <strong>Learning Path:</strong> Position within broader learning journey</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-orange-700">Send Reminder Dialog</h4>
+                    <p className="text-xs text-gray-600 mb-2">Access via "Send Reminder" button for any enrollment</p>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• <strong>Delivery Method:</strong> Choose between email or SMS notification</li>
+                      <li>• <strong>Message Customization:</strong> Edit pre-populated reminder text</li>
+                      <li>• <strong>Context Information:</strong> Includes progress, due date, and course details</li>
+                      <li>• <strong>Tracking:</strong> Confirmation of successful delivery</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-white border rounded-lg p-4">
+                    <h4 className="font-medium mb-3 text-teal-700">Sync Management</h4>
+                    <p className="text-xs text-gray-600 mb-2">Real-time synchronization with external platforms</p>
+                    <ul className="text-xs text-gray-700 space-y-1">
+                      <li>• <strong>Manual Sync:</strong> Click "Sync Now" for immediate data refresh</li>
+                      <li>• <strong>Sync Status:</strong> Visual indicators show sync progress and completion</li>
+                      <li>• <strong>Error Handling:</strong> Detailed error messages with troubleshooting steps</li>
+                      <li>• <strong>Sync Logs:</strong> Historical record of all synchronization activities</li>
+                    </ul>
                   </div>
                 </div>
               </div>
