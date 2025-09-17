@@ -205,7 +205,7 @@ const KirkpatrickEvaluations = () => {
                   <SelectValue placeholder="Select program (or view all)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Programs</SelectItem>
+                  <SelectItem value="all">All Programs</SelectItem>
                   {programs.map((program) => (
                     <SelectItem key={program.id} value={program.id}>
                       {program.title}
@@ -216,7 +216,7 @@ const KirkpatrickEvaluations = () => {
             </div>
           </div>
 
-          <KirkpatrickCalculator programId={selectedProgram || undefined} />
+          <KirkpatrickCalculator programId={selectedProgram === "all" ? undefined : selectedProgram} />
         </TabsContent>
       </Tabs>
     </div>
