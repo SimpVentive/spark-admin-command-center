@@ -31,10 +31,10 @@ const KirkpatrickEvaluations = () => {
         .from('user_program_enrollments')
         .select(`
           *,
-          training_programs!program_id (
+          programs!program_id (
             id,
             title,
-            description
+            outline
           )
         `)
         .eq('status', 'enrolled');
@@ -56,9 +56,8 @@ const KirkpatrickEvaluations = () => {
   const fetchPrograms = async () => {
     try {
       const { data, error } = await supabase
-        .from('training_programs')
-        .select('*')
-        .eq('is_active', true);
+        .from('programs')
+        .select('*');
 
       if (error) throw error;
       setPrograms(data || []);
@@ -119,7 +118,7 @@ const KirkpatrickEvaluations = () => {
                     <SelectContent>
                       {enrollments.map((enrollment) => (
                         <SelectItem key={enrollment.id} value={enrollment.id}>
-                          {enrollment.training_programs?.title || 'Unknown Program'}
+                          {enrollment.programs?.title || 'Unknown Program'}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -129,9 +128,9 @@ const KirkpatrickEvaluations = () => {
 
               {selectedEnrollmentData && (
                 <div className="mt-4 p-4 bg-muted/50 rounded-lg">
-                  <h3 className="font-medium">{selectedEnrollmentData.training_programs?.title}</h3>
+                  <h3 className="font-medium">{selectedEnrollmentData.programs?.title}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {selectedEnrollmentData.training_programs?.description}
+                    {selectedEnrollmentData.programs?.outline}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Enrolled: {new Date(selectedEnrollmentData.enrolled_at).toLocaleDateString()}
@@ -153,7 +152,7 @@ const KirkpatrickEvaluations = () => {
               <TabsContent value="level1" className="mt-6">
                 <Level1ReactionForm 
                   enrollmentId={selectedEnrollment}
-                  programName={selectedEnrollmentData?.training_programs?.title}
+                  programName={selectedEnrollmentData?.programs?.title}
                   onSubmit={handleFormSubmit}
                 />
               </TabsContent>
@@ -161,7 +160,7 @@ const KirkpatrickEvaluations = () => {
               <TabsContent value="level2" className="mt-6">
                 <Level2LearningForm 
                   enrollmentId={selectedEnrollment}
-                  programName={selectedEnrollmentData?.training_programs?.title}
+                  programName={selectedEnrollmentData?.programs?.title}
                   onSubmit={handleFormSubmit}
                 />
               </TabsContent>
@@ -169,7 +168,7 @@ const KirkpatrickEvaluations = () => {
               <TabsContent value="level3" className="mt-6">
                 <Level3BehaviorForm 
                   enrollmentId={selectedEnrollment}
-                  programName={selectedEnrollmentData?.training_programs?.title}
+                  programName={selectedEnrollmentData?.programs?.title}
                   onSubmit={handleFormSubmit}
                 />
               </TabsContent>
@@ -177,7 +176,7 @@ const KirkpatrickEvaluations = () => {
               <TabsContent value="level4" className="mt-6">
                 <Level4ResultsForm 
                   enrollmentId={selectedEnrollment}
-                  programName={selectedEnrollmentData?.training_programs?.title}
+                  programName={selectedEnrollmentData?.programs?.title}
                   onSubmit={handleFormSubmit}
                 />
               </TabsContent>
