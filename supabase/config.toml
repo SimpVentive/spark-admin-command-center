@@ -59,3 +59,15 @@ verify_jwt = true
 
 [functions.similar-users]
 verify_jwt = true
+
+[functions.learning-paths-api]
+verify_jwt = false
+
+[functions.path-content-api]
+verify_jwt = false
+
+[functions.path-assignment-api]
+verify_jwt = false
+
+[functions.ai-content-analysis]
+verify_jwt = false
