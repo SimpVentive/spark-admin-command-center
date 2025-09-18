@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_recommendations: {
+        Row: {
+          confidence_score: number
+          created_at: string
+          description: string | null
+          id: string
+          implementation_notes: string | null
+          priority: string
+          recommendation_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          supporting_data: Json | null
+          title: string
+        }
+        Insert: {
+          confidence_score?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          implementation_notes?: string | null
+          priority?: string
+          recommendation_type: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          supporting_data?: Json | null
+          title: string
+        }
+        Update: {
+          confidence_score?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          implementation_notes?: string | null
+          priority?: string
+          recommendation_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          supporting_data?: Json | null
+          title?: string
+        }
+        Relationships: []
+      }
       assessment_questions: {
         Row: {
           assessment_id: string
@@ -145,6 +190,48 @@ export type Database = {
           points_value?: number | null
           provider?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      bulk_operations: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          error_details: Json | null
+          failed_items: number
+          id: string
+          metadata: Json | null
+          operation_type: string
+          processed_items: number
+          status: string
+          total_items: number
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_details?: Json | null
+          failed_items?: number
+          id?: string
+          metadata?: Json | null
+          operation_type: string
+          processed_items?: number
+          status?: string
+          total_items?: number
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error_details?: Json | null
+          failed_items?: number
+          id?: string
+          metadata?: Json | null
+          operation_type?: string
+          processed_items?: number
+          status?: string
+          total_items?: number
         }
         Relationships: []
       }
@@ -321,6 +408,45 @@ export type Database = {
         }
         Relationships: []
       }
+      content_analytics: {
+        Row: {
+          action_type: string
+          completion_percentage: number | null
+          content_id: string
+          created_at: string
+          feedback: string | null
+          id: string
+          metadata: Json | null
+          rating: number | null
+          session_duration_seconds: number | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type: string
+          completion_percentage?: number | null
+          content_id: string
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          metadata?: Json | null
+          rating?: number | null
+          session_duration_seconds?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: string
+          completion_percentage?: number | null
+          content_id?: string
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          metadata?: Json | null
+          rating?: number | null
+          session_duration_seconds?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       content_media: {
         Row: {
           created_at: string | null
@@ -366,6 +492,116 @@ export type Database = {
           title?: string
           updated_at?: string | null
           url?: string
+        }
+        Relationships: []
+      }
+      content_tag_assignments: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          content_id: string
+          id: string
+          tag_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          content_id: string
+          id?: string
+          tag_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          content_id?: string
+          id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_tag_assignments_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "content_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_tags: {
+        Row: {
+          category: string
+          color: string | null
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+        }
+        Insert: {
+          category: string
+          color?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+        }
+        Update: {
+          category?: string
+          color?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+        }
+        Relationships: []
+      }
+      content_versions: {
+        Row: {
+          change_notes: string | null
+          content_id: string
+          content_type: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          quality_score: number | null
+          title: string
+          version_number: number
+        }
+        Insert: {
+          change_notes?: string | null
+          content_id: string
+          content_type: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          quality_score?: number | null
+          title: string
+          version_number?: number
+        }
+        Update: {
+          change_notes?: string | null
+          content_id?: string
+          content_type?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          quality_score?: number | null
+          title?: string
+          version_number?: number
         }
         Relationships: []
       }

@@ -1,46 +1,67 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import UserProfileForm from "@/components/ai/UserProfileForm";
-import AIRecommendations from "@/components/ai/AIRecommendations";
-import { Brain, User } from "lucide-react";
+import AdminAIInsights from "@/components/ai/AdminAIInsights";
+import ContentManagementAI from "@/components/ai/ContentManagementAI";
+import LearningPathAnalytics from "@/components/ai/LearningPathAnalytics";
+import { Brain, BarChart3, FileText, Users } from "lucide-react";
 
-const AIRecommendationsPage = () => {
-  const [activeTab, setActiveTab] = useState("profile");
+const AIAdminPage = () => {
+  const [activeTab, setActiveTab] = useState("insights");
 
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex items-center gap-3 mb-6">
         <Brain className="h-8 w-8 text-primary" />
         <div>
-          <h1 className="text-3xl font-bold">AI-Powered Learning</h1>
+          <h1 className="text-3xl font-bold">AI-Powered Admin Center</h1>
           <p className="text-muted-foreground">
-            Complete your profile to get personalized learning recommendations
+            Intelligent insights and automated content management for learning administrators
           </p>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="profile" className="flex items-center gap-2">
-            <User className="h-4 w-4" />
-            Learning Profile
-          </TabsTrigger>
-          <TabsTrigger value="recommendations" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="insights" className="flex items-center gap-2">
             <Brain className="h-4 w-4" />
-            AI Recommendations
+            AI Insights
+          </TabsTrigger>
+          <TabsTrigger value="content" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Content AI
+          </TabsTrigger>
+          <TabsTrigger value="analytics" className="flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Path Analytics
+          </TabsTrigger>
+          <TabsTrigger value="learners" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Learner Intelligence
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="profile" className="mt-6">
-          <UserProfileForm onProfileUpdate={() => setActiveTab("recommendations")} />
+        <TabsContent value="insights" className="mt-6">
+          <AdminAIInsights />
         </TabsContent>
 
-        <TabsContent value="recommendations" className="mt-6">
-          <AIRecommendations />
+        <TabsContent value="content" className="mt-6">
+          <ContentManagementAI />
+        </TabsContent>
+
+        <TabsContent value="analytics" className="mt-6">
+          <LearningPathAnalytics />
+        </TabsContent>
+
+        <TabsContent value="learners" className="mt-6">
+          <div className="text-center py-12">
+            <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="text-xl font-semibold mb-2">Learner Intelligence Dashboard</h3>
+            <p className="text-muted-foreground">Advanced learner analytics and AI-powered insights coming soon...</p>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
   );
 };
 
-export default AIRecommendationsPage;
+export default AIAdminPage;
