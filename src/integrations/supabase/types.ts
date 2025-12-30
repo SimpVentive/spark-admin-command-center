@@ -1171,7 +1171,7 @@ export type Database = {
           grade_received: number | null
           id: string
           id_token: string | null
-          ip_address: unknown | null
+          ip_address: unknown
           last_accessed_at: string | null
           launch_parameters: Json | null
           launch_url: string
@@ -1219,7 +1219,7 @@ export type Database = {
           grade_received?: number | null
           id?: string
           id_token?: string | null
-          ip_address?: unknown | null
+          ip_address?: unknown
           last_accessed_at?: string | null
           launch_parameters?: Json | null
           launch_url: string
@@ -1267,7 +1267,7 @@ export type Database = {
           grade_received?: number | null
           id?: string
           id_token?: string | null
-          ip_address?: unknown | null
+          ip_address?: unknown
           last_accessed_at?: string | null
           launch_parameters?: Json | null
           launch_url?: string
@@ -2842,10 +2842,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      cleanup_expired_lti_sessions: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      cleanup_expired_lti_sessions: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2853,10 +2850,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
