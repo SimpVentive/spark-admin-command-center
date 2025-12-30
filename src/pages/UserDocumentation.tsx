@@ -15,8 +15,91 @@ const UserDocumentation: React.FC = () => {
     window.print();
   };
 
+  const handleDownloadDoc = () => {
+    const content = document.querySelector('.documentation-content');
+    if (!content) return;
+
+    const html = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <meta charset="utf-8">
+          <title>L-Kurve Training Management System - User Documentation</title>
+          <style>
+            body { 
+              font-family: 'Calibri', 'Arial', sans-serif; 
+              font-size: 11pt; 
+              line-height: 1.5; 
+              color: #000; 
+              margin: 1in;
+            }
+            h1 { 
+              font-size: 24pt; 
+              font-weight: bold; 
+              color: #1a365d; 
+              margin: 24pt 0 12pt 0; 
+              page-break-after: avoid;
+            }
+            h2 { 
+              font-size: 18pt; 
+              font-weight: bold; 
+              color: #2c5282; 
+              margin: 18pt 0 10pt 0; 
+              page-break-after: avoid;
+            }
+            h3 { 
+              font-size: 14pt; 
+              font-weight: bold; 
+              color: #2d3748; 
+              margin: 14pt 0 8pt 0; 
+            }
+            h4 { 
+              font-size: 12pt; 
+              font-weight: bold; 
+              margin: 12pt 0 6pt 0; 
+            }
+            p { margin: 6pt 0; }
+            ul, ol { margin: 6pt 0 6pt 24pt; }
+            li { margin: 3pt 0; }
+            table { 
+              border-collapse: collapse; 
+              width: 100%; 
+              margin: 12pt 0; 
+            }
+            td, th { 
+              border: 1px solid #ccc; 
+              padding: 6pt; 
+              text-align: left; 
+            }
+            th { 
+              background-color: #f0f0f0; 
+              font-weight: bold; 
+            }
+            .page-break { 
+              page-break-before: always; 
+            }
+            .avoid-break { 
+              page-break-inside: avoid; 
+            }
+          </style>
+        </head>
+        <body>
+          ${content.innerHTML}
+        </body>
+      </html>
+    `;
+
+    const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'L-Kurve_User_Documentation.doc';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handleExportPDF = () => {
-    // Add instructions for better PDF generation
     const printWindow = window.open('', '_blank');
     if (printWindow) {
       printWindow.document.write(`
@@ -66,14 +149,13 @@ const UserDocumentation: React.FC = () => {
             </style>
           </head>
           <body>
-            ${document.querySelector('.max-w-4xl')?.innerHTML || ''}
+            ${document.querySelector('.documentation-content')?.innerHTML || ''}
           </body>
         </html>
       `);
       printWindow.document.close();
       printWindow.print();
     } else {
-      // Fallback to regular print
       window.print();
     }
   };
@@ -181,6 +263,10 @@ const UserDocumentation: React.FC = () => {
               <Printer className="h-4 w-4" />
               Print
             </Button>
+            <Button onClick={handleDownloadDoc} variant="outline" className="gap-2">
+              <FileText className="h-4 w-4" />
+              Download DOC
+            </Button>
             <Button onClick={handleExportPDF} className="gap-2">
               <Download className="h-4 w-4" />
               Export PDF
@@ -192,10 +278,10 @@ const UserDocumentation: React.FC = () => {
           <div className="flex items-start gap-2">
             <Info className="w-5 h-5 text-blue-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-800 mb-1">PDF Export Instructions</h4>
+              <h4 className="font-medium text-blue-800 mb-1">Download Options</h4>
               <p className="text-blue-700 text-sm">
-                For best results when generating PDF: Use Chrome/Edge browser, ensure "Print backgrounds" is enabled in print settings, 
-                and select "Save as PDF" as destination. This will generate a multi-page document with proper formatting.
+                <strong>Download DOC:</strong> Click to download as a Word document that can be edited. <br />
+                <strong>Export PDF:</strong> Opens print dialog - select "Save as PDF" as destination for PDF format.
               </p>
             </div>
           </div>
@@ -203,7 +289,7 @@ const UserDocumentation: React.FC = () => {
       </div>
 
       {/* PDF Content */}
-      <div className="max-w-4xl mx-auto p-8">
+      <div className="documentation-content max-w-4xl mx-auto p-8">
         
         {/* Title Page */}
         <div className="text-center mb-8 page-break-after">
