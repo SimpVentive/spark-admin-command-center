@@ -40,8 +40,8 @@ const navigationItems = [
     icon: Users,
     subItems: [
       { title: "All Users", url: "/users" },
-      { title: "Add Employee", url: "/users/add" },
-      { title: "Bulk Enrollment", url: "/users/bulk" },
+      { title: "Add Employee", url: "/users/add-employee" },
+      { title: "Bulk Enrollment", url: "/users/bulk-enrollment" },
       { title: "Learning Profiles", url: "/users/learning-profiles" }
     ]
   },
@@ -49,9 +49,9 @@ const navigationItems = [
     title: "Processes", 
     icon: Workflow,
     subItems: [
-      { title: "Workflow Management", url: "/processes/workflow" },
+      { title: "Workflow Management", url: "/processes/workflows" },
       { title: "User and Role Management", url: "/processes/user-roles" },
-      { title: "Approval Framework", url: "/processes/approval" },
+      { title: "Approval Framework", url: "/processes/approvals" },
       { title: "Business Rules", url: "/processes/business-rules" },
       { title: "Security & Access Control", url: "/processes/security" }
     ]

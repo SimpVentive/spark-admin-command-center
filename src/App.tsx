@@ -139,7 +139,9 @@ const App = () => (
           <Route path="/workflow-guide" element={<WorkflowGuide />} />
           <Route path="/user-documentation" element={<UserDocumentation />} />
                   <Route path="/users" element={<Users />} />
+                  <Route path="/users/add" element={<AddEmployee />} />
                   <Route path="/users/add-employee" element={<AddEmployee />} />
+                  <Route path="/users/bulk" element={<BulkEnrollment />} />
                   <Route path="/users/bulk-enrollment" element={<BulkEnrollment />} />
                   <Route path="/users/learning-profiles" element={<EmployeeLearningProfiles />} />
                   
@@ -165,7 +167,9 @@ const App = () => (
                   <Route path="/organization/locations" element={<Locations />} />
                   
                   <Route path="/processes" element={<Processes />} />
+                  <Route path="/processes/workflow" element={<WorkflowManagement />} />
                   <Route path="/processes/workflows" element={<WorkflowManagement />} />
+                  <Route path="/processes/approval" element={<ApprovalFramework />} />
                   <Route path="/processes/approvals" element={<ApprovalFramework />} />
                   <Route path="/processes/user-roles" element={<UserRoleManagement />} />
                   <Route path="/processes/security" element={<SecurityAccessControl />} />
