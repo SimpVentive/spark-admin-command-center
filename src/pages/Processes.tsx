@@ -8,7 +8,7 @@ const Processes = () => {
       title: "Workflow Management",
       description: "Design, execute, and monitor business workflows with drag-and-drop builder",
       icon: Workflow,
-      link: "/processes/workflow",
+      link: "/processes/workflows",
       gradient: "from-blue-600 to-blue-800"
     },
     {
@@ -22,7 +22,7 @@ const Processes = () => {
       title: "Approval Framework",
       description: "Configure approval workflows and escalation rules",
       icon: CheckCircle,
-      link: "/processes/approval",
+      link: "/processes/approvals",
       gradient: "from-green-600 to-green-800"
     },
     {
