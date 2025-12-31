@@ -1,18 +1,26 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Search, UserPlus, Filter, MoreVertical, Mail, Building2, Calendar } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Search, UserPlus, Filter, MoreVertical, Mail, Building2, Calendar, Users as UsersIcon, Upload } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { InviteUserDialog } from "@/components/users/InviteUserDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { toast } = useToast();
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['users'],
@@ -44,11 +52,8 @@ const Users = () => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
-  const handleInviteUser = () => {
-    toast({
-      title: "Invite User",
-      description: "User invitation functionality will be implemented here.",
-    });
+  const handleInviteSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ['users'] });
   };
 
   if (isLoading) {
@@ -87,10 +92,30 @@ const Users = () => {
           <h1 className="text-2xl font-bold">User Management</h1>
           <p className="text-muted-foreground">Manage employee accounts and their learning progress</p>
         </div>
-        <Button className="gap-2" onClick={handleInviteUser}>
-          <UserPlus className="h-4 w-4" />
-          Invite User
-        </Button>
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="gap-2">
+                <UserPlus className="h-4 w-4" />
+                Add User
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setInviteDialogOpen(true)}>
+                <UserPlus className="h-4 w-4 mr-2" />
+                Quick Invite
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/users/add-employee')}>
+                <UsersIcon className="h-4 w-4 mr-2" />
+                Add Employee (Full Form)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/users/bulk-enrollment')}>
+                <Upload className="h-4 w-4 mr-2" />
+                Bulk Enrollment
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">
@@ -199,6 +224,12 @@ const Users = () => {
           </CardContent>
         </Card>
       )}
+
+      <InviteUserDialog 
+        open={inviteDialogOpen} 
+        onOpenChange={setInviteDialogOpen}
+        onSuccess={handleInviteSuccess}
+      />
     </div>
   );
 };
