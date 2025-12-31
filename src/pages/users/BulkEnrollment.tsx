@@ -1,14 +1,14 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Download, Users, AlertCircle, CheckCircle, ArrowLeft } from "lucide-react";
+import { Upload, Download, Users, AlertCircle, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
 
 const BulkEnrollment = () => {
   const navigate = useNavigate();
@@ -102,9 +102,20 @@ const BulkEnrollment = () => {
         return row;
       });
 
-      // Here you would typically batch insert to your database
-      // For now, we'll simulate the process
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Insert profiles to database
+      const profilesToInsert = data.map(row => ({
+        id: crypto.randomUUID(),
+        full_name: `${row.firstName} ${row.lastName}`.trim(),
+        email: row.email,
+        department: row.department || null,
+        position: row.designation || null,
+      }));
+
+      const { error } = await supabase
+        .from('profiles')
+        .insert(profilesToInsert);
+
+      if (error) throw error;
 
       toast({
         title: "Success",
@@ -112,10 +123,11 @@ const BulkEnrollment = () => {
       });
 
       navigate('/users');
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Bulk enrollment error:', error);
       toast({
         title: "Error",
-        description: "Failed to process bulk enrollment",
+        description: error.message || "Failed to process bulk enrollment",
         variant: "destructive",
       });
     } finally {
