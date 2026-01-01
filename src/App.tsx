@@ -5,6 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LibraryProvider } from "@/contexts/LibraryContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 import Index from "./pages/Index";
@@ -122,123 +124,141 @@ import QualityManagement from "./pages/security/QualityManagement";
 
 const queryClient = new QueryClient();
 
+// Layout component for authenticated pages
+const AuthenticatedLayout = ({ children }: { children: React.ReactNode }) => (
+  <div className="flex h-screen w-full">
+    <AdminSidebar />
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <AdminHeader />
+      <main className="flex-1 overflow-auto p-6">
+        {children}
+      </main>
+    </div>
+  </div>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <LibraryProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <div className="flex h-screen w-full">
-            <AdminSidebar />
-            <div className="flex-1 flex flex-col overflow-hidden">
-              <AdminHeader />
-              <main className="flex-1 overflow-auto p-6">
-                <Routes>
-                  <Route path="/" element={<Index />} />
-          <Route path="/workflow-guide" element={<WorkflowGuide />} />
-          <Route path="/user-documentation" element={<UserDocumentation />} />
-                  <Route path="/users" element={<Users />} />
-                  <Route path="/users/add" element={<AddEmployee />} />
-                  <Route path="/users/add-employee" element={<AddEmployee />} />
-                  <Route path="/users/bulk" element={<BulkEnrollment />} />
-                  <Route path="/users/bulk-enrollment" element={<BulkEnrollment />} />
-                  <Route path="/users/learning-profiles" element={<EmployeeLearningProfiles />} />
-                  
-                  <Route path="/programs" element={<Programs />} />
-                  <Route path="/programs/create" element={<CreateProgram />} />
-                  <Route path="/programs/categories" element={<CategoryManagement />} />
-                  <Route path="/programs/trainers" element={<Trainers />} />
-                  
-                  <Route path="/learning-paths" element={<LearningPaths />} />
-                  <Route path="/learning-paths/create" element={<CreateLearningPath />} />
-                  <Route path="/learning-paths/management" element={<LearningPathManagement />} />
-                  <Route path="/learning-paths/details/:id" element={<LearningPathDetails />} />
-                  <Route path="/learning-paths/content" element={<ContentManagement />} />
-                  <Route path="/learning-paths/enrollment" element={<EnrollmentManagement />} />
-                  <Route path="/learning-paths/status" element={<StatusTracking />} />
-                  <Route path="/learning-paths/analytics" element={<AnalyticsDashboard />} />
-                  
-                  <Route path="/organization" element={<Organization />} />
-                  <Route path="/organization/chart" element={<OrganizationChart />} />
-                  <Route path="/organization/departments" element={<Departments />} />
-                  <Route path="/organization/roles" element={<Roles />} />
-                  <Route path="/organization/hierarchy" element={<Hierarchy />} />
-                  <Route path="/organization/locations" element={<Locations />} />
-                  
-                  <Route path="/processes" element={<Processes />} />
-                  <Route path="/processes/workflow" element={<WorkflowManagement />} />
-                  <Route path="/processes/workflows" element={<WorkflowManagement />} />
-                  <Route path="/processes/approval" element={<ApprovalFramework />} />
-                  <Route path="/processes/approvals" element={<ApprovalFramework />} />
-                  <Route path="/processes/user-roles" element={<UserRoleManagement />} />
-                  <Route path="/processes/security" element={<SecurityAccessControl />} />
-                  <Route path="/processes/business-rules" element={<BusinessRules />} />
-                  
-                  <Route path="/content" element={<ContentLibrary />} />
-                  <Route path="/content/upload" element={<UploadContent />} />
-                  <Route path="/content/categories" element={<ContentCategories />} />
-                  <Route path="/content/tools" element={<ContentTools />} />
-                  
-                  <Route path="/library" element={<Catalog />} />
-                  <Route path="/library/catalog" element={<Catalog />} />
-                  <Route path="/library/resources" element={<Resources />} />
-                  <Route path="/library/check-in-out" element={<CheckInOut />} />
-                  <Route path="/library/reservations" element={<Reservations />} />
-                  
-                  <Route path="/training-needs" element={<TNADashboard />} />
-                  <Route path="/training-needs/create-cycle" element={<CreateCycle />} />
-                  <Route path="/training-needs/employee-tni" element={<EmployeeTNI />} />
-                  <Route path="/training-needs/enhanced-employee-tni" element={<EnhancedEmployeeTNI />} />
-                  <Route path="/training-needs/manager-approval" element={<ManagerApproval />} />
-                  <Route path="/training-needs/enhanced-manager-approval" element={<EnhancedManagerApproval />} />
-                  <Route path="/training-needs/program-management" element={<ProgramManagement />} />
-                  <Route path="/training-needs/analytics" element={<Analytics />} />
-                  
-                  <Route path="/assessments" element={<Assessments />} />
-                  <Route path="/assessments/create" element={<CreateAssessment />} />
-                  <Route path="/assessments/questions" element={<QuestionBank />} />
-                  <Route path="/assessments/results" element={<AssessmentResults />} />
-                  <Route path="/ai-recommendations" element={<AIRecommendationsPage />} />
-                  <Route path="/mooc" element={<MOOC />} />
-                  <Route path="/mooc/catalog" element={<CourseCatalog />} />
-                  <Route path="/mooc/enrollments" element={<MOOCEnrollmentManagement />} />
-                  <Route path="/mooc/analytics" element={<MOOCAnalytics />} />
-                  <Route path="/mooc/budget" element={<BudgetLicensing />} />
-                  
-                  {/* LTI Routes */}
-                  <Route path="/lti/providers" element={<LTIProviders />} />
-                  <Route path="/lti/tools" element={<LTITools />} />
-                  <Route path="/lti/launches" element={<LTILaunches />} />
-                  <Route path="/lti/grades" element={<GradePassback />} />
-                  
-                  {/* ROI Routes */}
-                  <Route path="/roi/models" element={<ComputationModels />} />
-                  <Route path="/roi/models/kirkpatrick" element={<KirkpatrickModel />} />
-                  <Route path="/roi/models/phillips" element={<PhillipsModel />} />
-                  <Route path="/roi/kirkpatrick-evaluations" element={<KirkpatrickEvaluations />} />
-                  
-                  <Route path="/security" element={<Security />} />
-                  <Route path="/security/system-access" element={<SystemAccess />} />
-                  <Route path="/security/audit-trail" element={<AuditTrail />} />
-                  <Route path="/security/electronic-signature" element={<ElectronicSignature />} />
-                  <Route path="/security/data-integrity" element={<DataIntegrity />} />
-                  <Route path="/security/user-management" element={<UserManagement />} />
-                  <Route path="/security/record-management" element={<RecordManagement />} />
-                  <Route path="/security/system-validation" element={<SystemValidation />} />
-                  <Route path="/security/reporting-compliance" element={<ReportingCompliance />} />
-                  <Route path="/security/infrastructure" element={<SecurityInfrastructure />} />
-                  <Route path="/security/integration-security" element={<IntegrationSecurity />} />
-                  <Route path="/security/quality-management" element={<QualityManagement />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </main>
-            </div>
-          </div>
-        </BrowserRouter>
-      </LibraryProvider>
+      <AuthProvider>
+        <LibraryProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Auth route without layout */}
+              <Route path="/auth" element={<Auth />} />
+              
+              {/* All protected routes with layout */}
+              <Route path="/*" element={
+                <ProtectedRoute>
+                  <AuthenticatedLayout>
+                    <Routes>
+                      <Route path="/" element={<Index />} />
+                      <Route path="/workflow-guide" element={<WorkflowGuide />} />
+                      <Route path="/user-documentation" element={<UserDocumentation />} />
+                      <Route path="/users" element={<Users />} />
+                      <Route path="/users/add" element={<AddEmployee />} />
+                      <Route path="/users/add-employee" element={<AddEmployee />} />
+                      <Route path="/users/bulk" element={<BulkEnrollment />} />
+                      <Route path="/users/bulk-enrollment" element={<BulkEnrollment />} />
+                      <Route path="/users/learning-profiles" element={<EmployeeLearningProfiles />} />
+                      
+                      <Route path="/programs" element={<Programs />} />
+                      <Route path="/programs/create" element={<CreateProgram />} />
+                      <Route path="/programs/categories" element={<CategoryManagement />} />
+                      <Route path="/programs/trainers" element={<Trainers />} />
+                      
+                      <Route path="/learning-paths" element={<LearningPaths />} />
+                      <Route path="/learning-paths/create" element={<CreateLearningPath />} />
+                      <Route path="/learning-paths/management" element={<LearningPathManagement />} />
+                      <Route path="/learning-paths/details/:id" element={<LearningPathDetails />} />
+                      <Route path="/learning-paths/content" element={<ContentManagement />} />
+                      <Route path="/learning-paths/enrollment" element={<EnrollmentManagement />} />
+                      <Route path="/learning-paths/status" element={<StatusTracking />} />
+                      <Route path="/learning-paths/analytics" element={<AnalyticsDashboard />} />
+                      
+                      <Route path="/organization" element={<Organization />} />
+                      <Route path="/organization/chart" element={<OrganizationChart />} />
+                      <Route path="/organization/departments" element={<Departments />} />
+                      <Route path="/organization/roles" element={<Roles />} />
+                      <Route path="/organization/hierarchy" element={<Hierarchy />} />
+                      <Route path="/organization/locations" element={<Locations />} />
+                      
+                      <Route path="/processes" element={<Processes />} />
+                      <Route path="/processes/workflow" element={<WorkflowManagement />} />
+                      <Route path="/processes/workflows" element={<WorkflowManagement />} />
+                      <Route path="/processes/approval" element={<ApprovalFramework />} />
+                      <Route path="/processes/approvals" element={<ApprovalFramework />} />
+                      <Route path="/processes/user-roles" element={<UserRoleManagement />} />
+                      <Route path="/processes/security" element={<SecurityAccessControl />} />
+                      <Route path="/processes/business-rules" element={<BusinessRules />} />
+                      
+                      <Route path="/content" element={<ContentLibrary />} />
+                      <Route path="/content/upload" element={<UploadContent />} />
+                      <Route path="/content/categories" element={<ContentCategories />} />
+                      <Route path="/content/tools" element={<ContentTools />} />
+                      
+                      <Route path="/library" element={<Catalog />} />
+                      <Route path="/library/catalog" element={<Catalog />} />
+                      <Route path="/library/resources" element={<Resources />} />
+                      <Route path="/library/check-in-out" element={<CheckInOut />} />
+                      <Route path="/library/reservations" element={<Reservations />} />
+                      
+                      <Route path="/training-needs" element={<TNADashboard />} />
+                      <Route path="/training-needs/create-cycle" element={<CreateCycle />} />
+                      <Route path="/training-needs/employee-tni" element={<EmployeeTNI />} />
+                      <Route path="/training-needs/enhanced-employee-tni" element={<EnhancedEmployeeTNI />} />
+                      <Route path="/training-needs/manager-approval" element={<ManagerApproval />} />
+                      <Route path="/training-needs/enhanced-manager-approval" element={<EnhancedManagerApproval />} />
+                      <Route path="/training-needs/program-management" element={<ProgramManagement />} />
+                      <Route path="/training-needs/analytics" element={<Analytics />} />
+                      
+                      <Route path="/assessments" element={<Assessments />} />
+                      <Route path="/assessments/create" element={<CreateAssessment />} />
+                      <Route path="/assessments/questions" element={<QuestionBank />} />
+                      <Route path="/assessments/results" element={<AssessmentResults />} />
+                      <Route path="/ai-recommendations" element={<AIRecommendationsPage />} />
+                      <Route path="/mooc" element={<MOOC />} />
+                      <Route path="/mooc/catalog" element={<CourseCatalog />} />
+                      <Route path="/mooc/enrollments" element={<MOOCEnrollmentManagement />} />
+                      <Route path="/mooc/analytics" element={<MOOCAnalytics />} />
+                      <Route path="/mooc/budget" element={<BudgetLicensing />} />
+                      
+                      {/* LTI Routes */}
+                      <Route path="/lti/providers" element={<LTIProviders />} />
+                      <Route path="/lti/tools" element={<LTITools />} />
+                      <Route path="/lti/launches" element={<LTILaunches />} />
+                      <Route path="/lti/grades" element={<GradePassback />} />
+                      
+                      {/* ROI Routes */}
+                      <Route path="/roi/models" element={<ComputationModels />} />
+                      <Route path="/roi/models/kirkpatrick" element={<KirkpatrickModel />} />
+                      <Route path="/roi/models/phillips" element={<PhillipsModel />} />
+                      <Route path="/roi/kirkpatrick-evaluations" element={<KirkpatrickEvaluations />} />
+                      
+                      <Route path="/security" element={<Security />} />
+                      <Route path="/security/system-access" element={<SystemAccess />} />
+                      <Route path="/security/audit-trail" element={<AuditTrail />} />
+                      <Route path="/security/electronic-signature" element={<ElectronicSignature />} />
+                      <Route path="/security/data-integrity" element={<DataIntegrity />} />
+                      <Route path="/security/user-management" element={<UserManagement />} />
+                      <Route path="/security/record-management" element={<RecordManagement />} />
+                      <Route path="/security/system-validation" element={<SystemValidation />} />
+                      <Route path="/security/reporting-compliance" element={<ReportingCompliance />} />
+                      <Route path="/security/infrastructure" element={<SecurityInfrastructure />} />
+                      <Route path="/security/integration-security" element={<IntegrationSecurity />} />
+                      <Route path="/security/quality-management" element={<QualityManagement />} />
+                      <Route path="/settings" element={<Settings />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </AuthenticatedLayout>
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </BrowserRouter>
+        </LibraryProvider>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
