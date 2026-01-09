@@ -9,6 +9,51 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+// Helper function to validate JWT and get user ID
+async function validateAuth(req: Request): Promise<{ userId: string | null; isAdmin: boolean; error: Response | null }> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return {
+      userId: null,
+      isAdmin: false,
+      error: new Response(JSON.stringify({ error: 'Unauthorized: Missing or invalid authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    };
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } }
+  });
+
+  const token = authHeader.replace('Bearer ', '');
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error || !data?.user) {
+    return {
+      userId: null,
+      isAdmin: false,
+      error: new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    };
+  }
+
+  // Check if user is admin using service role
+  const serviceSupabase = createClient(supabaseUrl, supabaseServiceKey);
+  const { data: roleData } = await serviceSupabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', data.user.id)
+    .eq('role', 'admin')
+    .maybeSingle();
+
+  return { userId: data.user.id, isAdmin: !!roleData, error: null };
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -16,12 +61,19 @@ serve(async (req) => {
   }
 
   try {
+    // Validate authentication
+    const { userId, isAdmin, error: authError } = await validateAuth(req);
+    if (authError) {
+      return authError;
+    }
+
+    // Create service client for database operations (after auth validation)
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const url = new URL(req.url);
     const pathSegments = url.pathname.split('/').filter(Boolean);
     const method = req.method;
 
-    // GET /api/paths/{id}/content/ - List path modules
+    // GET /api/paths/{id}/content/ - List path modules (any authenticated user can view)
     if (method === 'GET' && pathSegments.length === 5 && pathSegments[4] === 'content') {
       const pathId = pathSegments[3];
 
@@ -43,8 +95,15 @@ serve(async (req) => {
       });
     }
 
-    // POST /api/paths/{id}/content/ - Add content to path
+    // POST /api/paths/{id}/content/ - Add content to path (admin only)
     if (method === 'POST' && pathSegments.length === 5 && pathSegments[4] === 'content') {
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       const pathId = pathSegments[3];
       const body = await req.json();
 
@@ -85,8 +144,15 @@ serve(async (req) => {
       });
     }
 
-    // PUT /api/paths/{id}/content/{module_id}/ - Update module in path
+    // PUT /api/paths/{id}/content/{module_id}/ - Update module in path (admin only)
     if (method === 'PUT' && pathSegments.length === 6) {
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       const pathId = pathSegments[3];
       const moduleId = pathSegments[5];
       const body = await req.json();
@@ -117,8 +183,15 @@ serve(async (req) => {
       });
     }
 
-    // DELETE /api/paths/{id}/content/{module_id}/ - Remove module from path
+    // DELETE /api/paths/{id}/content/{module_id}/ - Remove module from path (admin only)
     if (method === 'DELETE' && pathSegments.length === 6) {
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       const pathId = pathSegments[3];
       const moduleId = pathSegments[5];
 
@@ -140,8 +213,15 @@ serve(async (req) => {
       });
     }
 
-    // POST /api/paths/{id}/content/reorder/ - Change module sequence
+    // POST /api/paths/{id}/content/reorder/ - Change module sequence (admin only)
     if (method === 'POST' && pathSegments.length === 6 && pathSegments[5] === 'reorder') {
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       const pathId = pathSegments[3];
       const body = await req.json();
       const { modules } = body; // Array of { id, order_index }

@@ -33,6 +33,39 @@ interface LearningPath {
   prerequisites: any;
 }
 
+// Helper function to validate JWT and get user ID
+async function validateAuth(req: Request, supabaseUrl: string, supabaseAnonKey: string): Promise<{ userId: string | null; error: Response | null }> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return {
+      userId: null,
+      error: new Response(JSON.stringify({ error: 'Unauthorized: Missing or invalid authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    };
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } }
+  });
+
+  const token = authHeader.replace('Bearer ', '');
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error || !data?.user) {
+    return {
+      userId: null,
+      error: new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    };
+  }
+
+  return { userId: data.user.id, error: null };
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -41,22 +74,22 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!;
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const url = new URL(req.url);
-    const pathSegments = url.pathname.split('/');
-    const userId = pathSegments[pathSegments.length - 1];
-
-    if (!userId) {
-      return new Response(JSON.stringify({ error: 'User ID is required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    // Validate authentication
+    const { userId: authenticatedUserId, error: authError } = await validateAuth(req, supabaseUrl, supabaseAnonKey);
+    if (authError) {
+      return authError;
     }
 
-    console.log('Generating recommendations for user:', userId);
+    // Create service client for database operations (after auth validation)
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Use the authenticated user ID (ignore URL parameter for security)
+    const userId = authenticatedUserId!;
+
+    console.log('Generating recommendations for authenticated user:', userId);
 
     // Get user profile data
     const userProfile = await getUserProfile(supabase, userId);
@@ -139,7 +172,7 @@ async function getUserProfile(supabase: any, userId: string): Promise<UserProfil
   const analytics = {
     learning_velocity: 0,
     engagement_score: 0,
-    preferred_content_types: []
+    preferred_content_types: [] as string[]
   };
 
   if (analyticsResult.data && analyticsResult.data.length > 0) {
@@ -152,7 +185,7 @@ async function getUserProfile(supabase: any, userId: string): Promise<UserProfil
     // Get most common content types
     const contentTypes = analyticsResult.data
       .flatMap((item: any) => item.preferred_content_types || [])
-      .reduce((acc: any, type: string) => {
+      .reduce((acc: Record<string, number>, type: string) => {
         acc[type] = (acc[type] || 0) + 1;
         return acc;
       }, {});
@@ -218,20 +251,19 @@ async function generateContentBasedRecommendations(userProfile: UserProfile, lea
     }
 
     // Match difficulty with preference
-    const difficultyMapping = {
+    const difficultyMapping: Record<string, string[]> = {
       'easy': ['beginner'],
       'moderate': ['basic', 'intermediate'], 
       'challenging': ['advanced', 'expert']
     };
 
     if (userProfile.preferences.difficulty_preference && 
-        difficultyMapping[userProfile.preferences.difficulty_preference as keyof typeof difficultyMapping]?.includes(path.level)) {
+        difficultyMapping[userProfile.preferences.difficulty_preference]?.includes(path.level)) {
       score += 0.2;
       reasons.push(`matches preferred difficulty level`);
     }
 
     // Match with current skill gaps
-    const userSkills = userProfile.skills.map(s => s.skill_name.toLowerCase());
     const pathDescription = path.description?.toLowerCase() || '';
     
     let skillMatches = 0;
@@ -267,14 +299,14 @@ async function generateSkillGapRecommendations(supabase: any, userProfile: UserP
   }
 
   // Get required skills for target role (simplified - in production, this would be a comprehensive skills database)
-  const roleSkillMappings = {
+  const roleSkillMappings: Record<string, string[]> = {
     'software_engineer': ['programming', 'algorithms', 'system_design', 'databases'],
     'data_scientist': ['machine_learning', 'statistics', 'python', 'data_analysis'],
     'product_manager': ['strategy', 'analytics', 'user_research', 'project_management'],
     'designer': ['ui_design', 'ux_research', 'prototyping', 'user_testing']
   };
 
-  const targetSkills = roleSkillMappings[userProfile.preferences.job_role as keyof typeof roleSkillMappings] || [];
+  const targetSkills = roleSkillMappings[userProfile.preferences.job_role] || [];
   const currentSkills = userProfile.skills.map(s => s.skill_name.toLowerCase());
   
   const skillGaps = targetSkills.filter(skill => 
