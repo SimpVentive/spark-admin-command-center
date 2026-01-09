@@ -148,6 +148,66 @@ export type Database = {
           },
         ]
       }
+      audit_logs: {
+        Row: {
+          action: Database["public"]["Enums"]["audit_action"]
+          action_description: string | null
+          changed_fields: string[] | null
+          created_at: string
+          id: string
+          integrity_hash: string
+          ip_address: unknown
+          metadata: Json | null
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          session_id: string | null
+          table_name: string | null
+          user_agent: string | null
+          user_email: string | null
+          user_full_name: string | null
+          user_id: string
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["audit_action"]
+          action_description?: string | null
+          changed_fields?: string[] | null
+          created_at?: string
+          id?: string
+          integrity_hash?: string
+          ip_address?: unknown
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          session_id?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_full_name?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["audit_action"]
+          action_description?: string | null
+          changed_fields?: string[] | null
+          created_at?: string
+          id?: string
+          integrity_hash?: string
+          ip_address?: unknown
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          session_id?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_full_name?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       badges: {
         Row: {
           badge_type: string
@@ -2851,9 +2911,35 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      log_audit_event: {
+        Args: {
+          p_action: Database["public"]["Enums"]["audit_action"]
+          p_action_description?: string
+          p_changed_fields?: string[]
+          p_metadata?: Json
+          p_new_values?: Json
+          p_old_values?: Json
+          p_record_id?: string
+          p_table_name?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      audit_action:
+        | "INSERT"
+        | "UPDATE"
+        | "DELETE"
+        | "SELECT"
+        | "LOGIN"
+        | "LOGOUT"
+        | "LOGIN_FAILED"
+        | "PASSWORD_CHANGE"
+        | "PERMISSION_CHANGE"
+        | "SIGNATURE"
+        | "EXPORT"
+        | "IMPORT"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2982,6 +3068,20 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      audit_action: [
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "SELECT",
+        "LOGIN",
+        "LOGOUT",
+        "LOGIN_FAILED",
+        "PASSWORD_CHANGE",
+        "PERMISSION_CHANGE",
+        "SIGNATURE",
+        "EXPORT",
+        "IMPORT",
+      ],
     },
   },
 } as const
