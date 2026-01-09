@@ -9,6 +9,51 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+// Helper function to validate JWT and get user ID
+async function validateAuth(req: Request): Promise<{ userId: string | null; isAdmin: boolean; error: Response | null }> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return {
+      userId: null,
+      isAdmin: false,
+      error: new Response(JSON.stringify({ error: 'Unauthorized: Missing or invalid authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    };
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } }
+  });
+
+  const token = authHeader.replace('Bearer ', '');
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error || !data?.user) {
+    return {
+      userId: null,
+      isAdmin: false,
+      error: new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    };
+  }
+
+  // Check if user is admin using service role
+  const serviceSupabase = createClient(supabaseUrl, supabaseServiceKey);
+  const { data: roleData } = await serviceSupabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', data.user.id)
+    .eq('role', 'admin')
+    .maybeSingle();
+
+  return { userId: data.user.id, isAdmin: !!roleData, error: null };
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -16,13 +61,28 @@ serve(async (req) => {
   }
 
   try {
+    // Validate authentication
+    const { userId: authenticatedUserId, isAdmin, error: authError } = await validateAuth(req);
+    if (authError) {
+      return authError;
+    }
+
+    // Create service client for database operations (after auth validation)
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const url = new URL(req.url);
     const pathSegments = url.pathname.split('/').filter(Boolean);
     const method = req.method;
 
-    // POST /api/paths/{id}/assign/ - Assign path to users/groups
+    // POST /api/paths/{id}/assign/ - Assign path to users/groups (admin only)
     if (method === 'POST' && pathSegments.length === 5 && pathSegments[4] === 'assign') {
+      // Only admins can assign paths to other users
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       const pathId = pathSegments[3];
       const body = await req.json();
       const { userIds, groupIds, dueDate } = body;
@@ -91,14 +151,20 @@ serve(async (req) => {
     if (method === 'GET' && pathSegments.length === 5 && pathSegments[4] === 'progress') {
       const pathId = pathSegments[3];
 
-      // Get enrollment stats
-      const { data: enrollments, error: enrollError } = await supabase
+      // For progress, admins can see all enrollments, regular users can only see their own
+      let query = supabase
         .from('user_learning_path_enrollments')
         .select(`
           *,
           profiles(full_name, department)
         `)
         .eq('learning_path_id', pathId);
+
+      if (!isAdmin) {
+        query = query.eq('user_id', authenticatedUserId);
+      }
+
+      const { data: enrollments, error: enrollError } = await query;
 
       if (enrollError) {
         return new Response(JSON.stringify({ error: enrollError.message }), {
@@ -113,9 +179,9 @@ serve(async (req) => {
       const inProgress = enrollments?.filter(e => e.status === 'in_progress').length || 0;
       const notStarted = enrollments?.filter(e => e.status === 'enrolled').length || 0;
 
-      // Get completion analytics by department
-      const departmentStats = {};
-      if (enrollments) {
+      // Get completion analytics by department (only for admins)
+      const departmentStats: Record<string, { total: number; completed: number }> = {};
+      if (isAdmin && enrollments) {
         for (const enrollment of enrollments) {
           const dept = enrollment.profiles?.department || 'Unknown';
           if (!departmentStats[dept]) {
@@ -128,8 +194,8 @@ serve(async (req) => {
         }
       }
 
-      // Get recent activity
-      const { data: recentActivity } = await supabase
+      // Get recent activity (scoped to user for non-admins)
+      let activityQuery = supabase
         .from('user_learning_analytics')
         .select(`
           *,
@@ -139,6 +205,12 @@ serve(async (req) => {
         .order('created_at', { ascending: false })
         .limit(10);
 
+      if (!isAdmin) {
+        activityQuery = activityQuery.eq('user_id', authenticatedUserId);
+      }
+
+      const { data: recentActivity } = await activityQuery;
+
       const progressData = {
         overview: {
           totalEnrolled,
@@ -147,7 +219,7 @@ serve(async (req) => {
           notStarted,
           completionRate: totalEnrolled > 0 ? (completed / totalEnrolled * 100).toFixed(1) : 0
         },
-        departmentStats,
+        departmentStats: isAdmin ? departmentStats : undefined,
         enrollments: enrollments?.map(e => ({
           userId: e.user_id,
           userName: e.profiles?.full_name,
@@ -164,16 +236,30 @@ serve(async (req) => {
       });
     }
 
-    // POST /api/paths/{id}/enroll/ - Manual enrollment
+    // POST /api/paths/{id}/enroll/ - Manual enrollment (user can enroll themselves, admins can enroll anyone)
     if (method === 'POST' && pathSegments.length === 5 && pathSegments[4] === 'enroll') {
       const pathId = pathSegments[3];
       const body = await req.json();
       const { userId } = body;
 
+      // Determine the target user ID
+      let targetUserId = authenticatedUserId;
+      
+      // If a different userId is provided, only admins can enroll other users
+      if (userId && userId !== authenticatedUserId) {
+        if (!isAdmin) {
+          return new Response(JSON.stringify({ error: 'Forbidden: Cannot enroll other users' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+        targetUserId = userId;
+      }
+
       const { data, error } = await supabase
         .from('user_learning_path_enrollments')
         .upsert({
-          user_id: userId,
+          user_id: targetUserId,
           learning_path_id: pathId,
           status: 'enrolled'
         }, { onConflict: 'user_id,learning_path_id' })

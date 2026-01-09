@@ -9,7 +9,41 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+
+// Helper function to validate JWT and get user ID
+async function validateAuth(req: Request): Promise<{ userId: string | null; error: Response | null }> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return {
+      userId: null,
+      error: new Response(JSON.stringify({ error: 'Unauthorized: Missing or invalid authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    };
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } }
+  });
+
+  const token = authHeader.replace('Bearer ', '');
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error || !data?.user) {
+    return {
+      userId: null,
+      error: new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    };
+  }
+
+  return { userId: data.user.id, error: null };
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -17,6 +51,13 @@ serve(async (req) => {
   }
 
   try {
+    // Validate authentication
+    const { userId, error: authError } = await validateAuth(req);
+    if (authError) {
+      return authError;
+    }
+
+    // Create service client for database operations (after auth validation)
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const url = new URL(req.url);
     const pathSegments = url.pathname.split('/').filter(Boolean);
@@ -94,11 +135,12 @@ Return as JSON with this structure:
         };
       }
 
-      // Store analysis results
+      // Store analysis results with authenticated user
       const { data: analyticsData, error: analyticsError } = await supabase
         .from('content_analytics')
         .insert({
           content_id: contentId,
+          user_id: userId,
           action_type: 'content_analysis',
           metadata: {
             analysis,
@@ -129,7 +171,7 @@ Return as JSON with this structure:
       }
 
       // Calculate similarity scores between content items
-      const similarityMatrix = {};
+      const similarityMatrix: Record<string, Record<string, number>> = {};
       
       for (let i = 0; i < allContent.length; i++) {
         const content1 = allContent[i];
@@ -175,13 +217,16 @@ Return as JSON with this structure:
     // POST /skill-match - Match content to user skills
     if (method === 'POST' && pathSegments.includes('skill-match')) {
       const body = await req.json();
-      const { userId, jobRole } = body;
+      const { jobRole } = body;
+      
+      // Use authenticated user ID instead of trusting request body
+      const targetUserId = userId;
 
       // Get user's current skills
       const { data: userSkills } = await supabase
         .from('user_skills')
         .select('skill_name, proficiency_level')
-        .eq('user_id', userId);
+        .eq('user_id', targetUserId);
 
       // Get job role requirements
       const { data: jobRoleData } = await supabase
@@ -196,7 +241,7 @@ Return as JSON with this structure:
         .select('*');
 
       // Calculate skill gaps and recommend content
-      const skillGaps = [];
+      const skillGaps: Array<{ skill: string; currentLevel: string; requiredLevel: string; gap: number }> = [];
       const requiredSkills = jobRoleData?.skill_requirements || [];
       
       for (const requiredSkill of requiredSkills) {
@@ -212,7 +257,7 @@ Return as JSON with this structure:
       }
 
       // Recommend learning paths for skill gaps
-      const recommendations = [];
+      const recommendations: Array<{ learningPathId: string; title: string; relevanceScore: number; skillsAddressed: string[]; estimatedImpact: string }> = [];
       
       for (const gap of skillGaps) {
         const relevantPaths = learningPaths?.filter(path => {
@@ -266,7 +311,7 @@ function extractKeywords(text: string): string[] {
     .filter(word => word.length > 3)
     .filter(word => !['this', 'that', 'with', 'from', 'they', 'have', 'will', 'been', 'your', 'what', 'when', 'where', 'them'].includes(word));
   
-  const wordFreq = {};
+  const wordFreq: Record<string, number> = {};
   words.forEach(word => {
     wordFreq[word] = (wordFreq[word] || 0) + 1;
   });
@@ -277,7 +322,7 @@ function extractKeywords(text: string): string[] {
 }
 
 function getLevelScore(level: string): number {
-  const scores = {
+  const scores: Record<string, number> = {
     'none': 0,
     'beginner': 1,
     'intermediate': 2,

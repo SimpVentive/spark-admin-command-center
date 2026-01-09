@@ -9,6 +9,51 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+
+// Helper function to validate JWT and get user ID
+async function validateAuth(req: Request): Promise<{ userId: string | null; isAdmin: boolean; error: Response | null }> {
+  const authHeader = req.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return {
+      userId: null,
+      isAdmin: false,
+      error: new Response(JSON.stringify({ error: 'Unauthorized: Missing or invalid authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    };
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authHeader } }
+  });
+
+  const token = authHeader.replace('Bearer ', '');
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error || !data?.user) {
+    return {
+      userId: null,
+      isAdmin: false,
+      error: new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    };
+  }
+
+  // Check if user is admin using service role
+  const serviceSupabase = createClient(supabaseUrl, supabaseServiceKey);
+  const { data: roleData } = await serviceSupabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', data.user.id)
+    .eq('role', 'admin')
+    .maybeSingle();
+
+  return { userId: data.user.id, isAdmin: !!roleData, error: null };
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -16,12 +61,19 @@ serve(async (req) => {
   }
 
   try {
+    // Validate authentication
+    const { userId, isAdmin, error: authError } = await validateAuth(req);
+    if (authError) {
+      return authError;
+    }
+
+    // Create service client for database operations (after auth validation)
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const url = new URL(req.url);
     const pathSegments = url.pathname.split('/').filter(Boolean);
     const method = req.method;
 
-    // GET /api/paths/ - List learning paths with filtering, pagination, search
+    // GET /api/paths/ - List learning paths with filtering, pagination, search (any authenticated user)
     if (method === 'GET' && pathSegments.length === 3) {
       const search = url.searchParams.get('search') || '';
       const category = url.searchParams.get('category') || '';
@@ -67,8 +119,15 @@ serve(async (req) => {
       });
     }
 
-    // POST /api/paths/ - Create new learning path
+    // POST /api/paths/ - Create new learning path (admin only)
     if (method === 'POST' && pathSegments.length === 3) {
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       const body = await req.json();
       
       const { data, error } = await supabase
@@ -100,7 +159,7 @@ serve(async (req) => {
       });
     }
 
-    // GET /api/paths/{id}/ - Get detailed learning path
+    // GET /api/paths/{id}/ - Get detailed learning path (any authenticated user)
     if (method === 'GET' && pathSegments.length === 4) {
       const pathId = pathSegments[3];
       
@@ -132,8 +191,15 @@ serve(async (req) => {
       });
     }
 
-    // PUT /api/paths/{id}/ - Update learning path
+    // PUT /api/paths/{id}/ - Update learning path (admin only)
     if (method === 'PUT' && pathSegments.length === 4) {
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       const pathId = pathSegments[3];
       const body = await req.json();
 
@@ -166,8 +232,15 @@ serve(async (req) => {
       });
     }
 
-    // DELETE /api/paths/{id}/ - Soft delete learning path
+    // DELETE /api/paths/{id}/ - Soft delete learning path (admin only)
     if (method === 'DELETE' && pathSegments.length === 4) {
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       const pathId = pathSegments[3];
 
       // Instead of hard delete, we could add an is_active field for soft delete
@@ -188,8 +261,15 @@ serve(async (req) => {
       });
     }
 
-    // POST /api/paths/{id}/duplicate/ - Clone learning path
+    // POST /api/paths/{id}/duplicate/ - Clone learning path (admin only)
     if (method === 'POST' && pathSegments.length === 5 && pathSegments[4] === 'duplicate') {
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
       const pathId = pathSegments[3];
 
       // Get original path
