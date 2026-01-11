@@ -2,38 +2,30 @@ import { Settings, GitBranch, TestTube, Activity, Layers, FileCheck } from "luci
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function SystemValidation() {
-  const { toast } = useToast();
-
-  const handleAction = (action: string) => {
-    toast({
-      title: `${action} executed`,
-      description: `${action} validation process completed.`,
-    });
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2">
+      <header className="flex items-center gap-2">
         <Settings className="w-8 h-8 text-primary" />
         <div>
           <h1 className="text-3xl font-bold">System Validation Framework</h1>
           <p className="text-muted-foreground">Comprehensive validation support and change control</p>
         </div>
-      </div>
+      </header>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+        <Card className="cursor-pointer" onClick={() => navigate("/security/system-validation/cmdb")}
+        >
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Settings className="w-5 h-5" />
               Configuration Management
             </CardTitle>
-            <CardDescription>
-              Configuration management database (CMDB)
-            </CardDescription>
+            <CardDescription>Configuration management database (CMDB)</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -49,10 +41,13 @@ export default function SystemValidation() {
                 <span>Change Requests</span>
                 <Badge variant="secondary">23</Badge>
               </div>
-              <Button 
-                className="w-full" 
+              <Button
+                className="w-full"
                 variant="outline"
-                onClick={() => handleAction("Configuration Management Database")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/security/system-validation/cmdb");
+                }}
               >
                 Manage CMDB
               </Button>
@@ -60,15 +55,14 @@ export default function SystemValidation() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer" onClick={() => navigate("/security/system-validation/change-control")}
+        >
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <GitBranch className="w-5 h-5" />
               Change Control
             </CardTitle>
-            <CardDescription>
-              Change control workflow with approval gates
-            </CardDescription>
+            <CardDescription>Change control workflow with approval gates</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -84,10 +78,13 @@ export default function SystemValidation() {
                 <span>Emergency Changes</span>
                 <Badge variant="destructive">2</Badge>
               </div>
-              <Button 
-                className="w-full" 
+              <Button
+                className="w-full"
                 variant="outline"
-                onClick={() => handleAction("Change Control Board")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/security/system-validation/change-control");
+                }}
               >
                 Change Board
               </Button>
@@ -95,15 +92,14 @@ export default function SystemValidation() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer" onClick={() => navigate("/security/system-validation/test-execution")}
+        >
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TestTube className="w-5 h-5" />
               Test Execution
             </CardTitle>
-            <CardDescription>
-              Test case tracking and results storage
-            </CardDescription>
+            <CardDescription>Test case tracking and results storage</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -119,10 +115,13 @@ export default function SystemValidation() {
                 <span>Failed Tests</span>
                 <Badge variant="destructive">12</Badge>
               </div>
-              <Button 
-                className="w-full" 
+              <Button
+                className="w-full"
                 variant="outline"
-                onClick={() => handleAction("Test Case Manager")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/security/system-validation/test-execution");
+                }}
               >
                 Test Manager
               </Button>
@@ -130,15 +129,14 @@ export default function SystemValidation() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer" onClick={() => navigate("/security/system-validation/performance")}
+        >
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Activity className="w-5 h-5" />
               Performance Monitoring
             </CardTitle>
-            <CardDescription>
-              System performance monitoring and alerting
-            </CardDescription>
+            <CardDescription>System performance monitoring and alerting</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -154,10 +152,13 @@ export default function SystemValidation() {
                 <span>Active Alerts</span>
                 <Badge variant="secondary">3</Badge>
               </div>
-              <Button 
-                className="w-full" 
+              <Button
+                className="w-full"
                 variant="outline"
-                onClick={() => handleAction("Performance Monitoring Dashboard")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/security/system-validation/performance");
+                }}
               >
                 Performance Dashboard
               </Button>
@@ -165,15 +166,14 @@ export default function SystemValidation() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer" onClick={() => navigate("/security/system-validation/environments")}
+        >
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Layers className="w-5 h-5" />
               Environment Management
             </CardTitle>
-            <CardDescription>
-              Dev/test/prod segregation with promotion controls
-            </CardDescription>
+            <CardDescription>Dev/test/prod segregation with promotion controls</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -189,10 +189,13 @@ export default function SystemValidation() {
                 <span>Data Masking</span>
                 <Badge variant="default">Active</Badge>
               </div>
-              <Button 
-                className="w-full" 
+              <Button
+                className="w-full"
                 variant="outline"
-                onClick={() => handleAction("Environment Control Panel")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/security/system-validation/environments");
+                }}
               >
                 Environment Control
               </Button>
@@ -200,15 +203,14 @@ export default function SystemValidation() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer" onClick={() => navigate("/security/system-validation/documentation")}
+        >
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileCheck className="w-5 h-5" />
               Validation Documentation
             </CardTitle>
-            <CardDescription>
-              Automated validation document generation
-            </CardDescription>
+            <CardDescription>Automated validation document generation</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -224,10 +226,13 @@ export default function SystemValidation() {
                 <span>Validation Packages</span>
                 <Badge variant="secondary">47</Badge>
               </div>
-              <Button 
-                className="w-full" 
+              <Button
+                className="w-full"
                 variant="outline"
-                onClick={() => handleAction("Validation Document Generator")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/security/system-validation/documentation");
+                }}
               >
                 Document Generator
               </Button>
