@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   Shield, 
   AlertTriangle, 
@@ -168,6 +169,7 @@ const networkNodes = [
 ];
 
 export default function SecurityAccessControl() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("dashboard");
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
@@ -254,7 +256,10 @@ export default function SecurityAccessControl() {
             </div>
             <span className="text-sm text-gray-400">{securityAlerts} alerts</span>
           </div>
-          <Button className="bg-green-600/20 border border-green-600/30 text-green-400 hover:bg-green-600/30">
+          <Button 
+            onClick={() => navigate('/security')}
+            className="bg-green-600/20 border border-green-600/30 text-green-400 hover:bg-green-600/30"
+          >
             <Settings className="w-4 h-4 mr-2" />
             Security Settings
           </Button>
