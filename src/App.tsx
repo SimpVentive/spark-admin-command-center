@@ -151,112 +151,121 @@ const App = () => (
               <Route path="/landing" element={<LandingPage />} />
               <Route path="/auth" element={<Auth />} />
               
-              {/* All protected routes with layout */}
-              <Route path="/*" element={
-                <ProtectedRoute>
-                  <AuthenticatedLayout>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/workflow-guide" element={<WorkflowGuide />} />
-                      <Route path="/user-documentation" element={<UserDocumentation />} />
-                      <Route path="/users" element={<Users />} />
-                      <Route path="/users/add" element={<AddEmployee />} />
-                      <Route path="/users/add-employee" element={<AddEmployee />} />
-                      <Route path="/users/bulk" element={<BulkEnrollment />} />
-                      <Route path="/users/bulk-enrollment" element={<BulkEnrollment />} />
-                      <Route path="/users/learning-profiles" element={<EmployeeLearningProfiles />} />
-                      
-                      <Route path="/programs" element={<Programs />} />
-                      <Route path="/programs/create" element={<CreateProgram />} />
-                      <Route path="/programs/categories" element={<CategoryManagement />} />
-                      <Route path="/programs/trainers" element={<Trainers />} />
-                      
-                      <Route path="/learning-paths" element={<LearningPaths />} />
-                      <Route path="/learning-paths/create" element={<CreateLearningPath />} />
-                      <Route path="/learning-paths/management" element={<LearningPathManagement />} />
-                      <Route path="/learning-paths/details/:id" element={<LearningPathDetails />} />
-                      <Route path="/learning-paths/content" element={<ContentManagement />} />
-                      <Route path="/learning-paths/enrollment" element={<EnrollmentManagement />} />
-                      <Route path="/learning-paths/status" element={<StatusTracking />} />
-                      <Route path="/learning-paths/analytics" element={<AnalyticsDashboard />} />
-                      
-                      <Route path="/organization" element={<Organization />} />
-                      <Route path="/organization/chart" element={<OrganizationChart />} />
-                      <Route path="/organization/departments" element={<Departments />} />
-                      <Route path="/organization/roles" element={<Roles />} />
-                      <Route path="/organization/hierarchy" element={<Hierarchy />} />
-                      <Route path="/organization/locations" element={<Locations />} />
-                      
-                      <Route path="/processes" element={<Processes />} />
-                      <Route path="/processes/workflow" element={<WorkflowManagement />} />
-                      <Route path="/processes/workflows" element={<WorkflowManagement />} />
-                      <Route path="/processes/approval" element={<ApprovalFramework />} />
-                      <Route path="/processes/approvals" element={<ApprovalFramework />} />
-                      <Route path="/processes/user-roles" element={<UserRoleManagement />} />
-                      <Route path="/processes/security" element={<SecurityAccessControl />} />
-                      <Route path="/processes/business-rules" element={<BusinessRules />} />
-                      
-                      <Route path="/content" element={<ContentLibrary />} />
-                      <Route path="/content/upload" element={<UploadContent />} />
-                      <Route path="/content/categories" element={<ContentCategories />} />
-                      <Route path="/content/tools" element={<ContentTools />} />
-                      
-                      <Route path="/library" element={<Catalog />} />
-                      <Route path="/library/catalog" element={<Catalog />} />
-                      <Route path="/library/resources" element={<Resources />} />
-                      <Route path="/library/check-in-out" element={<CheckInOut />} />
-                      <Route path="/library/reservations" element={<Reservations />} />
-                      
-                      <Route path="/training-needs" element={<TNADashboard />} />
-                      <Route path="/training-needs/create-cycle" element={<CreateCycle />} />
-                      <Route path="/training-needs/employee-tni" element={<EmployeeTNI />} />
-                      <Route path="/training-needs/enhanced-employee-tni" element={<EnhancedEmployeeTNI />} />
-                      <Route path="/training-needs/manager-approval" element={<ManagerApproval />} />
-                      <Route path="/training-needs/enhanced-manager-approval" element={<EnhancedManagerApproval />} />
-                      <Route path="/training-needs/program-management" element={<ProgramManagement />} />
-                      <Route path="/training-needs/analytics" element={<Analytics />} />
-                      
-                      <Route path="/assessments" element={<Assessments />} />
-                      <Route path="/assessments/create" element={<CreateAssessment />} />
-                      <Route path="/assessments/questions" element={<QuestionBank />} />
-                      <Route path="/assessments/results" element={<AssessmentResults />} />
-                      <Route path="/ai-recommendations" element={<AIRecommendationsPage />} />
-                      <Route path="/mooc" element={<MOOC />} />
-                      <Route path="/mooc/catalog" element={<CourseCatalog />} />
-                      <Route path="/mooc/enrollments" element={<MOOCEnrollmentManagement />} />
-                      <Route path="/mooc/analytics" element={<MOOCAnalytics />} />
-                      <Route path="/mooc/budget" element={<BudgetLicensing />} />
-                      
-                      {/* LTI Routes */}
-                      <Route path="/lti/providers" element={<LTIProviders />} />
-                      <Route path="/lti/tools" element={<LTITools />} />
-                      <Route path="/lti/launches" element={<LTILaunches />} />
-                      <Route path="/lti/grades" element={<GradePassback />} />
-                      
-                      {/* ROI Routes */}
-                      <Route path="/roi/models" element={<ComputationModels />} />
-                      <Route path="/roi/models/kirkpatrick" element={<KirkpatrickModel />} />
-                      <Route path="/roi/models/phillips" element={<PhillipsModel />} />
-                      <Route path="/roi/kirkpatrick-evaluations" element={<KirkpatrickEvaluations />} />
-                      
-                      <Route path="/security" element={<Security />} />
-                      <Route path="/security/system-access" element={<SystemAccess />} />
-                      <Route path="/security/audit-trail" element={<AuditTrail />} />
-                      <Route path="/security/electronic-signature" element={<ElectronicSignature />} />
-                      <Route path="/security/data-integrity" element={<DataIntegrity />} />
-                      <Route path="/security/user-management" element={<UserManagement />} />
-                      <Route path="/security/record-management" element={<RecordManagement />} />
-                      <Route path="/security/system-validation" element={<SystemValidation />} />
-                      <Route path="/security/reporting-compliance" element={<ReportingCompliance />} />
-                      <Route path="/security/infrastructure" element={<SecurityInfrastructure />} />
-                      <Route path="/security/integration-security" element={<IntegrationSecurity />} />
-                      <Route path="/security/quality-management" element={<QualityManagement />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </AuthenticatedLayout>
-                </ProtectedRoute>
-              } />
+              {/* Protected routes with layout */}
+              <Route path="/" element={<ProtectedRoute><AuthenticatedLayout><Index /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/workflow-guide" element={<ProtectedRoute><AuthenticatedLayout><WorkflowGuide /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/user-documentation" element={<ProtectedRoute><AuthenticatedLayout><UserDocumentation /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* User Management */}
+              <Route path="/users" element={<ProtectedRoute><AuthenticatedLayout><Users /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/users/add" element={<ProtectedRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/users/add-employee" element={<ProtectedRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/users/bulk" element={<ProtectedRoute><AuthenticatedLayout><BulkEnrollment /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/users/bulk-enrollment" element={<ProtectedRoute><AuthenticatedLayout><BulkEnrollment /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/users/learning-profiles" element={<ProtectedRoute><AuthenticatedLayout><EmployeeLearningProfiles /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Programs */}
+              <Route path="/programs" element={<ProtectedRoute><AuthenticatedLayout><Programs /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/programs/create" element={<ProtectedRoute><AuthenticatedLayout><CreateProgram /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/programs/categories" element={<ProtectedRoute><AuthenticatedLayout><CategoryManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/programs/trainers" element={<ProtectedRoute><AuthenticatedLayout><Trainers /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Learning Paths */}
+              <Route path="/learning-paths" element={<ProtectedRoute><AuthenticatedLayout><LearningPaths /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/learning-paths/create" element={<ProtectedRoute><AuthenticatedLayout><CreateLearningPath /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/learning-paths/management" element={<ProtectedRoute><AuthenticatedLayout><LearningPathManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/learning-paths/details/:id" element={<ProtectedRoute><AuthenticatedLayout><LearningPathDetails /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/learning-paths/content" element={<ProtectedRoute><AuthenticatedLayout><ContentManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/learning-paths/enrollment" element={<ProtectedRoute><AuthenticatedLayout><EnrollmentManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/learning-paths/status" element={<ProtectedRoute><AuthenticatedLayout><StatusTracking /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/learning-paths/analytics" element={<ProtectedRoute><AuthenticatedLayout><AnalyticsDashboard /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Organization */}
+              <Route path="/organization" element={<ProtectedRoute><AuthenticatedLayout><Organization /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/organization/chart" element={<ProtectedRoute><AuthenticatedLayout><OrganizationChart /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/organization/departments" element={<ProtectedRoute><AuthenticatedLayout><Departments /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/organization/roles" element={<ProtectedRoute><AuthenticatedLayout><Roles /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/organization/hierarchy" element={<ProtectedRoute><AuthenticatedLayout><Hierarchy /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/organization/locations" element={<ProtectedRoute><AuthenticatedLayout><Locations /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Processes */}
+              <Route path="/processes" element={<ProtectedRoute><AuthenticatedLayout><Processes /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/processes/workflow" element={<ProtectedRoute><AuthenticatedLayout><WorkflowManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/processes/workflows" element={<ProtectedRoute><AuthenticatedLayout><WorkflowManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/processes/approval" element={<ProtectedRoute><AuthenticatedLayout><ApprovalFramework /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/processes/approvals" element={<ProtectedRoute><AuthenticatedLayout><ApprovalFramework /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/processes/user-roles" element={<ProtectedRoute><AuthenticatedLayout><UserRoleManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/processes/security" element={<ProtectedRoute><AuthenticatedLayout><SecurityAccessControl /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/processes/business-rules" element={<ProtectedRoute><AuthenticatedLayout><BusinessRules /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Content */}
+              <Route path="/content" element={<ProtectedRoute><AuthenticatedLayout><ContentLibrary /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/content/upload" element={<ProtectedRoute><AuthenticatedLayout><UploadContent /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/content/categories" element={<ProtectedRoute><AuthenticatedLayout><ContentCategories /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/content/tools" element={<ProtectedRoute><AuthenticatedLayout><ContentTools /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Library */}
+              <Route path="/library" element={<ProtectedRoute><AuthenticatedLayout><Catalog /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/library/catalog" element={<ProtectedRoute><AuthenticatedLayout><Catalog /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/library/resources" element={<ProtectedRoute><AuthenticatedLayout><Resources /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/library/check-in-out" element={<ProtectedRoute><AuthenticatedLayout><CheckInOut /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/library/reservations" element={<ProtectedRoute><AuthenticatedLayout><Reservations /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Training Needs */}
+              <Route path="/training-needs" element={<ProtectedRoute><AuthenticatedLayout><TNADashboard /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/training-needs/create-cycle" element={<ProtectedRoute><AuthenticatedLayout><CreateCycle /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/training-needs/employee-tni" element={<ProtectedRoute><AuthenticatedLayout><EmployeeTNI /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/training-needs/enhanced-employee-tni" element={<ProtectedRoute><AuthenticatedLayout><EnhancedEmployeeTNI /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/training-needs/manager-approval" element={<ProtectedRoute><AuthenticatedLayout><ManagerApproval /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/training-needs/enhanced-manager-approval" element={<ProtectedRoute><AuthenticatedLayout><EnhancedManagerApproval /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/training-needs/program-management" element={<ProtectedRoute><AuthenticatedLayout><ProgramManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/training-needs/analytics" element={<ProtectedRoute><AuthenticatedLayout><Analytics /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Assessments */}
+              <Route path="/assessments" element={<ProtectedRoute><AuthenticatedLayout><Assessments /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/assessments/create" element={<ProtectedRoute><AuthenticatedLayout><CreateAssessment /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/assessments/questions" element={<ProtectedRoute><AuthenticatedLayout><QuestionBank /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/assessments/results" element={<ProtectedRoute><AuthenticatedLayout><AssessmentResults /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* AI & MOOC */}
+              <Route path="/ai-recommendations" element={<ProtectedRoute><AuthenticatedLayout><AIRecommendationsPage /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/mooc" element={<ProtectedRoute><AuthenticatedLayout><MOOC /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/mooc/catalog" element={<ProtectedRoute><AuthenticatedLayout><CourseCatalog /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/mooc/enrollments" element={<ProtectedRoute><AuthenticatedLayout><MOOCEnrollmentManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/mooc/analytics" element={<ProtectedRoute><AuthenticatedLayout><MOOCAnalytics /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/mooc/budget" element={<ProtectedRoute><AuthenticatedLayout><BudgetLicensing /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* LTI Routes */}
+              <Route path="/lti/providers" element={<ProtectedRoute><AuthenticatedLayout><LTIProviders /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/lti/tools" element={<ProtectedRoute><AuthenticatedLayout><LTITools /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/lti/launches" element={<ProtectedRoute><AuthenticatedLayout><LTILaunches /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/lti/grades" element={<ProtectedRoute><AuthenticatedLayout><GradePassback /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* ROI Routes */}
+              <Route path="/roi/models" element={<ProtectedRoute><AuthenticatedLayout><ComputationModels /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/roi/models/kirkpatrick" element={<ProtectedRoute><AuthenticatedLayout><KirkpatrickModel /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/roi/models/phillips" element={<ProtectedRoute><AuthenticatedLayout><PhillipsModel /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/roi/kirkpatrick-evaluations" element={<ProtectedRoute><AuthenticatedLayout><KirkpatrickEvaluations /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Security */}
+              <Route path="/security" element={<ProtectedRoute><AuthenticatedLayout><Security /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/system-access" element={<ProtectedRoute><AuthenticatedLayout><SystemAccess /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/audit-trail" element={<ProtectedRoute><AuthenticatedLayout><AuditTrail /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/electronic-signature" element={<ProtectedRoute><AuthenticatedLayout><ElectronicSignature /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/data-integrity" element={<ProtectedRoute><AuthenticatedLayout><DataIntegrity /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/user-management" element={<ProtectedRoute><AuthenticatedLayout><UserManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/record-management" element={<ProtectedRoute><AuthenticatedLayout><RecordManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/system-validation" element={<ProtectedRoute><AuthenticatedLayout><SystemValidation /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/reporting-compliance" element={<ProtectedRoute><AuthenticatedLayout><ReportingCompliance /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/infrastructure" element={<ProtectedRoute><AuthenticatedLayout><SecurityInfrastructure /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/integration-security" element={<ProtectedRoute><AuthenticatedLayout><IntegrationSecurity /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/quality-management" element={<ProtectedRoute><AuthenticatedLayout><QualityManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Settings */}
+              <Route path="/settings" element={<ProtectedRoute><AuthenticatedLayout><Settings /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Catch-all */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </LibraryProvider>
