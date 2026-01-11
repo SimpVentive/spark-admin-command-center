@@ -20,6 +20,7 @@ import CreateAssessment from "./pages/assessments/CreateAssessment";
 import QuestionBank from "./pages/assessments/QuestionBank";
 import AssessmentResults from "./pages/assessments/AssessmentResults";
 import NotFound from "./pages/NotFound";
+import LandingPage from "./pages/LandingPage";
 
 // LTI pages
 import LTIProviders from "./pages/lti/LTIProviders";
@@ -146,7 +147,8 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Auth route without layout */}
+              {/* Public routes without layout */}
+              <Route path="/landing" element={<LandingPage />} />
               <Route path="/auth" element={<Auth />} />
               
               {/* All protected routes with layout */}
