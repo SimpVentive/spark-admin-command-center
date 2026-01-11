@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Search, Filter, MoreHorizontal, Plus, Settings, Shield, Star, Trophy, Clock, TrendingUp, Users as UsersIcon, CheckCircle, AlertCircle, ChevronRight, Edit3, Eye, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Search, Filter, MoreHorizontal, Plus, Settings, Shield, Star, Trophy, Clock, TrendingUp, Users as UsersIcon, CheckCircle, AlertCircle, ChevronRight, Edit3, Eye, Trash2, UserPlus, Upload } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
+import { InviteUserDialog } from "@/components/users/InviteUserDialog";
 
 const mockUsers = [
   {
@@ -96,6 +98,8 @@ export default function UserRoleManagement() {
   const [activeTab, setActiveTab] = useState("users");
   const [selectedRole, setSelectedRole] = useState("all");
   const [showBulkActions, setShowBulkActions] = useState(false);
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
   const filteredUsers = mockUsers.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -132,10 +136,28 @@ export default function UserRoleManagement() {
           <h1 className="text-3xl font-bold text-foreground">User & Role Management</h1>
           <p className="text-muted-foreground mt-1">Manage users, roles, and permissions with ease</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-          <Plus className="w-4 h-4 mr-2" />
-          Add User
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Plus className="w-4 h-4 mr-2" />
+              Add User
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setInviteDialogOpen(true)}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              Quick Invite
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/users/add-employee')}>
+              <UsersIcon className="h-4 w-4 mr-2" />
+              Add Employee (Full Form)
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/users/bulk-enrollment')}>
+              <Upload className="h-4 w-4 mr-2" />
+              Bulk Enrollment
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Stats Cards */}
@@ -429,6 +451,11 @@ export default function UserRoleManagement() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <InviteUserDialog 
+        open={inviteDialogOpen} 
+        onOpenChange={setInviteDialogOpen}
+      />
     </div>
   );
 }
