@@ -123,6 +123,14 @@ import SecurityInfrastructure from "./pages/security/SecurityInfrastructure";
 import IntegrationSecurity from "./pages/security/IntegrationSecurity";
 import QualityManagement from "./pages/security/QualityManagement";
 
+// System Validation subpages
+import SVConfigurationManagement from "./pages/security/system-validation/ConfigurationManagement";
+import SVChangeControl from "./pages/security/system-validation/ChangeControl";
+import SVTestExecution from "./pages/security/system-validation/TestExecution";
+import SVPerformanceMonitoring from "./pages/security/system-validation/PerformanceMonitoring";
+import SVEnvironmentManagement from "./pages/security/system-validation/EnvironmentManagement";
+import SVValidationDocumentation from "./pages/security/system-validation/ValidationDocumentation";
+
 const queryClient = new QueryClient();
 
 // Layout component for authenticated pages
@@ -256,6 +264,12 @@ const App = () => (
               <Route path="/security/user-management" element={<ProtectedRoute><AuthenticatedLayout><UserManagement /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/security/record-management" element={<ProtectedRoute><AuthenticatedLayout><RecordManagement /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/security/system-validation" element={<ProtectedRoute><AuthenticatedLayout><SystemValidation /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/system-validation/cmdb" element={<ProtectedRoute><AuthenticatedLayout><SVConfigurationManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/system-validation/change-control" element={<ProtectedRoute><AuthenticatedLayout><SVChangeControl /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/system-validation/test-execution" element={<ProtectedRoute><AuthenticatedLayout><SVTestExecution /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/system-validation/performance" element={<ProtectedRoute><AuthenticatedLayout><SVPerformanceMonitoring /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/system-validation/environments" element={<ProtectedRoute><AuthenticatedLayout><SVEnvironmentManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/security/system-validation/documentation" element={<ProtectedRoute><AuthenticatedLayout><SVValidationDocumentation /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/security/reporting-compliance" element={<ProtectedRoute><AuthenticatedLayout><ReportingCompliance /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/security/infrastructure" element={<ProtectedRoute><AuthenticatedLayout><SecurityInfrastructure /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/security/integration-security" element={<ProtectedRoute><AuthenticatedLayout><IntegrationSecurity /></AuthenticatedLayout></ProtectedRoute>} />
