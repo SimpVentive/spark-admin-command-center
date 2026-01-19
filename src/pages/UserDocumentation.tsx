@@ -1485,34 +1485,244 @@ const UserDocumentation: React.FC = () => {
           <h1 className="text-3xl font-bold mb-6">6. Training Program Management</h1>
           
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">6.1 Program Creation & Design</h2>
+            <h2 className="text-2xl font-semibold mb-4">6.1 Complete Program Management Workflow</h2>
             
-            <div className="space-y-6">
-              <div className="bg-green-50 border rounded-lg p-6">
-                <h3 className="text-lg font-semibold mb-4">Creating New Training Programs</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium mb-3">Basic Program Setup</h4>
-                    <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• Program title and description</li>
-                      <li>• Learning objectives and outcomes</li>
-                      <li>• Target audience and prerequisites</li>
-                      <li>• Duration and format selection</li>
-                      <li>• Category and subcategory assignment</li>
-                    </ul>
-                  </div>
+            <div className="bg-green-50 border rounded-lg p-4 mb-6">
+              <h3 className="font-semibold mb-4">Complete Training Manager Workflow</h3>
+              <p className="text-sm text-gray-700 mb-4">
+                This comprehensive guide walks you through the end-to-end process of creating, managing, and delivering training programs in L-Kurve.
+              </p>
+
+              <div className="space-y-4">
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-medium mb-3 text-green-800">Phase 1: Program Creation</h4>
                   
-                  <div>
-                    <h4 className="font-medium mb-3">Advanced Configuration</h4>
-                    <ul className="text-sm text-gray-700 space-y-1">
-                      <li>• Multi-session program structure</li>
-                      <li>• Assessment integration</li>
-                      <li>• Certification requirements</li>
-                      <li>• Resource attachments</li>
-                      <li>• Enrollment limits and waitlists</li>
-                    </ul>
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-green-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 1: Access Program Creation</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Navigate to <strong>Programs → Create Program</strong> from the main menu</li>
+                        <li>• Alternatively, click <strong>"+ Add Program"</strong> button on the Programs page</li>
+                        <li>• The Program Creation wizard will open with guided steps</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-green-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 2: Enter Basic Information</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• <strong>Program Title:</strong> Enter a clear, descriptive title (e.g., "Advanced Excel for Data Analysis")</li>
+                        <li>• <strong>Description:</strong> Write 2-3 paragraphs explaining the program purpose and benefits</li>
+                        <li>• <strong>Category:</strong> Select from Technical Skills, Leadership, Compliance, or Soft Skills</li>
+                        <li>• <strong>Level:</strong> Choose Beginner, Intermediate, or Advanced</li>
+                        <li>• <strong>Program Type:</strong> Select Classroom, Virtual, E-Learning, or Blended</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-green-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 3: Define Program Content</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• <strong>Learning Objectives:</strong> List 3-5 specific, measurable learning outcomes</li>
+                        <li>• <strong>Program Outline:</strong> Create a detailed module-by-module breakdown</li>
+                        <li>• <strong>Duration:</strong> Specify total hours and recommended completion timeframe</li>
+                        <li>• <strong>Prerequisites:</strong> List any required prior training or knowledge</li>
+                        <li>• <strong>Skills Covered:</strong> Tag relevant competencies for tracking purposes</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-green-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 4: Configure Pre-Training Setup</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• <strong>Pre-Read Materials:</strong> Upload documents, articles, or links for participants to review</li>
+                        <li>• <strong>Pre-Test:</strong> Optionally create an assessment to gauge baseline knowledge</li>
+                        <li>• <strong>Resource Materials:</strong> Attach handouts, workbooks, or reference guides</li>
+                        <li>• <strong>Library Resources:</strong> Link relevant books or materials from the Digital Library</li>
+                      </ul>
+                    </div>
                   </div>
+                </div>
+
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-medium mb-3 text-blue-800">Phase 2: Session & Trainer Setup</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-blue-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 5: Create Training Sessions</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Click <strong>"Add Session"</strong> to create a new session batch</li>
+                        <li>• <strong>Start Date & Time:</strong> Set when the session begins</li>
+                        <li>• <strong>End Date & Time:</strong> Set the session end time</li>
+                        <li>• <strong>Venue/Location:</strong> Specify physical room or virtual meeting link</li>
+                        <li>• <strong>Capacity:</strong> Set maximum participants for this session</li>
+                        <li>• Repeat for each batch you want to offer (e.g., Jan batch, Feb batch)</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-blue-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 6: Assign Trainer/Faculty</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Navigate to <strong>Programs → Trainers</strong> to view available trainers</li>
+                        <li>• Select a trainer based on expertise and availability</li>
+                        <li>• <strong>Check Calendar:</strong> View trainer's schedule to avoid conflicts</li>
+                        <li>• <strong>Assign to Session:</strong> Link the trainer to specific session batches</li>
+                        <li>• <strong>Notify Trainer:</strong> System sends automatic assignment notification</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-blue-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 7: Configure Additional Settings</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• <strong>Multiple Batches:</strong> Enable if program will run multiple times</li>
+                        <li>• <strong>Waitlist:</strong> Enable automatic waitlist when sessions are full</li>
+                        <li>• <strong>Certification:</strong> Configure completion certificate if applicable</li>
+                        <li>• <strong>Assessments:</strong> Link pre-test and post-test assessments</li>
+                        <li>• Click <strong>"Save Program"</strong> to create the program</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-medium mb-3 text-purple-800">Phase 3: Enrollment Management</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-purple-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 8: Open Enrollments</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Navigate to the program's <strong>Enrollment tab</strong></li>
+                        <li>• Set <strong>Enrollment Start Date</strong> and <strong>End Date</strong></li>
+                        <li>• Configure enrollment rules (open enrollment vs. manager-approved)</li>
+                        <li>• <strong>Publish Program:</strong> Make visible to target audience</li>
+                        <li>• System sends notifications to eligible employees</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-purple-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 9: Manage Enrollment Requests</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Review incoming enrollment requests in the <strong>Pending</strong> tab</li>
+                        <li>• <strong>Approve:</strong> Click to confirm enrollment</li>
+                        <li>• <strong>Reject:</strong> Click and provide reason for rejection</li>
+                        <li>• <strong>Waitlist:</strong> Automatically add to waitlist if session is full</li>
+                        <li>• <strong>Bulk Actions:</strong> Select multiple requests for batch approval</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-purple-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 10: Bulk Enrollment</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Go to <strong>Users → Bulk Enrollment</strong></li>
+                        <li>• Select the target program and session</li>
+                        <li>• <strong>By Department:</strong> Enroll entire department at once</li>
+                        <li>• <strong>By Job Role:</strong> Enroll all users with specific roles</li>
+                        <li>• <strong>From CSV:</strong> Upload employee list for mass enrollment</li>
+                        <li>• Review and confirm the enrollment list</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-medium mb-3 text-orange-800">Phase 4: Program Delivery & Tracking</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-orange-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 11: Pre-Training Activities</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• System sends <strong>reminder emails</strong> 7 days, 3 days, and 1 day before</li>
+                        <li>• Participants receive access to pre-read materials</li>
+                        <li>• Pre-tests become available 3 days before training starts</li>
+                        <li>• <strong>Monitor:</strong> Track pre-test completion rates</li>
+                        <li>• Send additional reminders to non-completers if needed</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-orange-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 12: Attendance Tracking</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• On training day, access the <strong>Attendance</strong> tab</li>
+                        <li>• <strong>Mark Present:</strong> Check off attendees as they arrive</li>
+                        <li>• <strong>Mark Absent:</strong> Record no-shows with reason codes</li>
+                        <li>• <strong>Partial Attendance:</strong> Log early departures or late arrivals</li>
+                        <li>• For virtual sessions, attendance auto-logs from meeting platform</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-orange-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 13: Post-Training Evaluation</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• <strong>Post-Test:</strong> Participants complete knowledge assessment</li>
+                        <li>• <strong>Level 1 Feedback:</strong> Send satisfaction survey to participants</li>
+                        <li>• <strong>Trainer Evaluation:</strong> Collect feedback on trainer performance</li>
+                        <li>• <strong>Compare Pre vs Post:</strong> System calculates learning gain metrics</li>
+                        <li>• Review feedback and identify improvement areas</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-orange-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 14: Completion & Certification</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Review completion criteria (attendance + assessment score)</li>
+                        <li>• <strong>Mark Complete:</strong> Update status for qualifying participants</li>
+                        <li>• <strong>Generate Certificates:</strong> System creates completion certificates</li>
+                        <li>• Certificates are automatically added to employee profiles</li>
+                        <li>• <strong>Send Notifications:</strong> Participants receive completion confirmation</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-medium mb-3 text-teal-800">Phase 5: Reporting & Analysis</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-teal-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 15: Generate Program Reports</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Navigate to the program's <strong>Analytics</strong> tab</li>
+                        <li>• <strong>Attendance Report:</strong> View participation rates by session</li>
+                        <li>• <strong>Assessment Report:</strong> Analyze pre/post test score distributions</li>
+                        <li>• <strong>Feedback Summary:</strong> Review aggregated satisfaction scores</li>
+                        <li>• <strong>Export:</strong> Download reports as PDF or Excel for stakeholders</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-teal-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 16: ROI & Effectiveness Analysis</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Go to <strong>Analytics → ROI Dashboard</strong></li>
+                        <li>• <strong>Kirkpatrick Evaluation:</strong> Track all four levels of evaluation</li>
+                        <li>• <strong>Cost Analysis:</strong> Calculate cost per participant, per hour</li>
+                        <li>• <strong>Skill Impact:</strong> Measure competency improvement</li>
+                        <li>• Document lessons learned for future program improvements</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <h3 className="font-semibold mb-3 text-yellow-800">Quick Reference: Program Creation Checklist</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium text-sm mb-2">Before Creating:</h4>
+                  <ul className="text-xs text-gray-700 space-y-1">
+                    <li>☐ Identify business need and target audience</li>
+                    <li>☐ Define learning objectives (SMART format)</li>
+                    <li>☐ Confirm budget and resources available</li>
+                    <li>☐ Check trainer availability</li>
+                    <li>☐ Reserve venue/virtual platform</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm mb-2">After Creating:</h4>
+                  <ul className="text-xs text-gray-700 space-y-1">
+                    <li>☐ Review all program details for accuracy</li>
+                    <li>☐ Upload all supporting materials</li>
+                    <li>☐ Configure assessment settings</li>
+                    <li>☐ Set enrollment dates and notify stakeholders</li>
+                    <li>☐ Brief assigned trainers on program content</li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -1523,7 +1733,30 @@ const UserDocumentation: React.FC = () => {
             
             <div className="space-y-4">
               <div className="border rounded-lg p-4">
-                <h3 className="font-semibold mb-2">Program Categories</h3>
+                <h3 className="font-semibold mb-3">Managing Program Categories</h3>
+                <div className="space-y-3">
+                  <div className="border-l-4 border-blue-400 pl-3">
+                    <h5 className="font-medium text-sm">Step 1: Access Category Management</h5>
+                    <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                      <li>• Navigate to <strong>Programs → Category Management</strong></li>
+                      <li>• View existing categories with program counts</li>
+                    </ul>
+                  </div>
+                  <div className="border-l-4 border-blue-400 pl-3">
+                    <h5 className="font-medium text-sm">Step 2: Create New Category</h5>
+                    <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                      <li>• Click <strong>"Add Category"</strong> button</li>
+                      <li>• Enter category name and description</li>
+                      <li>• Select a color code for visual identification</li>
+                      <li>• Set parent category if creating a subcategory</li>
+                      <li>• Click <strong>"Save"</strong> to create</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border rounded-lg p-4">
+                <h3 className="font-semibold mb-2">Default Program Categories</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
@@ -1551,13 +1784,42 @@ const UserDocumentation: React.FC = () => {
             
             <div className="space-y-4">
               <div className="bg-blue-50 border rounded-lg p-4">
-                <h3 className="font-semibold mb-2">Trainer Assignment</h3>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• Trainer profile management</li>
-                  <li>• Expertise and qualification tracking</li>
-                  <li>• Calendar integration and availability</li>
-                  <li>• Performance ratings and feedback</li>
-                </ul>
+                <h3 className="font-semibold mb-3">Complete Trainer Management Workflow</h3>
+                
+                <div className="space-y-3">
+                  <div className="border-l-4 border-blue-400 pl-3">
+                    <h5 className="font-medium text-sm">Step 1: Add New Trainer</h5>
+                    <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                      <li>• Navigate to <strong>Programs → Trainers</strong></li>
+                      <li>• Click <strong>"Add Trainer"</strong> button</li>
+                      <li>• Enter trainer details: name, email, phone, department</li>
+                      <li>• <strong>Expertise Areas:</strong> Select relevant skill categories</li>
+                      <li>• <strong>Qualifications:</strong> Add certifications and experience</li>
+                      <li>• <strong>Availability:</strong> Set regular availability schedule</li>
+                      <li>• Click <strong>"Save Trainer"</strong></li>
+                    </ul>
+                  </div>
+
+                  <div className="border-l-4 border-blue-400 pl-3">
+                    <h5 className="font-medium text-sm">Step 2: Assign to Programs</h5>
+                    <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                      <li>• Open trainer profile and click <strong>"Assign to Program"</strong></li>
+                      <li>• Select program and specific session dates</li>
+                      <li>• System checks for calendar conflicts automatically</li>
+                      <li>• Trainer receives email notification with session details</li>
+                    </ul>
+                  </div>
+
+                  <div className="border-l-4 border-blue-400 pl-3">
+                    <h5 className="font-medium text-sm">Step 3: Track Performance</h5>
+                    <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                      <li>• View aggregated feedback scores from all sessions</li>
+                      <li>• Review session-wise performance trends</li>
+                      <li>• Identify top-performing trainers for critical programs</li>
+                      <li>• Use data for trainer development planning</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1568,34 +1830,198 @@ const UserDocumentation: React.FC = () => {
           <h1 className="text-3xl font-bold mb-6">7. Learning Paths</h1>
           
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">7.1 Learning Path Design</h2>
+            <h2 className="text-2xl font-semibold mb-4">7.1 Complete Learning Path Creation Workflow</h2>
             
-            <div className="space-y-6">
-              <div className="bg-purple-50 border rounded-lg p-6">
-                <h3 className="text-lg font-semibold mb-4">Creating Structured Learning Journeys</h3>
-                
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">1</div>
-                    <div>
-                      <h4 className="font-medium">Define Learning Objectives</h4>
-                      <p className="text-sm text-gray-600">Set clear, measurable goals for the learning path</p>
+            <div className="bg-purple-50 border rounded-lg p-4 mb-6">
+              <h3 className="font-semibold mb-4">Step-by-Step Guide to Creating Learning Paths</h3>
+              <p className="text-sm text-gray-700 mb-4">
+                Learning Paths combine multiple training elements into a structured journey that guides employees from novice to expert in a specific skill area or role.
+              </p>
+
+              <div className="space-y-4">
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-medium mb-3 text-purple-800">Phase 1: Path Planning & Setup</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-purple-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 1: Access Learning Path Creator</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Navigate to <strong>Learning Paths → Create Learning Path</strong></li>
+                        <li>• The Path Builder wizard will open with a visual canvas</li>
+                        <li>• Choose <strong>"Blank Path"</strong> or use a pre-built template</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-purple-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 2: Define Path Basics</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• <strong>Path Title:</strong> Enter a descriptive name (e.g., "New Manager Development Path")</li>
+                        <li>• <strong>Description:</strong> Explain the path's purpose and expected outcomes</li>
+                        <li>• <strong>Category:</strong> Select the skill category (Technical, Leadership, etc.)</li>
+                        <li>• <strong>Target Audience:</strong> Specify job roles or departments</li>
+                        <li>• <strong>Difficulty Level:</strong> Choose Beginner, Intermediate, or Advanced</li>
+                        <li>• <strong>Estimated Duration:</strong> Set total hours to complete the path</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-purple-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 3: Set Prerequisites</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• <strong>Required Experience:</strong> Specify minimum experience level</li>
+                        <li>• <strong>Prior Paths:</strong> Link any paths that must be completed first</li>
+                        <li>• <strong>Required Skills:</strong> Tag prerequisite competencies</li>
+                        <li>• <strong>Certification Requirements:</strong> List any required certifications</li>
+                      </ul>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">2</div>
-                    <div>
-                      <h4 className="font-medium">Structure Content Sequence</h4>
-                      <p className="text-sm text-gray-600">Arrange content in logical progression with dependencies</p>
+                </div>
+
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-medium mb-3 text-blue-800">Phase 2: Building the Path Structure</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-blue-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 4: Add Modules/Stages</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Click <strong>"+ Add Module"</strong> to create a new stage</li>
+                        <li>• <strong>Module Name:</strong> Give each module a clear title (e.g., "Foundation Skills")</li>
+                        <li>• <strong>Module Description:</strong> Explain what learners will achieve</li>
+                        <li>• <strong>Duration:</strong> Estimate time to complete the module</li>
+                        <li>• <strong>Required vs Optional:</strong> Mark module as mandatory or elective</li>
+                        <li>• Drag modules to reorder the sequence</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-blue-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 5: Add Content to Modules</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Click on a module to expand and add content</li>
+                        <li>• <strong>Training Programs:</strong> Link existing L-Kurve training programs</li>
+                        <li>• <strong>E-Learning:</strong> Add uploaded videos, SCORM packages, or documents</li>
+                        <li>• <strong>MOOC Courses:</strong> Link courses from integrated MOOC providers</li>
+                        <li>• <strong>Assessments:</strong> Add quizzes or exams as checkpoints</li>
+                        <li>• <strong>Resources:</strong> Attach supplementary reading materials</li>
+                        <li>• Use drag-and-drop to arrange content within each module</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-blue-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 6: Configure Dependencies</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• <strong>Sequential Order:</strong> Require modules to be completed in order</li>
+                        <li>• <strong>Unlocking Rules:</strong> Set conditions for unlocking next modules</li>
+                        <li>• <strong>Assessment Gates:</strong> Require passing scores to proceed</li>
+                        <li>• <strong>Time Delays:</strong> Add waiting periods between modules</li>
+                      </ul>
                     </div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">3</div>
-                    <div>
-                      <h4 className="font-medium">Add Assessments & Milestones</h4>
-                      <p className="text-sm text-gray-600">Include checkpoints to validate learning progress</p>
+                </div>
+
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-medium mb-3 text-green-800">Phase 3: Assessment & Certification</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-green-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 7: Add Milestone Assessments</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• <strong>Knowledge Checks:</strong> Add quizzes at the end of each module</li>
+                        <li>• <strong>Skills Assessments:</strong> Include practical evaluations</li>
+                        <li>• <strong>Passing Criteria:</strong> Set minimum scores for progression</li>
+                        <li>• <strong>Retry Policy:</strong> Configure number of allowed attempts</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-green-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 8: Configure Certification</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Toggle <strong>"Enable Certification"</strong> if path awards a credential</li>
+                        <li>• <strong>Certificate Template:</strong> Select or upload custom certificate design</li>
+                        <li>• <strong>Validity Period:</strong> Set expiration (e.g., 12 months, indefinite)</li>
+                        <li>• <strong>Renewal Requirements:</strong> Define recertification process</li>
+                        <li>• <strong>Digital Badge:</strong> Enable to issue shareable digital badges</li>
+                      </ul>
                     </div>
                   </div>
+                </div>
+
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-medium mb-3 text-orange-800">Phase 4: Publishing & Enrollment</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-orange-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 9: Review & Publish</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Click <strong>"Preview Path"</strong> to see learner's view</li>
+                        <li>• Verify all content links are active and accessible</li>
+                        <li>• Check estimated completion time is accurate</li>
+                        <li>• Click <strong>"Publish"</strong> to make path available</li>
+                        <li>• Choose visibility: All Users, Specific Departments, or By Role</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-orange-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 10: Manage Enrollments</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• <strong>Self-Enrollment:</strong> Allow users to enroll themselves</li>
+                        <li>• <strong>Manager Assignment:</strong> Enable manager-initiated enrollment</li>
+                        <li>• <strong>Auto-Enrollment:</strong> Configure rules (e.g., all new hires)</li>
+                        <li>• <strong>Bulk Assign:</strong> Enroll entire departments or job roles</li>
+                        <li>• <strong>Set Deadlines:</strong> Configure path completion target dates</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white border rounded-lg p-4">
+                  <h4 className="font-medium mb-3 text-teal-800">Phase 5: Monitoring & Optimization</h4>
+                  
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-teal-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 11: Track Progress</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Navigate to <strong>Learning Paths → Analytics Dashboard</strong></li>
+                        <li>• <strong>Enrollment Stats:</strong> View total enrolled, active, completed</li>
+                        <li>• <strong>Module Completion:</strong> See drop-off points in the path</li>
+                        <li>• <strong>Time to Complete:</strong> Analyze actual vs. estimated duration</li>
+                        <li>• <strong>Assessment Scores:</strong> Review performance distributions</li>
+                      </ul>
+                    </div>
+
+                    <div className="border-l-4 border-teal-400 pl-3">
+                      <h5 className="font-medium text-sm">Step 12: Optimize Based on Data</h5>
+                      <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                        <li>• Identify modules with high drop-off rates</li>
+                        <li>• Review learner feedback for improvement areas</li>
+                        <li>• Update content that has low engagement</li>
+                        <li>• Adjust difficulty of assessments if pass rates are too low/high</li>
+                        <li>• Add supplementary resources where learners struggle</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <h3 className="font-semibold mb-3 text-yellow-800">Best Practices for Learning Paths</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium text-sm mb-2">Path Design:</h4>
+                  <ul className="text-xs text-gray-700 space-y-1">
+                    <li>• Keep modules to 2-4 hours max for better engagement</li>
+                    <li>• Mix content types (video, reading, activities)</li>
+                    <li>• Include knowledge checks every 30-45 minutes</li>
+                    <li>• Provide clear learning objectives per module</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm mb-2">Engagement Tips:</h4>
+                  <ul className="text-xs text-gray-700 space-y-1">
+                    <li>• Send progress reminders at 25%, 50%, 75%</li>
+                    <li>• Celebrate milestone completions with badges</li>
+                    <li>• Enable peer discussion for collaborative paths</li>
+                    <li>• Set realistic deadlines (4-6 weeks for paths)</li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -1604,27 +2030,22 @@ const UserDocumentation: React.FC = () => {
           <div className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">7.2 Content Management & Integration</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
               <div className="border rounded-lg p-4">
-                <h3 className="font-semibold mb-3">Content Types</h3>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• Training programs and sessions</li>
-                  <li>• E-learning modules and videos</li>
-                  <li>• Documents and resources</li>
-                  <li>• External MOOC integrations</li>
-                  <li>• Assessments and evaluations</li>
-                </ul>
-              </div>
-              
-              <div className="border rounded-lg p-4">
-                <h3 className="font-semibold mb-3">Management Features</h3>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• Drag-and-drop path builder</li>
-                  <li>• Content versioning and updates</li>
-                  <li>• Prerequisite management</li>
-                  <li>• Adaptive path adjustments</li>
-                  <li>• Multi-format content support</li>
-                </ul>
+                <h3 className="font-semibold mb-3">Adding Content to Learning Paths</h3>
+                <div className="space-y-3">
+                  <div className="border-l-4 border-purple-400 pl-3">
+                    <h5 className="font-medium text-sm">Content Types You Can Add</h5>
+                    <ul className="text-xs text-gray-700 mt-2 space-y-1">
+                      <li>• <strong>Training Programs:</strong> Link existing classroom/virtual programs</li>
+                      <li>• <strong>E-Learning Modules:</strong> Upload SCORM packages or videos</li>
+                      <li>• <strong>Documents:</strong> Attach PDFs, presentations, or guides</li>
+                      <li>• <strong>MOOC Courses:</strong> Include courses from Coursera, edX, etc.</li>
+                      <li>• <strong>Assessments:</strong> Add knowledge checks and exams</li>
+                      <li>• <strong>External Links:</strong> Reference web resources</li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
