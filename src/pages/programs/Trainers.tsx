@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, ExternalLink, Users, Star, MapPin, Calendar } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Trainers = () => {
   const trainers = [
@@ -39,8 +40,31 @@ const Trainers = () => {
     },
   ];
 
+  const { toast } = useToast();
+
   const handleConnectToSimplify = () => {
     window.open('https://www.SimplifyMyTraining.com', '_blank');
+  };
+
+  const handleAddTrainer = () => {
+    toast({
+      title: "Add Trainer",
+      description: "Trainer creation form coming soon!",
+    });
+  };
+
+  const handleScheduleTraining = () => {
+    toast({
+      title: "Schedule Training",
+      description: "Training scheduling feature coming soon!",
+    });
+  };
+
+  const handleTrainerReports = () => {
+    toast({
+      title: "Trainer Reports",
+      description: "Trainer analytics and reports coming soon!",
+    });
   };
 
   return (
@@ -148,7 +172,7 @@ const Trainers = () => {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Button variant="outline" className="h-20 flex-col gap-2">
+          <Button variant="outline" className="h-20 flex-col gap-2" onClick={handleAddTrainer}>
             <Plus className="h-6 w-6" />
             <span>Add Trainer</span>
           </Button>
@@ -156,11 +180,11 @@ const Trainers = () => {
             <ExternalLink className="h-6 w-6" />
             <span>Browse External</span>
           </Button>
-          <Button variant="outline" className="h-20 flex-col gap-2">
+          <Button variant="outline" className="h-20 flex-col gap-2" onClick={handleScheduleTraining}>
             <Calendar className="h-6 w-6" />
             <span>Schedule Training</span>
           </Button>
-          <Button variant="outline" className="h-20 flex-col gap-2">
+          <Button variant="outline" className="h-20 flex-col gap-2" onClick={handleTrainerReports}>
             <Users className="h-6 w-6" />
             <span>Trainer Reports</span>
           </Button>
