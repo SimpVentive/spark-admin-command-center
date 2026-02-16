@@ -85,6 +85,7 @@ import EnhancedManagerApproval from "./pages/training-needs/EnhancedManagerAppro
 
 // Auth pages
 import Auth from "./pages/auth/Auth";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 // AI pages
 import AIRecommendationsPage from "./pages/AIRecommendations";
@@ -158,6 +159,7 @@ const App = () => (
               {/* Public routes without layout */}
               <Route path="/landing" element={<LandingPage />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               
               {/* Protected routes with layout */}
               <Route path="/" element={<ProtectedRoute><AuthenticatedLayout><Index /></AuthenticatedLayout></ProtectedRoute>} />
