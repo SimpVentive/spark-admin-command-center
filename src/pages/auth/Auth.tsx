@@ -3,26 +3,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Building2 } from "lucide-react";
+import { Eye, EyeOff, Building2, ShieldCheck } from "lucide-react";
 
 export default function Auth() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    fullName: ''
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
-    // Check if user is already logged in
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
@@ -31,7 +25,6 @@ export default function Auth() {
     };
     checkUser();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         navigate('/');
@@ -42,288 +35,118 @@ export default function Auth() {
   }, [navigate]);
 
   const handleSignIn = async () => {
-    if (!formData.email || !formData.password) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in all fields",
-        variant: "destructive"
-      });
+    if (!email || !password) {
+      toast({ title: "Validation Error", description: "Please fill in all fields", variant: "destructive" });
       return;
     }
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password
-      });
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          toast({
-            title: "Sign In Failed",
-            description: "Invalid email or password. Please check your credentials.",
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Sign In Failed",
-            description: error.message,
-            variant: "destructive"
-          });
-        }
-      } else {
         toast({
-          title: "Welcome back!",
-          description: "You have been signed in successfully."
+          title: "Sign In Failed",
+          description: error.message.includes('Invalid login credentials')
+            ? "Invalid email or password. Please check your credentials."
+            : error.message,
+          variant: "destructive"
         });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSignUp = async () => {
-    if (!formData.email || !formData.password || !formData.confirmPassword || !formData.fullName) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in all fields",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      toast({
-        title: "Password Too Short",
-        description: "Password must be at least 6 characters long",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            full_name: formData.fullName
-          }
-        }
-      });
-
-      if (error) {
-        if (error.message.includes('User already registered')) {
-          toast({
-            title: "Account Exists",
-            description: "An account with this email already exists. Please sign in instead.",
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Sign Up Failed",
-            description: error.message,
-            variant: "destructive"
-          });
-        }
       } else {
-        toast({
-          title: "Account Created!",
-          description: "Please check your email to verify your account."
-        });
+        toast({ title: "Welcome back!", description: "You have been signed in successfully." });
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive"
-      });
+    } catch {
+      toast({ title: "Error", description: "An unexpected error occurred", variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-xl mb-4">
-            <Building2 className="w-8 h-8 text-white" />
+            <Building2 className="w-8 h-8 text-primary-foreground" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">L-Kurve</h1>
-          <p className="text-gray-600 mt-2">Enterprise Learning Management System</p>
+          <h1 className="text-3xl font-bold text-foreground">L-Kurve</h1>
+          <p className="text-muted-foreground mt-2">Enterprise Learning Management System</p>
         </div>
 
         <Card>
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Welcome</CardTitle>
+            <div className="flex items-center justify-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-primary" />
+              <CardTitle className="text-2xl">Admin Sign In</CardTitle>
+            </div>
             <CardDescription className="text-center">
-              Sign in to your account or create a new one
+              Sign in with your administrator credentials
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="signin" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="signin" className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
-                  <Input
-                    id="signin-email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="signin-password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      value={formData.password}
-                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-                <Button 
-                  onClick={handleSignIn} 
-                  className="w-full" 
-                  disabled={loading}
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="signin-email">Email</Label>
+              <Input
+                id="signin-email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="signin-password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="signin-password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSignIn()}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
                 >
-                  {loading ? "Signing in..." : "Sign In"}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
-                <div className="text-center">
-                  <Button
-                    type="button"
-                    variant="link"
-                    className="text-sm text-muted-foreground"
-                    onClick={async () => {
-                      if (!formData.email) {
-                        toast({ title: "Email Required", description: "Please enter your email address first.", variant: "destructive" });
-                        return;
-                      }
-                      const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
-                        redirectTo: `${window.location.origin}/reset-password`,
-                      });
-                      if (error) {
-                        toast({ title: "Error", description: error.message, variant: "destructive" });
-                      } else {
-                        toast({ title: "Email Sent", description: "Check your email for a password reset link." });
-                      }
-                    }}
-                  >
-                    Forgot your password?
-                  </Button>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="signup" className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name">Full Name</Label>
-                  <Input
-                    id="signup-name"
-                    type="text"
-                    placeholder="Enter your full name"
-                    value={formData.fullName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="signup-password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      value={formData.password}
-                      onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
-                  <Input
-                    id="confirm-password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  />
-                </div>
-                <Button 
-                  onClick={handleSignUp} 
-                  className="w-full" 
-                  disabled={loading}
-                >
-                  {loading ? "Creating account..." : "Create Account"}
-                </Button>
-              </TabsContent>
-            </Tabs>
+              </div>
+            </div>
+            <Button onClick={handleSignIn} className="w-full" disabled={loading}>
+              {loading ? "Signing in..." : "Sign In"}
+            </Button>
+            <div className="text-center">
+              <Button
+                type="button"
+                variant="link"
+                className="text-sm text-muted-foreground"
+                onClick={async () => {
+                  if (!email) {
+                    toast({ title: "Email Required", description: "Please enter your email address first.", variant: "destructive" });
+                    return;
+                  }
+                  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/reset-password`,
+                  });
+                  if (error) {
+                    toast({ title: "Error", description: error.message, variant: "destructive" });
+                  } else {
+                    toast({ title: "Email Sent", description: "Check your email for a password reset link." });
+                  }
+                }}
+              >
+                Forgot your password?
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
-        <p className="text-center text-sm text-gray-600 mt-4">
-          By signing in, you agree to our terms of service and privacy policy.
+        <p className="text-center text-sm text-muted-foreground mt-4">
+          Admin access only. Employees should use the Skill Spark app.
         </p>
       </div>
     </div>
