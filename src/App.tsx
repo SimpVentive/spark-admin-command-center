@@ -82,6 +82,7 @@ import ProgramManagement from "./pages/training-needs/ProgramManagement";
 import Analytics from "./pages/training-needs/Analytics";
 import EnhancedEmployeeTNI from "./pages/training-needs/EnhancedEmployeeTNI";
 import EnhancedManagerApproval from "./pages/training-needs/EnhancedManagerApproval";
+import TNACycleList from "./pages/training-needs/TNACycleList";
 
 // Auth pages
 import Auth from "./pages/auth/Auth";
@@ -230,6 +231,7 @@ const App = () => (
               
               {/* Training Needs */}
               <Route path="/training-needs" element={<ProtectedRoute><AuthenticatedLayout><TNADashboard /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/training-needs/cycles" element={<ProtectedRoute><AuthenticatedLayout><TNACycleList /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/training-needs/create-cycle" element={<ProtectedRoute><AuthenticatedLayout><CreateCycle /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/training-needs/employee-tni" element={<ProtectedRoute><AuthenticatedLayout><EmployeeTNI /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/training-needs/enhanced-employee-tni" element={<ProtectedRoute><AuthenticatedLayout><EnhancedEmployeeTNI /></AuthenticatedLayout></ProtectedRoute>} />

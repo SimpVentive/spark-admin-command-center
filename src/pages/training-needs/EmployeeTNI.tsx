@@ -556,20 +556,42 @@ export default function EmployeeTNI() {
       </Tabs>
 
       {/* Navigation */}
-      <div className="flex justify-between">
+      <div className="flex justify-between pt-4 border-t">
         <Button
           variant="outline"
           onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
           disabled={currentStep === 1}
         >
-          Previous
+          ← Previous
         </Button>
-        <Button
-          onClick={() => setCurrentStep(Math.min(4, currentStep + 1))}
-          disabled={currentStep === 4}
-        >
-          Next
-        </Button>
+        <div className="text-sm text-muted-foreground flex items-center">
+          Step {currentStep} of 4
+        </div>
+        {currentStep === 4 ? (
+          <Button onClick={handleSubmit}>
+            Submit Training Needs
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              // Validate before moving to next step
+              if (currentStep === 2) {
+                const totalSelected = tniData.selectedPrograms.length + mandatoryPrograms.length;
+                if (totalSelected < cycleInfo.minPrograms) {
+                  toast({
+                    title: "Selection Required",
+                    description: `Please select at least ${cycleInfo.minPrograms - mandatoryPrograms.length} optional program(s).`,
+                    variant: "destructive"
+                  });
+                  return;
+                }
+              }
+              setCurrentStep(Math.min(4, currentStep + 1));
+            }}
+          >
+            Next →
+          </Button>
+        )}
       </div>
     </div>
   );

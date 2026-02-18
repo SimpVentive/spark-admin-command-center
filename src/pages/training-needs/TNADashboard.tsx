@@ -152,7 +152,17 @@ export default function TNADashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/cycles')}>
+          <CardHeader className="pb-3">
+            <div className="w-12 h-12 bg-indigo-500 rounded-lg flex items-center justify-center mb-3">
+              <TrendingUp className="w-6 h-6 text-white" />
+            </div>
+            <CardTitle className="text-lg">View All Cycles</CardTitle>
+            <p className="text-sm text-muted-foreground">List of all initiated TNA cycles</p>
+          </CardHeader>
+        </Card>
+
         <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/create-cycle')}>
           <CardHeader className="pb-3">
             <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-3">
