@@ -106,6 +106,12 @@ import ComputationModels from "./pages/roi/ComputationModels";
 import KirkpatrickModel from "./pages/roi/KirkpatrickModel";
 import PhillipsModel from "./pages/roi/PhillipsModel";
 import KirkpatrickEvaluations from "./pages/roi/KirkpatrickEvaluations";
+import ROIDashboard from "./pages/roi/ROIDashboard";
+import CostAnalysis from "./pages/roi/CostAnalysis";
+import ImpactReports from "./pages/roi/ImpactReports";
+
+// Program Sessions
+import ProgramSessions from "./pages/programs/ProgramSessions";
 
 // Settings and Security pages
 import Security from "./pages/Security";
