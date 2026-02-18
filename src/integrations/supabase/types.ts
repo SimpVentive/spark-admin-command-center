@@ -2365,14 +2365,17 @@ export type Database = {
         Row: {
           category: string
           created_at: string
+          departments: string[] | null
           description: string | null
           duration_hours: number | null
           faculty: string | null
           id: string
           is_active: boolean | null
           level: string | null
+          locations: string[] | null
           outline: string | null
           prerequisites: string[] | null
+          roles: string[] | null
           skills_covered: string[] | null
           title: string
           updated_at: string
@@ -2381,14 +2384,17 @@ export type Database = {
         Insert: {
           category: string
           created_at?: string
+          departments?: string[] | null
           description?: string | null
           duration_hours?: number | null
           faculty?: string | null
           id?: string
           is_active?: boolean | null
           level?: string | null
+          locations?: string[] | null
           outline?: string | null
           prerequisites?: string[] | null
+          roles?: string[] | null
           skills_covered?: string[] | null
           title: string
           updated_at?: string
@@ -2397,14 +2403,17 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          departments?: string[] | null
           description?: string | null
           duration_hours?: number | null
           faculty?: string | null
           id?: string
           is_active?: boolean | null
           level?: string | null
+          locations?: string[] | null
           outline?: string | null
           prerequisites?: string[] | null
+          roles?: string[] | null
           skills_covered?: string[] | null
           title?: string
           updated_at?: string

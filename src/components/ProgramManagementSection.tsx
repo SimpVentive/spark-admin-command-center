@@ -140,16 +140,16 @@ export default function ProgramManagementSection({
     setFormData({
       title: program.title,
       description: program.description || "",
-      objective: program.description || "", // Using description as objective for now
+      objective: program.description || "",
       outline: program.outline || "",
-      duration_days: Math.ceil((program.duration_hours || 0) / 8), // Convert hours to days
+      duration_days: Math.ceil((program.duration_hours || 0) / 8),
       level: program.level || "Basic",
       category: program.category,
       faculty: program.faculty || "",
       venue: program.venue || "",
-      departments: [],
-      locations: [],
-      roles: [],
+      departments: (program as any).departments || [],
+      locations: (program as any).locations || [],
+      roles: (program as any).roles || [],
       prerequisites: program.prerequisites || [],
       skills_covered: program.skills_covered || []
     });
@@ -169,15 +169,18 @@ export default function ProgramManagementSection({
     try {
       const submissionData = {
         title: formData.title,
-        description: formData.objective, // Using objective as description
+        description: formData.objective,
         category: formData.category,
         level: formData.level,
-        duration_hours: formData.duration_days * 8, // Convert days to hours
+        duration_hours: formData.duration_days * 8,
         faculty: formData.faculty,
         venue: formData.venue,
         outline: formData.outline,
         prerequisites: formData.prerequisites,
-        skills_covered: formData.skills_covered
+        skills_covered: formData.skills_covered,
+        departments: formData.departments,
+        locations: formData.locations,
+        roles: formData.roles
       };
 
       if (editingProgram) {
