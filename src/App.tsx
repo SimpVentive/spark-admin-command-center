@@ -106,6 +106,12 @@ import ComputationModels from "./pages/roi/ComputationModels";
 import KirkpatrickModel from "./pages/roi/KirkpatrickModel";
 import PhillipsModel from "./pages/roi/PhillipsModel";
 import KirkpatrickEvaluations from "./pages/roi/KirkpatrickEvaluations";
+import ROIDashboard from "./pages/roi/ROIDashboard";
+import CostAnalysis from "./pages/roi/CostAnalysis";
+import ImpactReports from "./pages/roi/ImpactReports";
+
+// Program Sessions
+import ProgramSessions from "./pages/programs/ProgramSessions";
 
 // Settings and Security pages
 import Security from "./pages/Security";
@@ -179,6 +185,7 @@ const App = () => (
               <Route path="/programs/create" element={<ProtectedRoute><AuthenticatedLayout><CreateProgram /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/programs/categories" element={<ProtectedRoute><AuthenticatedLayout><CategoryManagement /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/programs/trainers" element={<ProtectedRoute><AuthenticatedLayout><Trainers /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/programs/sessions" element={<ProtectedRoute><AuthenticatedLayout><ProgramSessions /></AuthenticatedLayout></ProtectedRoute>} />
               
               {/* Learning Paths */}
               <Route path="/learning-paths" element={<ProtectedRoute><AuthenticatedLayout><LearningPaths /></AuthenticatedLayout></ProtectedRoute>} />
@@ -256,6 +263,9 @@ const App = () => (
               <Route path="/roi/models/kirkpatrick" element={<ProtectedRoute><AuthenticatedLayout><KirkpatrickModel /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/roi/models/phillips" element={<ProtectedRoute><AuthenticatedLayout><PhillipsModel /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/roi/kirkpatrick-evaluations" element={<ProtectedRoute><AuthenticatedLayout><KirkpatrickEvaluations /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/roi" element={<ProtectedRoute><AuthenticatedLayout><ROIDashboard /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/roi/costs" element={<ProtectedRoute><AuthenticatedLayout><CostAnalysis /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/roi/impact" element={<ProtectedRoute><AuthenticatedLayout><ImpactReports /></AuthenticatedLayout></ProtectedRoute>} />
               
               {/* Security */}
               <Route path="/security" element={<ProtectedRoute><AuthenticatedLayout><Security /></AuthenticatedLayout></ProtectedRoute>} />
