@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Edit, Trash2, FolderOpen } from "lucide-react";
+import { Plus, Edit, Trash2, FolderOpen, Save, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Category {
@@ -60,7 +60,8 @@ const ProgramCategoryManagement = ({
   const [newCategory, setNewCategory] = useState({ name: "", type: "functional" as const });
   const [newSubcategory, setNewSubcategory] = useState("");
   const [selectedCategoryForSub, setSelectedCategoryForSub] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editForm, setEditForm] = useState<{ name: string; type: Category['type'] }>({ name: "", type: "functional" });
 
   const addCategory = () => {
     if (!newCategory.name.trim()) return;
@@ -74,10 +75,7 @@ const ProgramCategoryManagement = ({
     
     setCategories(prev => [...prev, category]);
     setNewCategory({ name: "", type: "functional" });
-    toast({
-      title: "Success",
-      description: "Category added successfully",
-    });
+    toast({ title: "Success", description: "Category added successfully" });
   };
 
   const addSubcategory = () => {
@@ -91,10 +89,7 @@ const ProgramCategoryManagement = ({
     
     setNewSubcategory("");
     setSelectedCategoryForSub("");
-    toast({
-      title: "Success", 
-      description: "Subcategory added successfully",
-    });
+    toast({ title: "Success", description: "Subcategory added successfully" });
   };
 
   const removeSubcategory = (categoryId: string, subcategory: string) => {
@@ -103,6 +98,29 @@ const ProgramCategoryManagement = ({
         ? { ...cat, subcategories: cat.subcategories.filter(sub => sub !== subcategory) }
         : cat
     ));
+    toast({ title: "Removed", description: `Subcategory "${subcategory}" removed` });
+  };
+
+  const deleteCategory = (categoryId: string) => {
+    if (!confirm("Are you sure you want to delete this category?")) return;
+    setCategories(prev => prev.filter(cat => cat.id !== categoryId));
+    toast({ title: "Deleted", description: "Category deleted successfully" });
+  };
+
+  const startEditCategory = (category: Category) => {
+    setEditingCategory(category);
+    setEditForm({ name: category.name, type: category.type });
+  };
+
+  const saveEditCategory = () => {
+    if (!editingCategory || !editForm.name.trim()) return;
+    setCategories(prev => prev.map(cat =>
+      cat.id === editingCategory.id
+        ? { ...cat, name: editForm.name, type: editForm.type as Category['type'] }
+        : cat
+    ));
+    setEditingCategory(null);
+    toast({ title: "Updated", description: "Category updated successfully" });
   };
 
   if (showManagement) {
@@ -133,9 +151,7 @@ const ProgramCategoryManagement = ({
                   value={newCategory.type} 
                   onValueChange={(value: any) => setNewCategory(prev => ({ ...prev, type: value }))}
                 >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="functional">Functional</SelectItem>
                     <SelectItem value="technical">Technical</SelectItem>
@@ -158,9 +174,7 @@ const ProgramCategoryManagement = ({
               <div className="space-y-2">
                 <Label>Select Category</Label>
                 <Select value={selectedCategoryForSub} onValueChange={setSelectedCategoryForSub}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                   <SelectContent>
                     {categories.map(cat => (
                       <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
@@ -191,8 +205,46 @@ const ProgramCategoryManagement = ({
                 <Card key={category.id}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-base">{category.name}</CardTitle>
-                      <Badge variant="outline">{category.type}</Badge>
+                      {editingCategory?.id === category.id ? (
+                        <div className="flex items-center gap-2 flex-1">
+                          <Input
+                            value={editForm.name}
+                            onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                            className="max-w-xs"
+                          />
+                          <Select 
+                            value={editForm.type} 
+                            onValueChange={(value: any) => setEditForm(prev => ({ ...prev, type: value }))}
+                          >
+                            <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="functional">Functional</SelectItem>
+                              <SelectItem value="technical">Technical</SelectItem>
+                              <SelectItem value="leadership">Leadership</SelectItem>
+                              <SelectItem value="compliance">Compliance</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Button size="sm" onClick={saveEditCategory}>
+                            <Save className="h-3 w-3" />
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => setEditingCategory(null)}>
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <CardTitle className="text-base">{category.name}</CardTitle>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline">{category.type}</Badge>
+                            <Button variant="ghost" size="sm" onClick={() => startEditCategory(category)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => deleteCategory(category.id)}>
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -208,6 +260,9 @@ const ProgramCategoryManagement = ({
                             />
                           </Badge>
                         ))}
+                        {category.subcategories.length === 0 && (
+                          <span className="text-sm text-muted-foreground">No subcategories yet</span>
+                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -228,9 +283,7 @@ const ProgramCategoryManagement = ({
       <div className="space-y-2">
         <Label>Category</Label>
         <Select value={selectedCategory} onValueChange={(value) => onCategoryChange?.(value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select category" />
-          </SelectTrigger>
+          <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
           <SelectContent>
             {categories.map(cat => (
               <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
@@ -246,9 +299,7 @@ const ProgramCategoryManagement = ({
           onValueChange={(value) => onCategoryChange?.(selectedCategory || "", value)}
           disabled={!selectedCategory}
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Select subcategory" />
-          </SelectTrigger>
+          <SelectTrigger><SelectValue placeholder="Select subcategory" /></SelectTrigger>
           <SelectContent>
             {selectedCat?.subcategories.map(sub => (
               <SelectItem key={sub} value={sub}>{sub}</SelectItem>

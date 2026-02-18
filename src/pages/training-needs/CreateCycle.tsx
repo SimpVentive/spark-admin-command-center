@@ -43,9 +43,12 @@ interface CycleData {
   reminderDays: number[];
 }
 
+const tabOrder = ["basic", "workflow", "programs", "notifications", "preview", "review"];
+
 export default function CreateCycle() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("basic");
   
   const [cycleData, setCycleData] = useState<CycleData>({
     name: '',
@@ -162,7 +165,7 @@ Training Team`,
         </p>
       </div>
 
-      <Tabs defaultValue="basic" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="basic">Basic Info</TabsTrigger>
           <TabsTrigger value="workflow">Workflow</TabsTrigger>
@@ -761,6 +764,48 @@ Training Team`,
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Navigation Buttons */}
+      <div className="flex justify-between pt-4 border-t">
+        <Button
+          variant="outline"
+          onClick={() => {
+            const currentIndex = tabOrder.indexOf(activeTab);
+            if (currentIndex > 0) setActiveTab(tabOrder[currentIndex - 1]);
+          }}
+          disabled={activeTab === tabOrder[0]}
+        >
+          ← Previous
+        </Button>
+        <div className="text-sm text-muted-foreground flex items-center">
+          Step {tabOrder.indexOf(activeTab) + 1} of {tabOrder.length}
+        </div>
+        {activeTab === tabOrder[tabOrder.length - 1] ? (
+          <Button onClick={handleSubmit}>
+            Create TNI Cycle
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              // Validate current tab before proceeding
+              if (activeTab === "basic") {
+                if (!cycleData.name.trim()) {
+                  toast({ title: "Validation Error", description: "Cycle name is required", variant: "destructive" });
+                  return;
+                }
+                if (!cycleData.startDate || !cycleData.endDate) {
+                  toast({ title: "Validation Error", description: "Start and end dates are required", variant: "destructive" });
+                  return;
+                }
+              }
+              const currentIndex = tabOrder.indexOf(activeTab);
+              if (currentIndex < tabOrder.length - 1) setActiveTab(tabOrder[currentIndex + 1]);
+            }}
+          >
+            Next →
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
