@@ -1,23 +1,46 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Validate authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data, error: authError } = await supabase.auth.getClaims(token);
+    if (authError || !data?.claims) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { file, outputFormat, settings } = await req.json();
     
-    console.log('Video format conversion started', { file: file?.name, outputFormat, settings });
+    console.log('Video format conversion started', { userId: data.claims.sub, file: file?.name, outputFormat, settings });
 
-    // Simulate conversion process
     const conversionSteps = [
       'Analyzing input video file...',
       'Checking codec compatibility...',
@@ -27,12 +50,6 @@ serve(async (req) => {
       'Applying quality settings...',
       'Finalizing MP4 output...'
     ];
-
-    // For demo purposes, we'll simulate the conversion
-    // In a real implementation, you would:
-    // 1. Use FFmpeg or similar tool to convert video
-    // 2. Apply the specified quality settings
-    // 3. Optimize for the target use case (web, mobile, etc.)
 
     const inputFormat = file?.name?.split('.').pop()?.toUpperCase() || 'UNKNOWN';
     const targetFormat = outputFormat?.toUpperCase() || 'MP4';
@@ -64,7 +81,7 @@ serve(async (req) => {
     console.error('Error in video format conversion:', error);
     return new Response(JSON.stringify({ 
       success: false, 
-      error: error.message 
+      error: 'An internal error occurred' 
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
