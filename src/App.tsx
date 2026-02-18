@@ -185,6 +185,7 @@ const App = () => (
               <Route path="/programs/create" element={<ProtectedRoute><AuthenticatedLayout><CreateProgram /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/programs/categories" element={<ProtectedRoute><AuthenticatedLayout><CategoryManagement /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/programs/trainers" element={<ProtectedRoute><AuthenticatedLayout><Trainers /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/programs/sessions" element={<ProtectedRoute><AuthenticatedLayout><ProgramSessions /></AuthenticatedLayout></ProtectedRoute>} />
               
               {/* Learning Paths */}
               <Route path="/learning-paths" element={<ProtectedRoute><AuthenticatedLayout><LearningPaths /></AuthenticatedLayout></ProtectedRoute>} />
