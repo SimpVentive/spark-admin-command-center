@@ -263,6 +263,9 @@ const App = () => (
               <Route path="/roi/models/kirkpatrick" element={<ProtectedRoute><AuthenticatedLayout><KirkpatrickModel /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/roi/models/phillips" element={<ProtectedRoute><AuthenticatedLayout><PhillipsModel /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/roi/kirkpatrick-evaluations" element={<ProtectedRoute><AuthenticatedLayout><KirkpatrickEvaluations /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/roi" element={<ProtectedRoute><AuthenticatedLayout><ROIDashboard /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/roi/costs" element={<ProtectedRoute><AuthenticatedLayout><CostAnalysis /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/roi/impact" element={<ProtectedRoute><AuthenticatedLayout><ImpactReports /></AuthenticatedLayout></ProtectedRoute>} />
               
               {/* Security */}
               <Route path="/security" element={<ProtectedRoute><AuthenticatedLayout><Security /></AuthenticatedLayout></ProtectedRoute>} />
