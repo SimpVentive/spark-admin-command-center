@@ -2506,6 +2506,104 @@ export type Database = {
           },
         ]
       }
+      roi_cost_entries: {
+        Row: {
+          actual: number
+          budget: number
+          category: string
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          period: string
+          updated_at: string
+        }
+        Insert: {
+          actual?: number
+          budget?: number
+          category: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          period?: string
+          updated_at?: string
+        }
+        Update: {
+          actual?: number
+          budget?: number
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          period?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      roi_impact_metrics: {
+        Row: {
+          after_value: number
+          before_value: number
+          created_at: string
+          created_by: string | null
+          employee_count: number | null
+          id: string
+          impact_level: string
+          measurement_date: string
+          metric_name: string
+          notes: string | null
+          program_id: string | null
+          report_status: string
+          report_title: string | null
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          after_value?: number
+          before_value?: number
+          created_at?: string
+          created_by?: string | null
+          employee_count?: number | null
+          id?: string
+          impact_level?: string
+          measurement_date?: string
+          metric_name: string
+          notes?: string | null
+          program_id?: string | null
+          report_status?: string
+          report_title?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          after_value?: number
+          before_value?: number
+          created_at?: string
+          created_by?: string | null
+          employee_count?: number | null
+          id?: string
+          impact_level?: string
+          measurement_date?: string
+          metric_name?: string
+          notes?: string | null
+          program_id?: string | null
+          report_status?: string
+          report_title?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roi_impact_metrics_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       similar_users: {
         Row: {
           calculated_at: string | null
