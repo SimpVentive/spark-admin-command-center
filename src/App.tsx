@@ -30,6 +30,7 @@ import GradePassback from "./pages/lti/GradePassback";
 
 // User pages
 import AddEmployee from "./pages/users/AddEmployee";
+import EditEmployee from "./pages/users/EditEmployee";
 import BulkEnrollment from "./pages/users/BulkEnrollment";
 import EmployeeLearningProfiles from "./pages/users/EmployeeLearningProfiles";
 
@@ -180,6 +181,8 @@ const App = () => (
               <Route path="/users/add-employee" element={<ProtectedRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/users/bulk" element={<ProtectedRoute><AuthenticatedLayout><BulkEnrollment /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/users/bulk-enrollment" element={<ProtectedRoute><AuthenticatedLayout><BulkEnrollment /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/users/edit/:id" element={<ProtectedRoute><AuthenticatedLayout><EditEmployee /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/users/learning-profile/:id" element={<ProtectedRoute><AuthenticatedLayout><EmployeeLearningProfiles /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/users/learning-profiles" element={<ProtectedRoute><AuthenticatedLayout><EmployeeLearningProfiles /></AuthenticatedLayout></ProtectedRoute>} />
               
               {/* Programs */}
