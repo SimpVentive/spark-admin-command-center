@@ -20,14 +20,32 @@ import {
   Target,
   Zap
 } from "lucide-react";
+import { useUserRole } from "@/hooks/useUserRole";
 
-const navigationItems = [
+interface NavSubItem {
+  title: string;
+  url: string;
+  subItems?: NavSubItem[];
+}
+
+interface NavItem {
+  title?: string;
+  url?: string;
+  icon?: any;
+  subItems?: NavSubItem[];
+  separator?: boolean;
+  adminOnly?: boolean;
+}
+
+// adminOnly: true means the menu is hidden for non-admin users
+const navigationItems: NavItem[] = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
-  { title: "Workflow Guide", url: "/workflow-guide", icon: Workflow },
-  { title: "AI Recommendations", icon: Zap, url: "/ai-recommendations" },
+  { title: "Workflow Guide", url: "/workflow-guide", icon: Workflow, adminOnly: true },
+  { title: "AI Recommendations", icon: Zap, url: "/ai-recommendations", adminOnly: true },
   { 
     title: "Organization", 
     icon: Building2,
+    adminOnly: true,
     subItems: [
       { title: "Hierarchy Builder", url: "/organization/hierarchy" },
       { title: "Organization Chart", url: "/organization/chart" },
@@ -38,6 +56,7 @@ const navigationItems = [
   { 
     title: "User Management", 
     icon: Users,
+    adminOnly: true,
     subItems: [
       { title: "All Users", url: "/users" },
       { title: "Add Employee", url: "/users/add-employee" },
@@ -48,6 +67,7 @@ const navigationItems = [
   { 
     title: "Processes", 
     icon: Workflow,
+    adminOnly: true,
     subItems: [
       { title: "Workflow Management", url: "/processes/workflows" },
       { title: "User and Role Management", url: "/processes/user-roles" },
@@ -67,6 +87,7 @@ const navigationItems = [
   { 
     title: "Programs", 
     icon: GraduationCap,
+    adminOnly: true,
     subItems: [
       { title: "All Programs", url: "/programs" },
       { title: "Create Program", url: "/programs/create" },
@@ -89,6 +110,7 @@ const navigationItems = [
   { 
     title: "Assessments", 
     icon: FileText,
+    adminOnly: true,
     subItems: [
       { title: "All Assessments", url: "/assessments" },
       { title: "Create Assessment", url: "/assessments/create" },
@@ -99,6 +121,7 @@ const navigationItems = [
   { 
     title: "Content", 
     icon: Video,
+    adminOnly: true,
     subItems: [
       { title: "Content Library", url: "/content" },
       { title: "Content Tools", url: "/content/tools" },
@@ -109,6 +132,7 @@ const navigationItems = [
   { 
     title: "ROI & Analytics", 
     icon: DollarSign,
+    adminOnly: true,
     subItems: [
       { 
         title: "Computation Models", 
@@ -137,6 +161,7 @@ const navigationItems = [
   { 
     title: "MOOC Integration", 
     icon: Globe,
+    adminOnly: true,
     subItems: [
       { title: "Platform Management", url: "/mooc" },
       { title: "Course Catalog", url: "/mooc/catalog" },
@@ -148,6 +173,7 @@ const navigationItems = [
   { 
     title: "LTI Tools", 
     icon: Monitor,
+    adminOnly: true,
     subItems: [
       { title: "LTI Providers", url: "/lti/providers" },
       { title: "Tools", url: "/lti/tools" },
@@ -159,6 +185,7 @@ const navigationItems = [
     title: "Security", 
     url: "/security", 
     icon: Shield,
+    adminOnly: true,
     subItems: [
       { title: "System Access & Authentication", url: "/security/system-access" },
       { title: "Audit Trail", url: "/security/audit-trail" },
@@ -173,7 +200,7 @@ const navigationItems = [
       { title: "Quality Management", url: "/security/quality-management" }
     ]
   },
-  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Settings", url: "/settings", icon: Settings, adminOnly: true },
   // Separator for documentation
   { separator: true },
   { title: "User Documentation", url: "/user-documentation", icon: FileText },
@@ -183,6 +210,7 @@ export function AdminSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const [openGroups, setOpenGroups] = useState<string[]>([]);
+  const { isAdmin, loading } = useUserRole();
 
   const isActive = (path: string) => currentPath === path;
   
@@ -193,6 +221,13 @@ export function AdminSidebar() {
         : [...prev, title]
     );
   };
+
+  // Filter navigation items based on user role
+  const filteredItems = navigationItems.filter(item => {
+    if (item.separator) return true;
+    if (item.adminOnly && !isAdmin) return false;
+    return true;
+  });
 
   return (
     <div className="w-64 h-screen bg-background border-r border-border flex flex-col">
@@ -212,7 +247,7 @@ export function AdminSidebar() {
       {/* Navigation - simplified scrolling */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-2 space-y-1">
-          {navigationItems.map((item, index) => (
+          {filteredItems.map((item, index) => (
             <div key={`${item.title || 'separator'}-${index}`} className="w-full">
               {item.separator ? (
                 <div className="my-4">
