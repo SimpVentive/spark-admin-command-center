@@ -138,7 +138,9 @@ Training Team`,
       : [...array, value];
   };
 
-  const handleSubmit = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
     if (!cycleData.name || !cycleData.startDate || !cycleData.endDate) {
       toast({
         title: "Validation Error",
@@ -148,12 +150,47 @@ Training Team`,
       return;
     }
 
-    toast({
-      title: "Success",
-      description: "Training cycle created successfully!"
-    });
-    
-    navigate('/training-needs');
+    setIsSubmitting(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({ title: "Error", description: "You must be logged in", variant: "destructive" });
+        return;
+      }
+
+      const workflowTypeMap: Record<string, string> = {
+        individual: 'Individual Input + Manager Approval',
+        manager: 'Manager Input for Team',
+        tm_batch: 'TM Batch Input by Department',
+      };
+
+      const { error } = await supabase.from('tna_cycles').insert({
+        name: cycleData.name,
+        start_date: cycleData.startDate.toISOString().split('T')[0],
+        end_date: cycleData.endDate.toISOString().split('T')[0],
+        departments: cycleData.departments,
+        workflow_type: workflowTypeMap[cycleData.workflowType] || cycleData.workflowType,
+        status: 'draft',
+        created_by: user.id,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Training cycle created successfully!"
+      });
+      navigate('/training-needs/cycles');
+    } catch (error: any) {
+      console.error('Error creating cycle:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create cycle",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

@@ -1,79 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, Plus, Search, Eye, Edit, Trash2, Calendar, Users } from "lucide-react";
+import { ArrowLeft, Plus, Search, Eye, Edit, Calendar, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface TNACycle {
   id: string;
   name: string;
-  status: "active" | "completed" | "draft" | "closed";
-  startDate: string;
-  endDate: string;
+  status: string;
+  start_date: string;
+  end_date: string;
   departments: string[];
-  totalEmployees: number;
-  completedCount: number;
-  createdBy: string;
-  workflowType: string;
+  workflow_type: string;
+  created_at: string;
 }
 
 export default function TNACycleList() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
+  const [cycles, setCycles] = useState<TNACycle[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const cycles: TNACycle[] = [
-    {
-      id: "1",
-      name: "Q1 2024 Training Needs Analysis",
-      status: "active",
-      startDate: "2024-01-15",
-      endDate: "2024-03-15",
-      departments: ["Engineering", "Sales", "Marketing"],
-      totalEmployees: 2847,
-      completedCount: 2456,
-      createdBy: "Admin",
-      workflowType: "Individual Input + Manager Approval"
-    },
-    {
-      id: "2",
-      name: "Q4 2023 TNI Cycle",
-      status: "completed",
-      startDate: "2023-10-01",
-      endDate: "2023-12-15",
-      departments: ["All"],
-      totalEmployees: 2650,
-      completedCount: 2650,
-      createdBy: "HR Manager",
-      workflowType: "Manager Input for Team"
-    },
-    {
-      id: "3",
-      name: "Mid-Year 2024 Skills Assessment",
-      status: "draft",
-      startDate: "2024-06-01",
-      endDate: "2024-07-31",
-      departments: ["Engineering", "Operations"],
-      totalEmployees: 1200,
-      completedCount: 0,
-      createdBy: "Training Head",
-      workflowType: "Individual Input + Manager Approval"
-    },
-    {
-      id: "4",
-      name: "Q3 2023 Compliance Training Needs",
-      status: "closed",
-      startDate: "2023-07-01",
-      endDate: "2023-09-30",
-      departments: ["All"],
-      totalEmployees: 2500,
-      completedCount: 2380,
-      createdBy: "Compliance Officer",
-      workflowType: "TM Batch Input by Department"
+  useEffect(() => {
+    fetchCycles();
+  }, []);
+
+  const fetchCycles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('tna_cycles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setCycles(data || []);
+    } catch (error: any) {
+      console.error('Error fetching cycles:', error);
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; label: string }> = {
@@ -88,8 +61,10 @@ export default function TNACycleList() {
 
   const filteredCycles = cycles.filter(c =>
     c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    c.departments.some(d => d.toLowerCase().includes(searchTerm.toLowerCase()))
+    (c.departments || []).some(d => d.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const countByStatus = (s: string) => cycles.filter(c => c.status === s).length;
 
   return (
     <div className="space-y-6">
@@ -110,119 +85,80 @@ export default function TNACycleList() {
         </Button>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{cycles.length}</div>
-            <p className="text-sm text-muted-foreground">Total Cycles</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{cycles.filter(c => c.status === "active").length}</div>
-            <p className="text-sm text-muted-foreground">Active</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{cycles.filter(c => c.status === "completed").length}</div>
-            <p className="text-sm text-muted-foreground">Completed</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="text-2xl font-bold">{cycles.filter(c => c.status === "draft").length}</div>
-            <p className="text-sm text-muted-foreground">Drafts</p>
-          </CardContent>
-        </Card>
+        <Card><CardContent className="pt-6"><div className="text-2xl font-bold">{cycles.length}</div><p className="text-sm text-muted-foreground">Total Cycles</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-2xl font-bold">{countByStatus("active")}</div><p className="text-sm text-muted-foreground">Active</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-2xl font-bold">{countByStatus("completed")}</div><p className="text-sm text-muted-foreground">Completed</p></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-2xl font-bold">{countByStatus("draft")}</div><p className="text-sm text-muted-foreground">Drafts</p></CardContent></Card>
       </div>
 
-      {/* Search */}
       <Card>
         <CardContent className="pt-6">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search cycles by name or department..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+            <Input placeholder="Search cycles by name or department..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10" />
           </div>
         </CardContent>
       </Card>
 
-      {/* Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>All TNA Cycles</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle>All TNA Cycles</CardTitle></CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Cycle Name</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Duration</TableHead>
-                <TableHead>Departments</TableHead>
-                <TableHead>Progress</TableHead>
-                <TableHead>Workflow</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredCycles.map((cycle) => (
-                <TableRow key={cycle.id}>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{cycle.name}</p>
-                      <p className="text-xs text-muted-foreground">Created by {cycle.createdBy}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(cycle.status)}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1 text-sm">
-                      <Calendar className="h-3 w-3" />
-                      {cycle.startDate} - {cycle.endDate}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {cycle.departments.slice(0, 2).map(d => (
-                        <Badge key={d} variant="outline" className="text-xs">{d}</Badge>
-                      ))}
-                      {cycle.departments.length > 2 && (
-                        <Badge variant="outline" className="text-xs">+{cycle.departments.length - 2}</Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-3 w-3" />
-                      <span className="text-sm">{cycle.completedCount}/{cycle.totalEmployees}</span>
-                      <span className="text-xs text-muted-foreground">
-                        ({Math.round((cycle.completedCount / cycle.totalEmployees) * 100)}%)
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-xs">{cycle.workflowType}</span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" disabled={cycle.status === "completed" || cycle.status === "closed"}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          {loading ? (
+            <div className="text-center py-8 text-muted-foreground">Loading cycles...</div>
+          ) : filteredCycles.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              {cycles.length === 0 ? "No cycles created yet. Create your first TNA cycle!" : "No cycles match your search."}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Cycle Name</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Duration</TableHead>
+                  <TableHead>Departments</TableHead>
+                  <TableHead>Workflow</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredCycles.map((cycle) => (
+                  <TableRow key={cycle.id}>
+                    <TableCell>
+                      <p className="font-medium">{cycle.name}</p>
+                    </TableCell>
+                    <TableCell>{getStatusBadge(cycle.status)}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1 text-sm">
+                        <Calendar className="h-3 w-3" />
+                        {cycle.start_date} - {cycle.end_date}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {(cycle.departments || []).slice(0, 2).map(d => (
+                          <Badge key={d} variant="outline" className="text-xs">{d}</Badge>
+                        ))}
+                        {(cycle.departments || []).length > 2 && (
+                          <Badge variant="outline" className="text-xs">+{cycle.departments.length - 2}</Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell><span className="text-xs">{cycle.workflow_type}</span></TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="sm" disabled={cycle.status === "completed" || cycle.status === "closed"}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>
