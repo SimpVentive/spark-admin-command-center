@@ -155,7 +155,9 @@ export default function EmployeeTNI() {
     }));
   };
 
-  const handleSubmit = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
     const totalSelected = tniData.selectedPrograms.length + mandatoryPrograms.length;
     if (totalSelected < cycleInfo.minPrograms || totalSelected > cycleInfo.maxPrograms) {
       toast({
@@ -166,10 +168,59 @@ export default function EmployeeTNI() {
       return;
     }
 
-    toast({
-      title: "TNI Submitted Successfully",
-      description: "Your training needs have been submitted for approval."
-    });
+    setIsSubmitting(true);
+    try {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (!currentUser) {
+        toast({ title: "Error", description: "You must be logged in", variant: "destructive" });
+        return;
+      }
+
+      // Get the first active cycle (in a real app, this would be passed as a param)
+      const { data: activeCycle } = await supabase
+        .from('tna_cycles')
+        .select('id')
+        .eq('status', 'active')
+        .limit(1)
+        .single();
+
+      if (!activeCycle) {
+        toast({ title: "No Active Cycle", description: "There is no active TNI cycle to submit to.", variant: "destructive" });
+        return;
+      }
+
+      const trainingNeeds = {
+        selectedPrograms: tniData.selectedPrograms,
+        customRequirements: tniData.customRequirements,
+        quarterPreference: tniData.quarterPreference,
+      };
+
+      const { error } = await supabase.from('tni_submissions').insert({
+        cycle_id: activeCycle.id,
+        employee_id: currentUser.id,
+        status: 'submitted',
+        training_needs: trainingNeeds,
+        employee_comments: tniData.additionalComments,
+        submitted_at: new Date().toISOString(),
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "TNI Submitted Successfully",
+        description: "Your training needs have been submitted for approval."
+      });
+      navigate('/training-needs');
+    } catch (error: any) {
+      console.error('Error submitting TNI:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit TNI",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderProgramCard = (program: Program) => {

@@ -2361,6 +2361,98 @@ export type Database = {
         }
         Relationships: []
       }
+      tna_cycles: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          departments: string[] | null
+          end_date: string
+          id: string
+          name: string
+          start_date: string
+          status: string
+          updated_at: string | null
+          workflow_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          departments?: string[] | null
+          end_date: string
+          id?: string
+          name: string
+          start_date: string
+          status?: string
+          updated_at?: string | null
+          workflow_type?: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          departments?: string[] | null
+          end_date?: string
+          id?: string
+          name?: string
+          start_date?: string
+          status?: string
+          updated_at?: string | null
+          workflow_type?: string
+        }
+        Relationships: []
+      }
+      tni_submissions: {
+        Row: {
+          created_at: string | null
+          cycle_id: string
+          employee_comments: string | null
+          employee_id: string
+          id: string
+          manager_approved_at: string | null
+          manager_comments: string | null
+          manager_id: string | null
+          status: string
+          submitted_at: string | null
+          training_needs: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          cycle_id: string
+          employee_comments?: string | null
+          employee_id: string
+          id?: string
+          manager_approved_at?: string | null
+          manager_comments?: string | null
+          manager_id?: string | null
+          status?: string
+          submitted_at?: string | null
+          training_needs?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          cycle_id?: string
+          employee_comments?: string | null
+          employee_id?: string
+          id?: string
+          manager_approved_at?: string | null
+          manager_comments?: string | null
+          manager_id?: string | null
+          status?: string
+          submitted_at?: string | null
+          training_needs?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tni_submissions_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "tna_cycles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       training_programs: {
         Row: {
           category: string
