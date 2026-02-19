@@ -859,6 +859,83 @@ export type Database = {
         }
         Relationships: []
       }
+      employee_details: {
+        Row: {
+          aadhar_number: string | null
+          address: string | null
+          blood_group: string | null
+          created_at: string
+          date_of_birth: string | null
+          emergency_contact: string | null
+          emergency_phone: string | null
+          esi_number: string | null
+          experience: string | null
+          id: string
+          marital_status: string | null
+          nationality: string | null
+          pan_number: string | null
+          pf_number: string | null
+          profile_id: string
+          qualification: string | null
+          salary: string | null
+          shift_timing: string | null
+          skills: string | null
+          updated_at: string
+        }
+        Insert: {
+          aadhar_number?: string | null
+          address?: string | null
+          blood_group?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
+          esi_number?: string | null
+          experience?: string | null
+          id?: string
+          marital_status?: string | null
+          nationality?: string | null
+          pan_number?: string | null
+          pf_number?: string | null
+          profile_id: string
+          qualification?: string | null
+          salary?: string | null
+          shift_timing?: string | null
+          skills?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aadhar_number?: string | null
+          address?: string | null
+          blood_group?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
+          esi_number?: string | null
+          experience?: string | null
+          id?: string
+          marital_status?: string | null
+          nationality?: string | null
+          pan_number?: string | null
+          pf_number?: string | null
+          profile_id?: string
+          qualification?: string | null
+          salary?: string | null
+          shift_timing?: string | null
+          skills?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_details_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_roles: {
         Row: {
           created_at: string
@@ -2249,39 +2326,63 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string | null
+          date_of_joining: string | null
           department: string | null
           email: string | null
+          employee_id: string | null
           full_name: string | null
+          gender: string | null
+          grade: string | null
           id: string
+          location: string | null
           manager_id: string | null
+          phone: string | null
           position: string | null
+          rank: string | null
           sso_provider: string | null
           sso_provider_id: string | null
           updated_at: string | null
+          work_type: string | null
         }
         Insert: {
           created_at?: string | null
+          date_of_joining?: string | null
           department?: string | null
           email?: string | null
+          employee_id?: string | null
           full_name?: string | null
+          gender?: string | null
+          grade?: string | null
           id: string
+          location?: string | null
           manager_id?: string | null
+          phone?: string | null
           position?: string | null
+          rank?: string | null
           sso_provider?: string | null
           sso_provider_id?: string | null
           updated_at?: string | null
+          work_type?: string | null
         }
         Update: {
           created_at?: string | null
+          date_of_joining?: string | null
           department?: string | null
           email?: string | null
+          employee_id?: string | null
           full_name?: string | null
+          gender?: string | null
+          grade?: string | null
           id?: string
+          location?: string | null
           manager_id?: string | null
+          phone?: string | null
           position?: string | null
+          rank?: string | null
           sso_provider?: string | null
           sso_provider_id?: string | null
           updated_at?: string | null
+          work_type?: string | null
         }
         Relationships: []
       }
