@@ -1,159 +1,109 @@
-
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Plus, Edit, Trash2, Settings } from "lucide-react";
+import { MapPin, Plus, Edit, Trash2, Settings, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import GoogleMapPicker from "@/components/GoogleMapPicker";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Location {
-  id: number;
+  id: string;
   name: string;
-  location: string;
-  type: string;
-  lat?: number;
-  lng?: number;
-  departments: number;
-  employees: number;
+  address: string | null;
+  type: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  department_count: number;
+  employee_count: number;
 }
 
 const Locations = () => {
   const { toast } = useToast();
-  const [locationTypes, setLocationTypes] = useState<string[]>([
-    "Manufacturing Plant",
-    "R&D Center", 
-    "Regional Office",
-    "Sales Office"
-  ]);
-  
-  const [locations, setLocations] = useState<Location[]>([
-    { id: 1, name: "Headquarters", location: "123 Main St, City", type: "Regional Office", departments: 3, employees: 80 },
-    { id: 2, name: "Manufacturing Plant", location: "456 Industrial Ave", type: "Manufacturing Plant", departments: 2, employees: 120 },
-    { id: 3, name: "R&D Center", location: "789 Tech Blvd", type: "R&D Center", departments: 1, employees: 25 },
-  ]);
-
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [locationTypes, setLocationTypes] = useState<{ id: string; name: string }[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isManageTypesOpen, setIsManageTypesOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
-  const [newLocation, setNewLocation] = useState({
-    name: "",
-    location: "",
-    type: "",
-    lat: 0,
-    lng: 0
-  });
+  const [newLocation, setNewLocation] = useState({ name: "", address: "", type: "" });
   const [newLocationType, setNewLocationType] = useState("");
 
-  const handleLocationSelect = (address: string, lat: number, lng: number) => {
-    setNewLocation(prev => ({
-      ...prev,
-      location: address,
-      lat,
-      lng
-    }));
+  useEffect(() => { fetchLocations(); fetchLocationTypes(); }, []);
+
+  const fetchLocations = async () => {
+    try {
+      const { data, error } = await (supabase as any).from('locations').select('*').eq('is_active', true).order('name');
+      if (error) throw error;
+      setLocations(data || []);
+    } catch (error: any) { console.error(error); } finally { setLoading(false); }
   };
 
-  const handleAddLocation = () => {
-    if (!newLocation.name.trim() || !newLocation.location.trim() || !newLocation.type.trim()) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive"
-      });
+  const fetchLocationTypes = async () => {
+    try {
+      const { data } = await (supabase as any).from('location_types').select('*').eq('is_active', true).order('name');
+      setLocationTypes(data || []);
+    } catch {}
+  };
+
+  const handleAddLocation = async () => {
+    if (!newLocation.name.trim() || !newLocation.address.trim()) {
+      toast({ title: "Error", description: "Name and address are required", variant: "destructive" });
       return;
     }
-
-    const location: Location = {
-      id: Date.now(),
-      name: newLocation.name.trim(),
-      location: newLocation.location.trim(),
-      type: newLocation.type.trim(),
-      lat: newLocation.lat,
-      lng: newLocation.lng,
-      departments: 0,
-      employees: 0
-    };
-
-    setLocations(prev => [...prev, location]);
-    setNewLocation({ name: "", location: "", type: "", lat: 0, lng: 0 });
-    setIsAddDialogOpen(false);
-    
-    toast({
-      title: "Success",
-      description: "Location added successfully"
-    });
+    try {
+      const { error } = await (supabase as any).from('locations').insert([{ name: newLocation.name.trim(), address: newLocation.address.trim(), type: newLocation.type || null }]);
+      if (error) throw error;
+      toast({ title: "Success", description: "Location added successfully" });
+      setNewLocation({ name: "", address: "", type: "" });
+      setIsAddDialogOpen(false);
+      fetchLocations();
+    } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
   };
 
-  const handleEditLocation = (location: Location) => {
-    setEditingLocation({ ...location });
-    setIsEditDialogOpen(true);
-  };
-
-  const handleUpdateLocation = () => {
+  const handleUpdateLocation = async () => {
     if (!editingLocation) return;
-    
-    if (!editingLocation.name.trim() || !editingLocation.location.trim() || !editingLocation.type.trim()) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setLocations(prev => prev.map(loc => 
-      loc.id === editingLocation.id ? editingLocation : loc
-    ));
-    setIsEditDialogOpen(false);
-    setEditingLocation(null);
-    
-    toast({
-      title: "Success",
-      description: "Location updated successfully"
-    });
+    try {
+      const { error } = await (supabase as any).from('locations').update({ name: editingLocation.name, address: editingLocation.address, type: editingLocation.type }).eq('id', editingLocation.id);
+      if (error) throw error;
+      toast({ title: "Success", description: "Location updated" });
+      setIsEditDialogOpen(false);
+      fetchLocations();
+    } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
   };
 
-  const handleAddLocationType = () => {
+  const handleDeleteLocation = async (id: string) => {
+    try {
+      const { error } = await (supabase as any).from('locations').update({ is_active: false }).eq('id', id);
+      if (error) throw error;
+      toast({ title: "Success", description: "Location deleted" });
+      fetchLocations();
+    } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
+  };
+
+  const handleAddLocationType = async () => {
     if (!newLocationType.trim()) return;
-    
-    if (locationTypes.includes(newLocationType.trim())) {
-      toast({
-        title: "Error",
-        description: "Location type already exists",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setLocationTypes(prev => [...prev, newLocationType.trim()]);
-    setNewLocationType("");
-    
-    toast({
-      title: "Success",
-      description: "Location type added successfully"
-    });
+    try {
+      const { error } = await (supabase as any).from('location_types').insert([{ name: newLocationType.trim() }]);
+      if (error) throw error;
+      toast({ title: "Success", description: "Location type added" });
+      setNewLocationType("");
+      fetchLocationTypes();
+    } catch (error: any) { toast({ title: "Error", description: error.message, variant: "destructive" }); }
   };
 
-  const handleDeleteLocationType = (type: string) => {
-    setLocationTypes(prev => prev.filter(t => t !== type));
-    toast({
-      title: "Success",
-      description: "Location type deleted successfully"
-    });
+  const handleDeleteLocationType = async (id: string) => {
+    try {
+      const { error } = await (supabase as any).from('location_types').update({ is_active: false }).eq('id', id);
+      if (error) throw error;
+      fetchLocationTypes();
+    } catch {}
   };
 
-  const handleDeleteLocation = (id: number) => {
-    setLocations(prev => prev.filter(loc => loc.id !== id));
-    toast({
-      title: "Success",
-      description: "Location deleted successfully"
-    });
-  };
+  if (loading) return <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
 
   return (
     <div className="space-y-6">
@@ -163,180 +113,92 @@ const Locations = () => {
           <p className="text-muted-foreground">Manage organizational locations and facilities</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => setIsManageTypesOpen(true)} variant="outline" className="gap-2">
-            <Settings className="h-4 w-4" />
-            Manage Types
-          </Button>
+          <Button onClick={() => setIsManageTypesOpen(true)} variant="outline" className="gap-2"><Settings className="h-4 w-4" />Manage Types</Button>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Location
-              </Button>
-            </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Location</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Location Name *</Label>
-                <Input
-                  id="name"
-                  value={newLocation.name}
-                  onChange={(e) => setNewLocation(prev => ({...prev, name: e.target.value}))}
-                  placeholder="Enter location name"
-                />
+            <DialogTrigger asChild><Button className="gap-2"><Plus className="h-4 w-4" />Add Location</Button></DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Add New Location</DialogTitle></DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2"><Label>Location Name *</Label><Input value={newLocation.name} onChange={(e) => setNewLocation(p => ({ ...p, name: e.target.value }))} placeholder="Enter location name" /></div>
+                <div className="space-y-2"><Label>Address *</Label><Input value={newLocation.address} onChange={(e) => setNewLocation(p => ({ ...p, address: e.target.value }))} placeholder="Enter address" /></div>
+                <div className="space-y-2">
+                  <Label>Type</Label>
+                  <Select value={newLocation.type} onValueChange={(v) => setNewLocation(p => ({ ...p, type: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                    <SelectContent>{locationTypes.map((t) => <SelectItem key={t.id} value={t.name}>{t.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>Cancel</Button>
+                  <Button onClick={handleAddLocation}>Add Location</Button>
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>Location *</Label>
-                <GoogleMapPicker 
-                  onLocationSelect={handleLocationSelect}
-                  defaultValue={newLocation.location}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="type">Type *</Label>
-                <Select value={newLocation.type} onValueChange={(value) => setNewLocation(prev => ({...prev, type: value}))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select location type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {locationTypes.map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleAddLocation}>
-                  Add Location
-                </Button>
-              </div>
-            </div>
             </DialogContent>
           </Dialog>
         </div>
       </div>
 
-      <div className="grid gap-4">
-        {locations.map((location) => (
-          <Card key={location.id}>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
+      {locations.length === 0 ? (
+        <Card><CardContent className="p-8 text-center text-muted-foreground">No locations found. Add your first location.</CardContent></Card>
+      ) : (
+        <div className="grid gap-4">
+          {locations.map((location) => (
+            <Card key={location.id}>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-medium">{location.name}</h3>
+                      {location.type && <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">{location.type}</span>}
+                    </div>
+                    {location.address && <p className="text-sm text-muted-foreground flex items-center gap-1"><MapPin className="h-3 w-3" />{location.address}</p>}
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>{location.department_count} departments</span>
+                      <span>{location.employee_count} employees</span>
+                    </div>
+                  </div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-medium">{location.name}</h3>
-                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">{location.type}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <MapPin className="h-3 w-3" />
-                    {location.location}
-                  </p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span>{location.departments} departments</span>
-                    <span>{location.employees} employees</span>
+                    <Button variant="outline" size="sm" onClick={() => { setEditingLocation({ ...location }); setIsEditDialogOpen(true); }} className="gap-1"><Edit className="h-4 w-4" />Edit</Button>
+                    <Button variant="outline" size="sm" onClick={() => handleDeleteLocation(location.id)} className="gap-1 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" />Delete</Button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleEditLocation(location)}
-                    className="gap-1"
-                  >
-                    <Edit className="h-4 w-4" />
-                    Edit
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleDeleteLocation(location.id)}
-                    className="gap-1 text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
-      {/* Edit Location Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Location</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>Edit Location</DialogTitle></DialogHeader>
           {editingLocation && (
             <div className="space-y-4">
+              <div className="space-y-2"><Label>Name *</Label><Input value={editingLocation.name} onChange={(e) => setEditingLocation(p => p ? { ...p, name: e.target.value } : null)} /></div>
+              <div className="space-y-2"><Label>Address *</Label><Input value={editingLocation.address || ""} onChange={(e) => setEditingLocation(p => p ? { ...p, address: e.target.value } : null)} /></div>
               <div className="space-y-2">
-                <Label htmlFor="edit-name">Location Name *</Label>
-                <Input
-                  id="edit-name"
-                  value={editingLocation.name}
-                  onChange={(e) => setEditingLocation(prev => prev ? {...prev, name: e.target.value} : null)}
-                  placeholder="Enter location name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Location *</Label>
-                <GoogleMapPicker 
-                  onLocationSelect={(address, lat, lng) => setEditingLocation(prev => prev ? {...prev, location: address, lat, lng} : null)}
-                  defaultValue={editingLocation.location}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-type">Type *</Label>
-                <Select 
-                  value={editingLocation.type} 
-                  onValueChange={(value) => setEditingLocation(prev => prev ? {...prev, type: value} : null)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select location type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {locationTypes.map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
+                <Label>Type</Label>
+                <Select value={editingLocation.type || ""} onValueChange={(v) => setEditingLocation(p => p ? { ...p, type: v } : null)}>
+                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                  <SelectContent>{locationTypes.map((t) => <SelectItem key={t.id} value={t.name}>{t.name}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleUpdateLocation}>
-                  Update Location
-                </Button>
+                <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>Cancel</Button>
+                <Button onClick={handleUpdateLocation}>Update Location</Button>
               </div>
             </div>
           )}
         </DialogContent>
       </Dialog>
 
-      {/* Manage Location Types Dialog */}
       <Dialog open={isManageTypesOpen} onOpenChange={setIsManageTypesOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Manage Location Types</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>Manage Location Types</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="new-type">Add New Type</Label>
+              <Label>Add New Type</Label>
               <div className="flex gap-2">
-                <Input
-                  id="new-type"
-                  value={newLocationType}
-                  onChange={(e) => setNewLocationType(e.target.value)}
-                  placeholder="Enter new location type"
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddLocationType()}
-                />
+                <Input value={newLocationType} onChange={(e) => setNewLocationType(e.target.value)} placeholder="Enter new type" onKeyDown={(e) => e.key === 'Enter' && handleAddLocationType()} />
                 <Button onClick={handleAddLocationType}>Add</Button>
               </div>
             </div>
@@ -344,25 +206,14 @@ const Locations = () => {
               <Label>Existing Types</Label>
               <div className="space-y-2 max-h-40 overflow-y-auto">
                 {locationTypes.map((type) => (
-                  <div key={type} className="flex items-center justify-between p-2 border rounded">
-                    <span>{type}</span>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDeleteLocationType(type)}
-                      className="gap-1 text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
+                  <div key={type.id} className="flex items-center justify-between p-2 border rounded">
+                    <span>{type.name}</span>
+                    <Button size="sm" variant="outline" onClick={() => handleDeleteLocationType(type.id)} className="text-destructive hover:text-destructive"><Trash2 className="h-3 w-3" /></Button>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="flex justify-end">
-              <Button onClick={() => setIsManageTypesOpen(false)}>
-                Done
-              </Button>
-            </div>
+            <div className="flex justify-end"><Button onClick={() => setIsManageTypesOpen(false)}>Done</Button></div>
           </div>
         </DialogContent>
       </Dialog>
