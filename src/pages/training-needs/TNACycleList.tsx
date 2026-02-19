@@ -147,9 +147,11 @@ export default function TNACycleList() {
                     </TableCell>
                     <TableCell><span className="text-xs">{cycle.workflow_type}</span></TableCell>
                     <TableCell>
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="sm"><Eye className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="sm" disabled={cycle.status === "completed" || cycle.status === "closed"}>
+                    <div className="flex gap-1">
+                        <Button variant="ghost" size="sm" onClick={() => navigate(`/training-needs/cycles/${cycle.id}`)}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" disabled={cycle.status === "completed" || cycle.status === "closed"} onClick={() => navigate(`/training-needs/cycles/${cycle.id}?edit=true`)}>
                           <Edit className="h-4 w-4" />
                         </Button>
                       </div>
