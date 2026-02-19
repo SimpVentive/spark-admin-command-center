@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Save, Calendar, Users, Building, MapPin, Briefcase, Download, BarChart3, Eye } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, Save, Calendar, Users, Building, MapPin, Briefcase, Download, BarChart3, Eye, CheckCircle, Clock, PieChart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -271,12 +272,144 @@ export default function TNACycleDetail() {
         </div>
       </div>
 
-      <Tabs defaultValue="overview">
+      <Tabs defaultValue="dashboard">
         <TabsList>
+          <TabsTrigger value="dashboard"><BarChart3 className="h-4 w-4 mr-1" /> Dashboard</TabsTrigger>
           <TabsTrigger value="overview"><Eye className="h-4 w-4 mr-1" /> Overview</TabsTrigger>
           <TabsTrigger value="submissions"><Users className="h-4 w-4 mr-1" /> Submissions</TabsTrigger>
-          <TabsTrigger value="analysis"><BarChart3 className="h-4 w-4 mr-1" /> Program Analysis</TabsTrigger>
+          <TabsTrigger value="departments"><Building className="h-4 w-4 mr-1" /> Department Analysis</TabsTrigger>
+          <TabsTrigger value="analysis"><PieChart className="h-4 w-4 mr-1" /> Program Analysis</TabsTrigger>
         </TabsList>
+
+        {/* Dashboard Tab */}
+        <TabsContent value="dashboard" className="space-y-4">
+          {/* Stats Cards */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Submissions</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{submissions.filter(s => s.submitted_at).length}</div>
+                <p className="text-xs text-muted-foreground">out of {submissions.length} expected</p>
+                <Progress value={submissions.length > 0 ? (submissions.filter(s => s.submitted_at).length / submissions.length) * 100 : 0} className="mt-2 h-2" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
+                <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {submissions.length > 0 ? Math.round((submissions.filter(s => s.submitted_at).length / submissions.length) * 100) : 0}%
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {submissions.filter(s => s.submitted_at).length > submissions.length * 0.85 ? (
+                    <span className="text-emerald-600">Above 85% threshold</span>
+                  ) : (
+                    <span className="text-amber-600">Below 85% threshold</span>
+                  )}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Programs Selected</CardTitle>
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{getSelectedPrograms().length}</div>
+                <p className="text-xs text-muted-foreground">Unique programs identified</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Pending</CardTitle>
+                <Clock className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{submissions.filter(s => !s.submitted_at).length}</div>
+                <p className="text-xs text-muted-foreground">Need to complete TNI</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Category Distribution & Top Programs */}
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Card>
+              <CardHeader><CardTitle>Category Distribution</CardTitle></CardHeader>
+              <CardContent className="space-y-4">
+                {(() => {
+                  const catCounts: Record<string, { count: number; programs: Set<string> }> = {};
+                  submissions.forEach(s => {
+                    const needs = Array.isArray(s.training_needs) ? s.training_needs : [];
+                    needs.forEach((n: any) => {
+                      const cat = n.category || "Uncategorized";
+                      if (!catCounts[cat]) catCounts[cat] = { count: 0, programs: new Set() };
+                      catCounts[cat].count++;
+                      if (n.program || n.title) catCounts[cat].programs.add(n.program || n.title);
+                    });
+                  });
+                  const cats = Object.entries(catCounts).sort(([,a],[,b]) => b.count - a.count);
+                  if (cats.length === 0) return <p className="text-muted-foreground text-sm">No data yet</p>;
+                  const colors = ["bg-blue-500", "bg-emerald-500", "bg-purple-500", "bg-amber-500", "bg-rose-500"];
+                  return cats.map(([cat, data], i) => (
+                    <div key={cat} className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{cat}</span>
+                        <span className="text-sm text-muted-foreground">{data.count} requests</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded ${colors[i % colors.length]}`} />
+                        <div className="text-sm">{data.programs.size} programs</div>
+                      </div>
+                    </div>
+                  ));
+                })()}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader><CardTitle>Top Requested Programs</CardTitle></CardHeader>
+              <CardContent className="space-y-3">
+                {getSelectedPrograms().slice(0, 5).map((p, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <div className="font-medium">#{i + 1} {p.title}</div>
+                      <div className="text-sm text-muted-foreground">{p.count} selections</div>
+                    </div>
+                    <Badge variant={p.count > 5 ? "destructive" : "secondary"}>
+                      {p.count > 5 ? "High" : "Medium"}
+                    </Badge>
+                  </div>
+                ))}
+                {getSelectedPrograms().length === 0 && (
+                  <p className="text-muted-foreground text-sm">No program data yet</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Department completion overview */}
+          <Card>
+            <CardHeader><CardTitle>Department Completion</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              {Object.entries(getDepartmentBreakdown()).map(([dept, data]) => (
+                <div key={dept} className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">{dept}</span>
+                    <span>{data.total > 0 ? Math.round((data.submitted / data.total) * 100) : 0}%</span>
+                  </div>
+                  <Progress value={data.total > 0 ? (data.submitted / data.total) * 100 : 0} className="h-2" />
+                </div>
+              ))}
+              {Object.keys(getDepartmentBreakdown()).length === 0 && (
+                <p className="text-muted-foreground text-sm">No department data available</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
@@ -367,6 +500,70 @@ export default function TNACycleDetail() {
                   </TableBody>
                 </Table>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Department Analysis Tab */}
+        <TabsContent value="departments" className="space-y-4">
+          <Card>
+            <CardHeader><CardTitle>Department-wise Completion Status</CardTitle></CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Department</TableHead>
+                    <TableHead>Total</TableHead>
+                    <TableHead>Submitted</TableHead>
+                    <TableHead>Approved</TableHead>
+                    <TableHead>Completion</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {Object.entries(getDepartmentBreakdown()).map(([dept, data]) => (
+                    <TableRow key={dept}>
+                      <TableCell className="font-medium">{dept}</TableCell>
+                      <TableCell>{data.total}</TableCell>
+                      <TableCell>{data.submitted}</TableCell>
+                      <TableCell>{data.approved}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Progress value={data.total > 0 ? (data.submitted / data.total) * 100 : 0} className="w-20 h-2" />
+                          <span className="text-sm">{data.total > 0 ? Math.round((data.submitted / data.total) * 100) : 0}%</span>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {Object.keys(getDepartmentBreakdown()).length === 0 && (
+                    <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-6">No department data</TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>Position-wise Breakdown</CardTitle></CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Position</TableHead>
+                    <TableHead>Submissions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {Object.entries(getPositionBreakdown()).sort(([,a],[,b]) => b - a).map(([pos, count]) => (
+                    <TableRow key={pos}>
+                      <TableCell className="font-medium">{pos}</TableCell>
+                      <TableCell>{count}</TableCell>
+                    </TableRow>
+                  ))}
+                  {Object.keys(getPositionBreakdown()).length === 0 && (
+                    <TableRow><TableCell colSpan={2} className="text-center text-muted-foreground py-6">No position data</TableCell></TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>
