@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmployeeFormData } from "@/hooks/useEmployeeForm";
+import { ManagerCombobox } from "./ManagerCombobox";
 
 interface EmploymentInfoSectionProps {
   formData: EmployeeFormData;
@@ -89,10 +90,9 @@ export const EmploymentInfoSection = ({ formData, onInputChange }: EmploymentInf
         </div>
         <div className="space-y-2">
           <Label htmlFor="reportingManager">Reporting Manager</Label>
-          <Input
-            id="reportingManager"
+          <ManagerCombobox
             value={formData.reportingManager}
-            onChange={(e) => onInputChange('reportingManager', e.target.value)}
+            onChange={(value) => onInputChange('reportingManager', value)}
           />
         </div>
         <div className="space-y-2">

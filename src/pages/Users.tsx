@@ -184,9 +184,21 @@ const Users = () => {
                       <div className="font-medium text-sm">0</div>
                       <div className="text-xs text-muted-foreground">Skills</div>
                     </div>
-                    <Button variant="ghost" size="icon">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => navigate(`/users/edit/${user.id}`)}>
+                          Edit Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate(`/users/learning-profile/${user.id}`)}>
+                          View Learning Profile
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               ))}

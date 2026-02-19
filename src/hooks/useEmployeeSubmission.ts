@@ -24,6 +24,7 @@ export const useEmployeeSubmission = () => {
             email: formData.email,
             department: formData.department,
             position: formData.designation,
+            manager_id: formData.reportingManager || null,
           }
         ])
         .select();
