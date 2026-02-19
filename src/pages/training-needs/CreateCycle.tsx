@@ -38,6 +38,7 @@ interface CycleData {
   departments: string[];
   locations: string[];
   mandatoryPrograms: MandatoryProgram[];
+  managerRatificationRequired: boolean;
   emailTemplate: string;
   reminderEnabled: boolean;
   reminderDays: number[];
@@ -63,6 +64,7 @@ export default function CreateCycle() {
     departments: [],
     locations: [],
     mandatoryPrograms: [],
+    managerRatificationRequired: false,
     emailTemplate: `Dear {employee_name},
 
 The Training Needs Identification cycle "{cycle_name}" is now open.
@@ -172,6 +174,7 @@ Training Team`,
         workflow_type: workflowTypeMap[cycleData.workflowType] || cycleData.workflowType,
         status: 'draft',
         created_by: user.id,
+        manager_ratification_required: cycleData.managerRatificationRequired,
       });
 
       if (error) throw error;
@@ -263,6 +266,22 @@ Training Team`,
                       </label>
                       <p className="text-xs text-muted-foreground">
                         Employee TNI submissions need manager approval before finalization
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="manager-ratification"
+                      checked={cycleData.managerRatificationRequired}
+                      onCheckedChange={(checked) => setCycleData(prev => ({ ...prev, managerRatificationRequired: !!checked }))}
+                    />
+                    <div className="space-y-0.5">
+                      <label htmlFor="manager-ratification" className="text-sm font-medium">
+                        Manager to Ratify Reportee Training Needs
+                      </label>
+                      <p className="text-xs text-muted-foreground">
+                        The reporting manager must review, add, or remove training needs submitted by the employee before finalization. The employee will be notified of any changes.
                       </p>
                     </div>
                   </div>

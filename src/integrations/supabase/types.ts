@@ -2831,6 +2831,7 @@ export type Database = {
           departments: string[] | null
           end_date: string
           id: string
+          manager_ratification_required: boolean
           name: string
           start_date: string
           status: string
@@ -2843,6 +2844,7 @@ export type Database = {
           departments?: string[] | null
           end_date: string
           id?: string
+          manager_ratification_required?: boolean
           name: string
           start_date: string
           status?: string
@@ -2855,6 +2857,7 @@ export type Database = {
           departments?: string[] | null
           end_date?: string
           id?: string
+          manager_ratification_required?: boolean
           name?: string
           start_date?: string
           status?: string
@@ -2871,8 +2874,10 @@ export type Database = {
           employee_id: string
           id: string
           manager_approved_at: string | null
+          manager_changes_count: number
           manager_comments: string | null
           manager_id: string | null
+          manager_modifications: Json | null
           status: string
           submitted_at: string | null
           training_needs: Json | null
@@ -2885,8 +2890,10 @@ export type Database = {
           employee_id: string
           id?: string
           manager_approved_at?: string | null
+          manager_changes_count?: number
           manager_comments?: string | null
           manager_id?: string | null
+          manager_modifications?: Json | null
           status?: string
           submitted_at?: string | null
           training_needs?: Json | null
@@ -2899,8 +2906,10 @@ export type Database = {
           employee_id?: string
           id?: string
           manager_approved_at?: string | null
+          manager_changes_count?: number
           manager_comments?: string | null
           manager_id?: string | null
+          manager_modifications?: Json | null
           status?: string
           submitted_at?: string | null
           training_needs?: Json | null

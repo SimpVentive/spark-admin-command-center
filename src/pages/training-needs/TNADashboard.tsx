@@ -20,6 +20,7 @@ interface TNACycle {
   departments: string[];
   workflow_type: string;
   created_at: string;
+  manager_ratification_required?: boolean;
 }
 
 interface CycleStats {
@@ -36,6 +37,7 @@ export default function TNADashboard() {
   const [cycles, setCycles] = useState<TNACycle[]>([]);
   const [cycleStats, setCycleStats] = useState<CycleStats[]>([]);
   const [loading, setLoading] = useState(true);
+  const [topManagers, setTopManagers] = useState<{ name: string; additions: number }[]>([]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -56,7 +58,7 @@ export default function TNADashboard() {
         const cycleIds = allCycles.map(c => c.id);
         const { data: allSubs } = await supabase
           .from('tni_submissions')
-          .select('id, cycle_id, status, submitted_at, training_needs')
+          .select('id, cycle_id, status, submitted_at, training_needs, manager_id, manager_changes_count')
           .in('cycle_id', cycleIds);
 
         const stats: CycleStats[] = allCycles.map(cycle => {
@@ -91,6 +93,31 @@ export default function TNADashboard() {
         });
 
         setCycleStats(stats);
+
+        // Calculate top 3 managers by training additions
+        const managerAdditions: Record<string, number> = {};
+        (allSubs || []).forEach(s => {
+          if (s.manager_id && (s.manager_changes_count as number) > 0) {
+            managerAdditions[s.manager_id] = (managerAdditions[s.manager_id] || 0) + (s.manager_changes_count as number);
+          }
+        });
+
+        const managerIds = Object.keys(managerAdditions);
+        if (managerIds.length > 0) {
+          const { data: managerProfiles } = await supabase
+            .from('profiles')
+            .select('id, full_name')
+            .in('id', managerIds);
+
+          const ranked = Object.entries(managerAdditions)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 3)
+            .map(([id, additions]) => ({
+              name: managerProfiles?.find(p => p.id === id)?.full_name || 'Unknown',
+              additions,
+            }));
+          setTopManagers(ranked);
+        }
       }
     } catch (error: any) {
       console.error('Error fetching dashboard:', error);
@@ -164,7 +191,7 @@ export default function TNADashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
         <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/cycles')}>
           <CardHeader className="pb-3">
             <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center mb-2">
@@ -208,6 +235,15 @@ export default function TNADashboard() {
             </div>
             <CardTitle className="text-base">Manager Approval</CardTitle>
             <p className="text-xs text-muted-foreground">Approvals & reporting</p>
+          </CardHeader>
+        </Card>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/training-needs/manager-dashboard')}>
+          <CardHeader className="pb-3">
+            <div className="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center mb-2">
+              <Users className="w-5 h-5 text-white" />
+            </div>
+            <CardTitle className="text-base">Manager TNI</CardTitle>
+            <p className="text-xs text-muted-foreground">Ratify reportee needs</p>
           </CardHeader>
         </Card>
       </div>
@@ -268,6 +304,37 @@ export default function TNADashboard() {
                 <Badge key={theme} variant="secondary" className="text-sm py-1 px-3">
                   {theme} <span className="ml-1 font-bold text-primary">({count})</span>
                 </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Top 3 Managers Ranking */}
+      {topManagers.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Top Managers by Training Additions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-3 md:grid-cols-3">
+              {topManagers.map((mgr, i) => (
+                <div key={mgr.name} className="flex items-center gap-3 p-3 rounded-lg border">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                    i === 0 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300" :
+                    i === 1 ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300" :
+                    "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300"
+                  }`}>
+                    #{i + 1}
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">{mgr.name}</p>
+                    <p className="text-xs text-muted-foreground">{mgr.additions} training needs added</p>
+                  </div>
+                </div>
               ))}
             </div>
           </CardContent>
