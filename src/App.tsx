@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LibraryProvider } from "@/contexts/LibraryContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AdminRoute from "@/components/AdminRoute";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 import Index from "./pages/Index";
@@ -173,25 +174,25 @@ const App = () => (
               
               {/* Protected routes with layout */}
               <Route path="/" element={<ProtectedRoute><AuthenticatedLayout><Index /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/workflow-guide" element={<ProtectedRoute><AuthenticatedLayout><WorkflowGuide /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/workflow-guide" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><WorkflowGuide /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/user-documentation" element={<ProtectedRoute><AuthenticatedLayout><UserDocumentation /></AuthenticatedLayout></ProtectedRoute>} />
               
-              {/* User Management */}
-              <Route path="/users" element={<ProtectedRoute><AuthenticatedLayout><Users /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/users/add" element={<ProtectedRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/users/add-employee" element={<ProtectedRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/users/bulk" element={<ProtectedRoute><AuthenticatedLayout><BulkEnrollment /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/users/bulk-enrollment" element={<ProtectedRoute><AuthenticatedLayout><BulkEnrollment /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/users/edit/:id" element={<ProtectedRoute><AuthenticatedLayout><EditEmployee /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/users/learning-profile/:id" element={<ProtectedRoute><AuthenticatedLayout><EmployeeLearningProfiles /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/users/learning-profiles" element={<ProtectedRoute><AuthenticatedLayout><EmployeeLearningProfiles /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* User Management - Admin Only */}
+              <Route path="/users" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Users /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/users/add" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/users/add-employee" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/users/bulk" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><BulkEnrollment /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/users/bulk-enrollment" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><BulkEnrollment /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/users/edit/:id" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><EditEmployee /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/users/learning-profile/:id" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><EmployeeLearningProfiles /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/users/learning-profiles" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><EmployeeLearningProfiles /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
-              {/* Programs */}
-              <Route path="/programs" element={<ProtectedRoute><AuthenticatedLayout><Programs /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/programs/create" element={<ProtectedRoute><AuthenticatedLayout><CreateProgram /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/programs/categories" element={<ProtectedRoute><AuthenticatedLayout><CategoryManagement /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/programs/trainers" element={<ProtectedRoute><AuthenticatedLayout><Trainers /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/programs/sessions" element={<ProtectedRoute><AuthenticatedLayout><ProgramSessions /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* Programs - Admin Only */}
+              <Route path="/programs" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Programs /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/programs/create" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><CreateProgram /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/programs/categories" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><CategoryManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/programs/trainers" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Trainers /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/programs/sessions" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ProgramSessions /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
               {/* Learning Paths */}
               <Route path="/learning-paths" element={<ProtectedRoute><AuthenticatedLayout><LearningPaths /></AuthenticatedLayout></ProtectedRoute>} />
@@ -203,29 +204,29 @@ const App = () => (
               <Route path="/learning-paths/status" element={<ProtectedRoute><AuthenticatedLayout><StatusTracking /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/learning-paths/analytics" element={<ProtectedRoute><AuthenticatedLayout><AnalyticsDashboard /></AuthenticatedLayout></ProtectedRoute>} />
               
-              {/* Organization */}
-              <Route path="/organization" element={<ProtectedRoute><AuthenticatedLayout><Organization /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/organization/chart" element={<ProtectedRoute><AuthenticatedLayout><OrganizationChart /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/organization/departments" element={<ProtectedRoute><AuthenticatedLayout><Departments /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/organization/roles" element={<ProtectedRoute><AuthenticatedLayout><Roles /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/organization/hierarchy" element={<ProtectedRoute><AuthenticatedLayout><Hierarchy /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/organization/locations" element={<ProtectedRoute><AuthenticatedLayout><Locations /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* Organization - Admin Only */}
+              <Route path="/organization" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Organization /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/organization/chart" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><OrganizationChart /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/organization/departments" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Departments /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/organization/roles" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Roles /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/organization/hierarchy" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Hierarchy /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/organization/locations" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Locations /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
-              {/* Processes */}
-              <Route path="/processes" element={<ProtectedRoute><AuthenticatedLayout><Processes /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/processes/workflow" element={<ProtectedRoute><AuthenticatedLayout><WorkflowManagement /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/processes/workflows" element={<ProtectedRoute><AuthenticatedLayout><WorkflowManagement /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/processes/approval" element={<ProtectedRoute><AuthenticatedLayout><ApprovalFramework /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/processes/approvals" element={<ProtectedRoute><AuthenticatedLayout><ApprovalFramework /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/processes/user-roles" element={<ProtectedRoute><AuthenticatedLayout><UserRoleManagement /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/processes/security" element={<ProtectedRoute><AuthenticatedLayout><SecurityAccessControl /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/processes/business-rules" element={<ProtectedRoute><AuthenticatedLayout><BusinessRules /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* Processes - Admin Only */}
+              <Route path="/processes" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Processes /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/processes/workflow" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><WorkflowManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/processes/workflows" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><WorkflowManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/processes/approval" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ApprovalFramework /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/processes/approvals" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ApprovalFramework /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/processes/user-roles" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><UserRoleManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/processes/security" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><SecurityAccessControl /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/processes/business-rules" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><BusinessRules /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
-              {/* Content */}
-              <Route path="/content" element={<ProtectedRoute><AuthenticatedLayout><ContentLibrary /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/content/upload" element={<ProtectedRoute><AuthenticatedLayout><UploadContent /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/content/categories" element={<ProtectedRoute><AuthenticatedLayout><ContentCategories /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/content/tools" element={<ProtectedRoute><AuthenticatedLayout><ContentTools /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* Content - Admin Only */}
+              <Route path="/content" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ContentLibrary /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/content/upload" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><UploadContent /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/content/categories" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ContentCategories /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/content/tools" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ContentTools /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
               {/* Library */}
               <Route path="/library" element={<ProtectedRoute><AuthenticatedLayout><Catalog /></AuthenticatedLayout></ProtectedRoute>} />
@@ -247,57 +248,57 @@ const App = () => (
               <Route path="/training-needs/analytics" element={<ProtectedRoute><AuthenticatedLayout><Analytics /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/training-needs/manager-dashboard" element={<ProtectedRoute><AuthenticatedLayout><ManagerTNIDashboard /></AuthenticatedLayout></ProtectedRoute>} />
               
-              {/* Assessments */}
-              <Route path="/assessments" element={<ProtectedRoute><AuthenticatedLayout><Assessments /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/assessments/create" element={<ProtectedRoute><AuthenticatedLayout><CreateAssessment /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/assessments/questions" element={<ProtectedRoute><AuthenticatedLayout><QuestionBank /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/assessments/results" element={<ProtectedRoute><AuthenticatedLayout><AssessmentResults /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* Assessments - Admin Only */}
+              <Route path="/assessments" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Assessments /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/assessments/create" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><CreateAssessment /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/assessments/questions" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><QuestionBank /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/assessments/results" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AssessmentResults /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
-              {/* AI & MOOC */}
-              <Route path="/ai-recommendations" element={<ProtectedRoute><AuthenticatedLayout><AIRecommendationsPage /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/mooc" element={<ProtectedRoute><AuthenticatedLayout><MOOC /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/mooc/catalog" element={<ProtectedRoute><AuthenticatedLayout><CourseCatalog /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/mooc/enrollments" element={<ProtectedRoute><AuthenticatedLayout><MOOCEnrollmentManagement /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/mooc/analytics" element={<ProtectedRoute><AuthenticatedLayout><MOOCAnalytics /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/mooc/budget" element={<ProtectedRoute><AuthenticatedLayout><BudgetLicensing /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* AI & MOOC - Admin Only */}
+              <Route path="/ai-recommendations" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AIRecommendationsPage /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/mooc" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><MOOC /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/mooc/catalog" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><CourseCatalog /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/mooc/enrollments" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><MOOCEnrollmentManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/mooc/analytics" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><MOOCAnalytics /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/mooc/budget" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><BudgetLicensing /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
-              {/* LTI Routes */}
-              <Route path="/lti/providers" element={<ProtectedRoute><AuthenticatedLayout><LTIProviders /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/lti/tools" element={<ProtectedRoute><AuthenticatedLayout><LTITools /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/lti/launches" element={<ProtectedRoute><AuthenticatedLayout><LTILaunches /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/lti/grades" element={<ProtectedRoute><AuthenticatedLayout><GradePassback /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* LTI Routes - Admin Only */}
+              <Route path="/lti/providers" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><LTIProviders /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/lti/tools" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><LTITools /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/lti/launches" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><LTILaunches /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/lti/grades" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><GradePassback /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
-              {/* ROI Routes */}
-              <Route path="/roi/models" element={<ProtectedRoute><AuthenticatedLayout><ComputationModels /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/roi/models/kirkpatrick" element={<ProtectedRoute><AuthenticatedLayout><KirkpatrickModel /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/roi/models/phillips" element={<ProtectedRoute><AuthenticatedLayout><PhillipsModel /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/roi/kirkpatrick-evaluations" element={<ProtectedRoute><AuthenticatedLayout><KirkpatrickEvaluations /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/roi" element={<ProtectedRoute><AuthenticatedLayout><ROIDashboard /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/roi/costs" element={<ProtectedRoute><AuthenticatedLayout><CostAnalysis /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/roi/impact" element={<ProtectedRoute><AuthenticatedLayout><ImpactReports /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* ROI Routes - Admin Only */}
+              <Route path="/roi/models" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ComputationModels /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/roi/models/kirkpatrick" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><KirkpatrickModel /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/roi/models/phillips" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><PhillipsModel /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/roi/kirkpatrick-evaluations" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><KirkpatrickEvaluations /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/roi" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ROIDashboard /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/roi/costs" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><CostAnalysis /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/roi/impact" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ImpactReports /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
-              {/* Security */}
-              <Route path="/security" element={<ProtectedRoute><AuthenticatedLayout><Security /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/system-access" element={<ProtectedRoute><AuthenticatedLayout><SystemAccess /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/audit-trail" element={<ProtectedRoute><AuthenticatedLayout><AuditTrail /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/electronic-signature" element={<ProtectedRoute><AuthenticatedLayout><ElectronicSignature /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/data-integrity" element={<ProtectedRoute><AuthenticatedLayout><DataIntegrity /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/user-management" element={<ProtectedRoute><AuthenticatedLayout><UserManagement /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/record-management" element={<ProtectedRoute><AuthenticatedLayout><RecordManagement /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/system-validation" element={<ProtectedRoute><AuthenticatedLayout><SystemValidation /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/system-validation/cmdb" element={<ProtectedRoute><AuthenticatedLayout><SVConfigurationManagement /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/system-validation/change-control" element={<ProtectedRoute><AuthenticatedLayout><SVChangeControl /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/system-validation/test-execution" element={<ProtectedRoute><AuthenticatedLayout><SVTestExecution /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/system-validation/performance" element={<ProtectedRoute><AuthenticatedLayout><SVPerformanceMonitoring /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/system-validation/environments" element={<ProtectedRoute><AuthenticatedLayout><SVEnvironmentManagement /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/system-validation/documentation" element={<ProtectedRoute><AuthenticatedLayout><SVValidationDocumentation /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/reporting-compliance" element={<ProtectedRoute><AuthenticatedLayout><ReportingCompliance /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/infrastructure" element={<ProtectedRoute><AuthenticatedLayout><SecurityInfrastructure /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/integration-security" element={<ProtectedRoute><AuthenticatedLayout><IntegrationSecurity /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/security/quality-management" element={<ProtectedRoute><AuthenticatedLayout><QualityManagement /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* Security - Admin Only */}
+              <Route path="/security" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Security /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/system-access" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><SystemAccess /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/audit-trail" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AuditTrail /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/electronic-signature" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ElectronicSignature /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/data-integrity" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><DataIntegrity /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/user-management" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><UserManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/record-management" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><RecordManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/system-validation" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><SystemValidation /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/system-validation/cmdb" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><SVConfigurationManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/system-validation/change-control" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><SVChangeControl /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/system-validation/test-execution" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><SVTestExecution /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/system-validation/performance" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><SVPerformanceMonitoring /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/system-validation/environments" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><SVEnvironmentManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/system-validation/documentation" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><SVValidationDocumentation /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/reporting-compliance" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ReportingCompliance /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/infrastructure" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><SecurityInfrastructure /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/integration-security" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><IntegrationSecurity /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/security/quality-management" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><QualityManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
-              {/* Settings */}
-              <Route path="/settings" element={<ProtectedRoute><AuthenticatedLayout><Settings /></AuthenticatedLayout></ProtectedRoute>} />
+              {/* Settings - Admin Only */}
+              <Route path="/settings" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Settings /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
