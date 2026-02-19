@@ -119,12 +119,37 @@ const CreateAssessment = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const handleSaveAssessment = () => {
-    toast({
-      title: "Assessment Created",
-      description: `${assessmentData.title} has been created successfully!`,
-    });
-    navigate("/assessments");
+  const handleSaveAssessment = async () => {
+    if (!assessmentData.title || !assessmentData.type) {
+      toast({ title: "Error", description: "Title and type are required", variant: "destructive" });
+      return;
+    }
+    try {
+      const { data: assessment, error } = await supabase.from('assessments').insert([{
+        title: assessmentData.title,
+        assessment_type: assessmentData.type,
+        time_limit_minutes: assessmentData.timeLimit ? parseInt(assessmentData.timeLimit) : null,
+        passing_score: assessmentData.passingScore,
+        max_attempts: assessmentData.maxAttempts,
+      }]).select().single();
+      if (error) throw error;
+
+      // Link selected questions
+      if (assessment && assessmentData.selectedQuestions.length > 0) {
+        const questionLinks = assessmentData.selectedQuestions.map((q: any, i: number) => ({
+          assessment_id: assessment.id,
+          question_id: q.id,
+          question_order: i + 1,
+          points: q.points || 1,
+        }));
+        await supabase.from('assessment_questions').insert(questionLinks);
+      }
+
+      toast({ title: "Assessment Created", description: `${assessmentData.title} has been created successfully!` });
+      navigate("/assessments");
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
   };
 
   const handleCreateQuestion = async () => {

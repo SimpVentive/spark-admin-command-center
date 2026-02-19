@@ -104,6 +104,59 @@ export type Database = {
           },
         ]
       }
+      assessment_results: {
+        Row: {
+          answers: Json | null
+          assessment_id: string
+          attempt_number: number | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          passing_score: number | null
+          score: number | null
+          started_at: string | null
+          status: string | null
+          time_spent_minutes: number | null
+          user_id: string
+        }
+        Insert: {
+          answers?: Json | null
+          assessment_id: string
+          attempt_number?: number | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          passing_score?: number | null
+          score?: number | null
+          started_at?: string | null
+          status?: string | null
+          time_spent_minutes?: number | null
+          user_id: string
+        }
+        Update: {
+          answers?: Json | null
+          assessment_id?: string
+          attempt_number?: number | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          passing_score?: number | null
+          score?: number | null
+          started_at?: string | null
+          status?: string | null
+          time_spent_minutes?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_results_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assessments: {
         Row: {
           assessment_type: string
@@ -507,6 +560,107 @@ export type Database = {
         }
         Relationships: []
       }
+      content_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      content_items: {
+        Row: {
+          category_id: string | null
+          content_type: string
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          file_format: string | null
+          file_path: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          is_active: boolean | null
+          language: string | null
+          page_count: number | null
+          slide_count: number | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          content_type: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          file_format?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          language?: string | null
+          page_count?: number | null
+          slide_count?: number | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          content_type?: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          file_format?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          language?: string | null
+          page_count?: number | null
+          slide_count?: number | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "content_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_media: {
         Row: {
           created_at: string | null
@@ -662,6 +816,39 @@ export type Database = {
           quality_score?: number | null
           title?: string
           version_number?: number
+        }
+        Relationships: []
+      }
+      departments: {
+        Row: {
+          created_at: string
+          employee_count: number | null
+          id: string
+          is_active: boolean | null
+          location: string | null
+          manager_name: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          manager_name?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          manager_name?: string | null
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1068,6 +1255,69 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string | null
+        }
+        Relationships: []
+      }
+      location_types: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+        }
+        Relationships: []
+      }
+      locations: {
+        Row: {
+          address: string | null
+          created_at: string
+          department_count: number | null
+          employee_count: number | null
+          id: string
+          is_active: boolean | null
+          latitude: number | null
+          longitude: number | null
+          name: string
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          department_count?: number | null
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          department_count?: number | null
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          type?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -2452,6 +2702,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      trainers: {
+        Row: {
+          bio: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean | null
+          is_external: boolean | null
+          location: string | null
+          name: string
+          phone: string | null
+          programs_count: number | null
+          rating: number | null
+          specialization: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_external?: boolean | null
+          location?: string | null
+          name: string
+          phone?: string | null
+          programs_count?: number | null
+          rating?: number | null
+          specialization?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_external?: boolean | null
+          location?: string | null
+          name?: string
+          phone?: string | null
+          programs_count?: number | null
+          rating?: number | null
+          specialization?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       training_programs: {
         Row: {
