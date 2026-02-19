@@ -28,9 +28,8 @@ serve(async (req) => {
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data, error: authError } = await supabase.auth.getClaims(token);
-    if (authError || !data?.claims) {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -39,7 +38,7 @@ serve(async (req) => {
 
     const { file, settings } = await req.json();
     
-    console.log('PPT to Video conversion started', { userId: data.claims.sub, settings });
+    console.log('PPT to Video conversion started', { userId: user.id, settings });
 
     const conversionSteps = [
       'Analyzing PowerPoint file...',
