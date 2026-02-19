@@ -72,7 +72,7 @@ const KirkpatrickEvaluations = () => {
   const fetchPrograms = async () => {
     try {
       const { data, error } = await supabase
-        .from('programs')
+        .from('training_programs')
         .select('*');
 
       if (error) throw error;
