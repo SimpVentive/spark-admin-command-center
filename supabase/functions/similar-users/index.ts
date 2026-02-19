@@ -31,21 +31,17 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } }
     });
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await authClient.auth.getClaims(token);
+    const { data: { user }, error: userError } = await authClient.auth.getUser();
     
-    if (claimsError || !claimsData?.claims) {
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Get authenticated user's ID from JWT claims
-    const authenticatedUserId = claimsData.claims.sub;
-    
     // Users can only query their own similar users data
-    const userId = authenticatedUserId;
+    const userId = user.id;
 
     // Create service role client for database operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -181,7 +177,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in similar-users function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -226,10 +222,10 @@ async function getSkillsComparison(supabase: any, userId: string, similarUserIds
     .in('user_id', similarUserIds);
 
   // Calculate skill overlap and gaps
-  const userSkillNames = new Set(userSkills?.map(s => s.skill_name) || []);
+  const userSkillNames = new Set(userSkills?.map((s: any) => s.skill_name) || []);
   
-  const commonSkills = [];
-  const skillGaps = [];
+  const commonSkills: string[] = [];
+  const skillGaps: string[] = [];
   const skillFrequency: { [key: string]: number } = {};
 
   similarUsersSkills?.forEach((skill: any) => {
@@ -272,12 +268,12 @@ async function getLearningVelocityComparison(supabase: any, userId: string, simi
     .in('user_id', similarUserIds)
     .order('created_at', { ascending: false });
 
-  const userAvgVelocity = userAnalytics?.reduce((sum, item) => sum + (item.learning_velocity || 0), 0) / (userAnalytics?.length || 1);
-  const userAvgEngagement = userAnalytics?.reduce((sum, item) => sum + (item.engagement_score || 0), 0) / (userAnalytics?.length || 1);
+  const userAvgVelocity = userAnalytics?.reduce((sum: number, item: any) => sum + (item.learning_velocity || 0), 0) / (userAnalytics?.length || 1);
+  const userAvgEngagement = userAnalytics?.reduce((sum: number, item: any) => sum + (item.engagement_score || 0), 0) / (userAnalytics?.length || 1);
 
   // Calculate averages for similar users
-  const similarUsersAvgVelocity = similarUsersAnalytics?.reduce((sum, item) => sum + (item.learning_velocity || 0), 0) / (similarUsersAnalytics?.length || 1);
-  const similarUsersAvgEngagement = similarUsersAnalytics?.reduce((sum, item) => sum + (item.engagement_score || 0), 0) / (similarUsersAnalytics?.length || 1);
+  const similarUsersAvgVelocity = similarUsersAnalytics?.reduce((sum: number, item: any) => sum + (item.learning_velocity || 0), 0) / (similarUsersAnalytics?.length || 1);
+  const similarUsersAvgEngagement = similarUsersAnalytics?.reduce((sum: number, item: any) => sum + (item.engagement_score || 0), 0) / (similarUsersAnalytics?.length || 1);
 
   return {
     user_velocity: userAvgVelocity || 0,

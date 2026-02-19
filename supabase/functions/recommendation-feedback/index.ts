@@ -37,9 +37,8 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } }
     });
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await authClient.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    const { data: { user }, error: userError } = await authClient.auth.getUser();
+    if (userError || !user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -47,7 +46,7 @@ serve(async (req) => {
     }
 
     // Use authenticated user's ID instead of trusting client-supplied value
-    const user_id = claimsData.claims.sub;
+    const user_id = user.id;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const {
@@ -117,8 +116,8 @@ serve(async (req) => {
     // Update user preferences based on feedback patterns
     await updateUserPreferencesFromFeedback(supabase, user_id, feedback_type, recommendation_id);
 
-    // Trigger recommendation model retraining (background task)
-    EdgeRuntime.waitUntil(updateRecommendationModel(supabase, user_id, feedback_type));
+    // Trigger recommendation model retraining (fire and forget)
+    updateRecommendationModel(supabase, user_id, feedback_type).catch(e => console.error('Background model update failed:', e));
 
     return new Response(JSON.stringify({
       success: true,
@@ -129,7 +128,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in recommendation-feedback:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
