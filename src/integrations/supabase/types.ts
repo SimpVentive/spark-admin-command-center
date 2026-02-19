@@ -102,6 +102,13 @@ export type Database = {
             referencedRelation: "question_bank"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "assessment_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank_safe"
+            referencedColumns: ["id"]
+          },
         ]
       }
       assessment_results: {
@@ -2466,6 +2473,13 @@ export type Database = {
             referencedRelation: "question_bank"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank_safe"
+            referencedColumns: ["id"]
+          },
         ]
       }
       recommendation_feedback: {
@@ -3399,7 +3413,93 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      question_bank_safe: {
+        Row: {
+          competency_id: string | null
+          created_at: string | null
+          difficulty_level: string | null
+          id: string | null
+          is_active: boolean | null
+          points: number | null
+          program_id: string | null
+          question_text: string | null
+          question_type: string | null
+        }
+        Insert: {
+          competency_id?: string | null
+          created_at?: string | null
+          difficulty_level?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          points?: number | null
+          program_id?: string | null
+          question_text?: string | null
+          question_type?: string | null
+        }
+        Update: {
+          competency_id?: string | null
+          created_at?: string | null
+          difficulty_level?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          points?: number | null
+          program_id?: string | null
+          question_text?: string | null
+          question_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_bank_competency_id_fkey"
+            columns: ["competency_id"]
+            isOneToOne: false
+            referencedRelation: "competencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_bank_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_options_safe: {
+        Row: {
+          id: string | null
+          option_order: number | null
+          option_text: string | null
+          question_id: string | null
+        }
+        Insert: {
+          id?: string | null
+          option_order?: number | null
+          option_text?: string | null
+          question_id?: string | null
+        }
+        Update: {
+          id?: string | null
+          option_order?: number | null
+          option_text?: string | null
+          question_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       cleanup_expired_lti_sessions: { Args: never; Returns: number }
