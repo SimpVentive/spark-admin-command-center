@@ -102,6 +102,21 @@ const BulkEnrollment = () => {
         return row;
       });
 
+      // Resolve reporting manager names to IDs
+      const managerNames = [...new Set(data.map(row => row.reportingManager).filter(Boolean))];
+      let managerMap: Record<string, string> = {};
+      if (managerNames.length > 0) {
+        const { data: managers } = await supabase
+          .from('profiles')
+          .select('id, full_name')
+          .in('full_name', managerNames);
+        if (managers) {
+          managers.forEach(m => {
+            if (m.full_name) managerMap[m.full_name.toLowerCase()] = m.id;
+          });
+        }
+      }
+
       // Insert profiles to database
       const profilesToInsert = data.map(row => ({
         id: crypto.randomUUID(),
@@ -109,6 +124,7 @@ const BulkEnrollment = () => {
         email: row.email,
         department: row.department || null,
         position: row.designation || null,
+        manager_id: row.reportingManager ? (managerMap[row.reportingManager.toLowerCase()] || null) : null,
       }));
 
       const { error } = await supabase
