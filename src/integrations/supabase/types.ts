@@ -2831,8 +2831,10 @@ export type Database = {
           departments: string[] | null
           end_date: string
           id: string
+          locations: string[]
           manager_ratification_required: boolean
           name: string
+          roles: string[]
           start_date: string
           status: string
           updated_at: string | null
@@ -2844,8 +2846,10 @@ export type Database = {
           departments?: string[] | null
           end_date: string
           id?: string
+          locations?: string[]
           manager_ratification_required?: boolean
           name: string
+          roles?: string[]
           start_date: string
           status?: string
           updated_at?: string | null
@@ -2857,8 +2861,10 @@ export type Database = {
           departments?: string[] | null
           end_date?: string
           id?: string
+          locations?: string[]
           manager_ratification_required?: boolean
           name?: string
+          roles?: string[]
           start_date?: string
           status?: string
           updated_at?: string | null

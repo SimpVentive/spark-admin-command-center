@@ -35,6 +35,7 @@ interface NavItem {
   subItems?: NavSubItem[];
   separator?: boolean;
   adminOnly?: boolean;
+  managerOnly?: boolean;
 }
 
 // adminOnly: true means the menu is hidden for non-admin users
@@ -79,10 +80,22 @@ const navigationItems: NavItem[] = [
   { 
     title: "Training Needs Analysis", 
     icon: Target,
+    adminOnly: true,
     subItems: [
       { title: "TNA Dashboard", url: "/training-needs" },
       { title: "Create TNI Cycle", url: "/training-needs/create-cycle" }
     ]
+  },
+  {
+    title: "My Training Needs",
+    icon: Target,
+    url: "/my-training-needs",
+  },
+  {
+    title: "Team Training Needs",
+    icon: Users,
+    managerOnly: true,
+    url: "/team-training-needs",
   },
   { 
     title: "Programs", 
@@ -210,7 +223,7 @@ export function AdminSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const [openGroups, setOpenGroups] = useState<string[]>([]);
-  const { isAdmin, loading } = useUserRole();
+  const { isAdmin, isManager, loading } = useUserRole();
 
   const isActive = (path: string) => currentPath === path;
   
@@ -226,6 +239,7 @@ export function AdminSidebar() {
   const filteredItems = navigationItems.filter(item => {
     if (item.separator) return true;
     if (item.adminOnly && !isAdmin) return false;
+    if (item.managerOnly && !isManager) return false;
     return true;
   });
 
