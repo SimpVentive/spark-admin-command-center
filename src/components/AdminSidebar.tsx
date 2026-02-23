@@ -83,6 +83,7 @@ const navigationItems: NavItem[] = [
     adminOnly: true,
     subItems: [
       { title: "TNA Dashboard", url: "/training-needs" },
+      { title: "All TNA Cycles", url: "/training-needs/cycles" },
       { title: "Create TNI Cycle", url: "/training-needs/create-cycle" }
     ]
   },
@@ -103,7 +104,7 @@ const navigationItems: NavItem[] = [
     adminOnly: true,
     subItems: [
       { title: "All Programs", url: "/programs" },
-      { title: "Create Program", url: "/programs/create" },
+      { title: "Program Categories", url: "/programs/categories" },
       { title: "Program Sessions", url: "/programs/sessions" },
       { title: "Trainers", url: "/programs/trainers" }
     ]
