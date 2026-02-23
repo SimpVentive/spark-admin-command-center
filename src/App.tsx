@@ -87,6 +87,8 @@ import EnhancedManagerApproval from "./pages/training-needs/EnhancedManagerAppro
 import TNACycleList from "./pages/training-needs/TNACycleList";
 import TNACycleDetail from "./pages/training-needs/TNACycleDetail";
 import ManagerTNIDashboard from "./pages/training-needs/ManagerTNIDashboard";
+import MyTrainingNeeds from "./pages/training-needs/MyTrainingNeeds";
+import TeamTrainingNeeds from "./pages/training-needs/TeamTrainingNeeds";
 
 // Auth pages
 import Auth from "./pages/auth/Auth";
@@ -236,10 +238,10 @@ const App = () => (
               <Route path="/library/reservations" element={<ProtectedRoute><AuthenticatedLayout><Reservations /></AuthenticatedLayout></ProtectedRoute>} />
               
               {/* Training Needs */}
-              <Route path="/training-needs" element={<ProtectedRoute><AuthenticatedLayout><TNADashboard /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/training-needs/cycles" element={<ProtectedRoute><AuthenticatedLayout><TNACycleList /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/training-needs/cycles/:id" element={<ProtectedRoute><AuthenticatedLayout><TNACycleDetail /></AuthenticatedLayout></ProtectedRoute>} />
-              <Route path="/training-needs/create-cycle" element={<ProtectedRoute><AuthenticatedLayout><CreateCycle /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/training-needs" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><TNADashboard /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/training-needs/cycles" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><TNACycleList /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/training-needs/cycles/:id" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><TNACycleDetail /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/training-needs/create-cycle" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><CreateCycle /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/training-needs/employee-tni" element={<ProtectedRoute><AuthenticatedLayout><EmployeeTNI /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/training-needs/enhanced-employee-tni" element={<ProtectedRoute><AuthenticatedLayout><EnhancedEmployeeTNI /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/training-needs/manager-approval" element={<ProtectedRoute><AuthenticatedLayout><ManagerApproval /></AuthenticatedLayout></ProtectedRoute>} />
@@ -247,6 +249,12 @@ const App = () => (
               <Route path="/training-needs/program-management" element={<ProtectedRoute><AuthenticatedLayout><ProgramManagement /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/training-needs/analytics" element={<ProtectedRoute><AuthenticatedLayout><Analytics /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/training-needs/manager-dashboard" element={<ProtectedRoute><AuthenticatedLayout><ManagerTNIDashboard /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* My Training Needs - All authenticated users */}
+              <Route path="/my-training-needs" element={<ProtectedRoute><AuthenticatedLayout><MyTrainingNeeds /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Team Training Needs - Managers */}
+              <Route path="/team-training-needs" element={<ProtectedRoute><AuthenticatedLayout><TeamTrainingNeeds /></AuthenticatedLayout></ProtectedRoute>} />
               
               {/* Assessments - Admin Only */}
               <Route path="/assessments" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Assessments /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
