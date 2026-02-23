@@ -37,6 +37,7 @@ interface CycleData {
   autoCloseThreshold: number;
   departments: string[];
   locations: string[];
+  roles: string[];
   mandatoryPrograms: MandatoryProgram[];
   managerRatificationRequired: boolean;
   emailTemplate: string;
@@ -63,6 +64,7 @@ export default function CreateCycle() {
     autoCloseThreshold: 80,
     departments: [],
     locations: [],
+    roles: [],
     mandatoryPrograms: [],
     managerRatificationRequired: false,
     emailTemplate: `Dear {employee_name},
@@ -172,7 +174,7 @@ Training Team`,
         end_date: cycleData.endDate.toISOString().split('T')[0],
         departments: cycleData.departments,
         locations: cycleData.locations,
-        roles: [],
+        roles: cycleData.roles || [],
         workflow_type: workflowTypeMap[cycleData.workflowType] || cycleData.workflowType,
         status: 'draft',
         created_by: user.id,
@@ -436,6 +438,34 @@ Training Team`,
                         }}
                       />
                       <Label htmlFor={`loc-${location}`} className="text-sm">{location}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-base font-medium">Roles</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+                  {roles.map((role) => (
+                    <div key={role} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`role-${role}`}
+                        checked={cycleData.roles.includes(role)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setCycleData(prev => ({
+                              ...prev,
+                              roles: [...prev.roles, role]
+                            }));
+                          } else {
+                            setCycleData(prev => ({
+                              ...prev,
+                              roles: prev.roles.filter(r => r !== role)
+                            }));
+                          }
+                        }}
+                      />
+                      <Label htmlFor={`role-${role}`} className="text-sm">{role}</Label>
                     </div>
                   ))}
                 </div>
@@ -772,6 +802,7 @@ Training Team`,
                     <div className="text-sm text-muted-foreground space-y-1 mt-2">
                       <p><strong>Departments:</strong> {cycleData.departments.length ? cycleData.departments.join(', ') : 'All'}</p>
                       <p><strong>Locations:</strong> {cycleData.locations.length ? cycleData.locations.join(', ') : 'All'}</p>
+                      <p><strong>Roles:</strong> {cycleData.roles.length ? cycleData.roles.join(', ') : 'All'}</p>
                     </div>
                   </div>
                 </div>
@@ -811,8 +842,8 @@ Training Team`,
               </div>
 
               <div className="flex gap-4">
-                <Button onClick={handleSubmit} className="flex-1">
-                  Create TNI Cycle
+                <Button onClick={handleSubmit} className="flex-1" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating..." : "Create TNI Cycle"}
                 </Button>
                 <Button variant="outline" onClick={() => navigate('/training-needs')}>
                   Cancel
@@ -839,8 +870,8 @@ Training Team`,
           Step {tabOrder.indexOf(activeTab) + 1} of {tabOrder.length}
         </div>
         {activeTab === tabOrder[tabOrder.length - 1] ? (
-          <Button onClick={handleSubmit}>
-            Create TNI Cycle
+          <Button onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? "Creating..." : "Create TNI Cycle"}
           </Button>
         ) : (
           <Button
