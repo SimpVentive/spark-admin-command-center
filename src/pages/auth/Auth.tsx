@@ -42,9 +42,13 @@ export default function Auth() {
 
     setLoading(true);
     try {
+      console.log('[Auth] Attempting sign in to:', import.meta.env.VITE_SUPABASE_URL || 'https://exwakeotltumdcsviinl.supabase.co');
+      console.log('[Auth] Current origin:', window.location.origin);
+      
       const { error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) {
+        console.error('[Auth] Sign in error:', error.message, error.status, error);
         toast({
           title: "Sign In Failed",
           description: error.message.includes('Invalid login credentials')
@@ -55,8 +59,18 @@ export default function Auth() {
       } else {
         toast({ title: "Welcome back!", description: "You have been signed in successfully." });
       }
-    } catch {
-      toast({ title: "Error", description: "An unexpected error occurred", variant: "destructive" });
+    } catch (err: any) {
+      console.error('[Auth] Fetch error details:', {
+        message: err?.message,
+        name: err?.name,
+        cause: err?.cause,
+        stack: err?.stack,
+      });
+      toast({ 
+        title: "Connection Error", 
+        description: `Could not reach authentication server. Error: ${err?.message || 'Unknown'}. Please check if your network/firewall allows connections to exwakeotltumdcsviinl.supabase.co`,
+        variant: "destructive" 
+      });
     } finally {
       setLoading(false);
     }
