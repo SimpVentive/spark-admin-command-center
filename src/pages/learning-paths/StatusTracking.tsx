@@ -33,6 +33,7 @@ const StatusTracking = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [pathFilter, setPathFilter] = useState("all");
+  const { toast } = useToast();
 
   const statusData = [
     { status: "Not Started", count: 156, percentage: 15.6, color: "#f59e0b" },
