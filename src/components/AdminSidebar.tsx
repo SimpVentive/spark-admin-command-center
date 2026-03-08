@@ -229,6 +229,23 @@ const navigationItems: NavItem[] = [
       { title: "Quality Management", url: "/security/quality-management" }
     ]
   },
+  {
+    title: "Reports",
+    icon: FileText,
+    adminOnly: true,
+    subItems: [
+      { title: "Reports Center", url: "/reports" },
+      { title: "TNA Report", url: "/reports/tna" },
+      { title: "Training Attendance", url: "/reports/attendance" },
+      { title: "Program Report", url: "/reports/programs" },
+      { title: "Budget Report", url: "/reports/budget" },
+      { title: "Assessment Report", url: "/reports/assessments" },
+      { title: "Kirkpatrick Report", url: "/reports/kirkpatrick" },
+      { title: "Employee Profiles", url: "/reports/employee-profile" },
+      { title: "LASER Report", url: "/reports/laser" },
+      { title: "Audit Trail", url: "/reports/audit" },
+    ]
+  },
   { title: "Settings", url: "/settings", icon: Settings, adminOnly: true },
   // Separator for documentation
   { separator: true },

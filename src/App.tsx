@@ -129,6 +129,18 @@ import LaserInterventions from "./pages/laser/Interventions";
 import ImpactValidation from "./pages/laser/ImpactValidation";
 import DataSources from "./pages/laser/DataSources";
 
+// Reports pages
+import ReportsHub from "./pages/reports/ReportsHub";
+import TNAReport from "./pages/reports/TNAReport";
+import AttendanceReport from "./pages/reports/AttendanceReport";
+import ProgramReport from "./pages/reports/ProgramReport";
+import BudgetReport from "./pages/reports/BudgetReport";
+import AssessmentReport from "./pages/reports/AssessmentReport";
+import KirkpatrickReport from "./pages/reports/KirkpatrickReport";
+import EmployeeProfileReport from "./pages/reports/EmployeeProfileReport";
+import LaserReport from "./pages/reports/LaserReport";
+import AuditReport from "./pages/reports/AuditReport";
+
 // Settings and Security pages
 import Security from "./pages/Security";
 import Settings from "./pages/Settings";
@@ -314,6 +326,18 @@ const App = () => (
               <Route path="/security/integration-security" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><IntegrationSecurity /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/security/quality-management" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><QualityManagement /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
+              {/* Reports - Admin Only */}
+              <Route path="/reports" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ReportsHub /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/reports/tna" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><TNAReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/reports/attendance" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AttendanceReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/reports/programs" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ProgramReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/reports/budget" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><BudgetReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/reports/assessments" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AssessmentReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/reports/kirkpatrick" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><KirkpatrickReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/reports/employee-profile" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><EmployeeProfileReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/reports/laser" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><LaserReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/reports/audit" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AuditReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+
               {/* Settings - Admin Only */}
               <Route path="/settings" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Settings /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
