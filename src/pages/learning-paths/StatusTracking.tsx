@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { generatePDF } from "@/utils/reportExport";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +33,7 @@ const StatusTracking = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [pathFilter, setPathFilter] = useState("all");
+  const { toast } = useToast();
 
   const statusData = [
     { status: "Not Started", count: 156, percentage: 15.6, color: "#f59e0b" },
@@ -162,11 +165,18 @@ const StatusTracking = () => {
           <p className="text-muted-foreground">Detailed learner status tracking and intervention tools</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => toast({ title: "Alerts configured", description: "You'll receive notifications for at-risk and overdue learners." })}>
             <Bell className="h-4 w-4" />
             Set Alerts
           </Button>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => {
+            generatePDF(
+              { title: "Status Tracking Report", subtitle: "Learning Path Status Analytics" },
+              statusData.map(s => ({ label: s.status, value: `${s.count} (${s.percentage}%)` })),
+              [{ title: "Status Summary", headers: ["Status", "Count", "Percentage"], rows: statusData.map(s => [s.status, s.count, `${s.percentage}%`]) }]
+            );
+            toast({ title: "Report exported" });
+          }}>
             <Download className="h-4 w-4" />
             Export Report
           </Button>

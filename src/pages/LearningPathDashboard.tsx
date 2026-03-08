@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +12,7 @@ import PathBuilderInterface from "@/components/path-builder/PathBuilderInterface
 
 const LearningPathDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const navigate = useNavigate();
 
   const dashboardStats = [
     {
@@ -70,7 +72,7 @@ const LearningPathDashboard = () => {
             Comprehensive dashboard for managing learning paths, content, and analytics
           </p>
         </div>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2" onClick={() => navigate('/learning-paths/create')}>
           <Plus className="h-4 w-4" />
           Create Learning Path
         </Button>

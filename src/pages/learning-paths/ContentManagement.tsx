@@ -91,11 +91,20 @@ const ContentManagement = () => {
           <p className="text-muted-foreground">Manage modules, lessons, and resources for learning paths</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = '.mp4,.pdf,.docx,.pptx,.zip';
+            input.click();
+          }}>
             <Upload className="h-4 w-4" />
             Bulk Upload
           </Button>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={() => {
+            const tabs = document.querySelector('[value="upload"]');
+            if (tabs) (tabs as HTMLElement).click();
+          }}>
             <Plus className="h-4 w-4" />
             Add Content
           </Button>
@@ -113,8 +122,8 @@ const ContentManagement = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button variant="outline">Filter by Status</Button>
-        <Button variant="outline">Filter by Type</Button>
+        <Button variant="outline" onClick={() => setSearchTerm(searchTerm === "published" ? "" : "published")}>Filter by Status</Button>
+        <Button variant="outline" onClick={() => setSearchTerm(searchTerm === "video" ? "" : "video")}>Filter by Type</Button>
       </div>
 
       <Tabs defaultValue="tree" className="space-y-4">
@@ -280,7 +289,13 @@ const ContentManagement = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   Drag and drop files or click to browse. Supports videos, documents, and SCORM packages.
                 </p>
-                <Button>Choose Files</Button>
+                <Button onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.multiple = true;
+                  input.accept = '.mp4,.avi,.mov,.pdf,.docx,.pptx,.zip,.jpg,.png,.gif';
+                  input.click();
+                }}>Choose Files</Button>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

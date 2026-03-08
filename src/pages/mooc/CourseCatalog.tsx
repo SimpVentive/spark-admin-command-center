@@ -143,7 +143,12 @@ const CourseCatalog = () => {
             Browse and manage courses from integrated MOOC platforms.
           </p>
         </div>
-        <Button>
+        <Button onClick={() => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.csv,.xlsx';
+          input.click();
+        }}>
           <Plus className="w-4 h-4 mr-2" />
           Bulk Import
         </Button>

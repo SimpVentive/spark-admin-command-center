@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { generatePDF } from "@/utils/reportExport";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +31,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 const EnrollmentManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPath, setSelectedPath] = useState("all");
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [statusFilter, setStatusFilter] = useState("all");
 
   const learningPaths = [
@@ -141,11 +146,11 @@ const EnrollmentManagement = () => {
           <p className="text-muted-foreground">Manage learner enrollments and cohorts</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => navigate('/users/bulk-enrollment')}>
             <Upload className="h-4 w-4" />
             Bulk Enroll
           </Button>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={() => toast({ title: "Enroll Learner", description: "Select a learning path, then search and add a learner." })}>
             <UserPlus className="h-4 w-4" />
             Enroll Learner
           </Button>
@@ -245,7 +250,15 @@ const EnrollmentManagement = () => {
                 <SelectItem value="overdue">Overdue</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2" onClick={() => {
+              const rows = enrollments.map(e => [e.learnerName, e.email, e.learningPath, e.status, `${e.progress}%`, e.enrolledDate]);
+              generatePDF(
+                { title: "Enrollment Report", subtitle: "Learning Path Enrollments" },
+                [{ label: "Total", value: String(enrollments.length) }],
+                [{ title: "Enrollments", headers: ["Learner", "Email", "Path", "Status", "Progress", "Enrolled"], rows }]
+              );
+              toast({ title: "Report exported" });
+            }}>
               <Download className="h-4 w-4" />
               Export
             </Button>

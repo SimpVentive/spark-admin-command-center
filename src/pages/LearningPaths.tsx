@@ -155,7 +155,11 @@ const LearningPaths = () => {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input placeholder="Search learning paths..." className="pl-8" />
         </div>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className="gap-2" onClick={() => {
+          // Simple filter toggle
+          const input = document.querySelector<HTMLInputElement>('input[placeholder="Search learning paths..."]');
+          if (input) input.focus();
+        }}>
           <Filter className="h-4 w-4" />
           Filter
         </Button>

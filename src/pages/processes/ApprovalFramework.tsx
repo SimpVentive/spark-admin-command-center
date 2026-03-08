@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useToast } from "@/hooks/use-toast";
 import { 
   CheckCircle, 
   Clock, 
@@ -189,6 +190,7 @@ export default function ApprovalFramework() {
   const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
   const [filterStatus, setFilterStatus] = useState("all");
   const [activeTab, setActiveTab] = useState("kanban");
+  const { toast } = useToast();
   
   // React Flow state
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -264,11 +266,11 @@ export default function ApprovalFramework() {
           <p className="text-muted-foreground mt-1">Streamline your training approval process</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button variant="outline" className="flex items-center gap-2" onClick={() => toast({ title: "Delegation", description: "Select a request first, then choose a delegate from the approval chain." })}>
             <UserPlus className="w-4 h-4" />
             Delegate
           </Button>
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => toast({ title: "New Request", description: "Navigate to Programs > Create Program to submit a new training request." })}>
             <FileText className="w-4 h-4 mr-2" />
             New Request
           </Button>
@@ -343,11 +345,11 @@ export default function ApprovalFramework() {
                   <CheckCircle className="w-4 h-4 mr-1" />
                   Bulk Approve
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => toast({ title: "Info Requested", description: `Requesting additional info for ${selectedRequests.length} selected request(s).` })}>
                   <MessageSquare className="w-4 h-4 mr-1" />
                   Request Info
                 </Button>
-                <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700" onClick={() => { toast({ title: "Rejected", description: `${selectedRequests.length} request(s) rejected.` }); setSelectedRequests([]); }}>
                   <X className="w-4 h-4 mr-1" />
                   Reject
                 </Button>
@@ -389,7 +391,9 @@ export default function ApprovalFramework() {
                   />
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" className="flex items-center gap-2">
+                  <Button variant="outline" className="flex items-center gap-2" onClick={() => {
+                    setSearchTerm(searchTerm ? "" : "high");
+                  }}>
                     <Filter className="w-4 h-4" />
                     Filter
                   </Button>
@@ -438,15 +442,15 @@ export default function ApprovalFramework() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => { toast({ title: "Approved", description: `${request.title} has been approved.` }); }}>
                                   <CheckCircle className="w-4 h-4 mr-2" />
                                   Approve
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => toast({ title: "Info Requested", description: `Additional information requested for ${request.title}.` })}>
                                   <MessageSquare className="w-4 h-4 mr-2" />
                                   Request Info
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => toast({ title: "Delegated", description: `${request.title} has been delegated.` })}>
                                   <UserPlus className="w-4 h-4 mr-2" />
                                   Delegate
                                 </DropdownMenuItem>
