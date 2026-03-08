@@ -3285,7 +3285,7 @@ const UserDocumentation: React.FC = () => {
           <h1 className="text-3xl font-bold mb-6">15. Best Practices & Troubleshooting</h1>
           
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">14.1 Implementation Best Practices</h2>
+            <h2 className="text-2xl font-semibold mb-4">15.1 Implementation Best Practices</h2>
             
             <div className="space-y-6">
               <div className="bg-green-50 border-l-4 border-green-500 p-4">
@@ -3313,7 +3313,7 @@ const UserDocumentation: React.FC = () => {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">14.2 Common Issues & Solutions</h2>
+            <h2 className="text-2xl font-semibold mb-4">15.2 Common Issues & Solutions</h2>
             
             <div className="space-y-4">
               <div className="border rounded-lg p-4">
@@ -3353,7 +3353,7 @@ const UserDocumentation: React.FC = () => {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">14.3 Support & Contact Information</h2>
+            <h2 className="text-2xl font-semibold mb-4">15.3 Support & Contact Information</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="border rounded-lg p-4">
