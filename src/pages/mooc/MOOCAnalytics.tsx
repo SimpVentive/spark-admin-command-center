@@ -58,7 +58,9 @@ const MOOCAnalytics = () => {
             Monitor learning progress, engagement, and outcomes across your organization.
           </p>
         </div>
-        <Button>
+        <Button onClick={() => {
+          window.open('/reports', '_self');
+        }}>
           <Download className="w-4 h-4 mr-2" />
           Export Report
         </Button>

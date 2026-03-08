@@ -104,7 +104,7 @@ const BudgetLicensing = () => {
             Manage subscriptions, track spending, and optimize your MOOC investment.
           </p>
         </div>
-        <Button>
+        <Button onClick={() => window.open('/reports', '_self')}>
           <FileText className="w-4 h-4 mr-2" />
           Generate Report
         </Button>
@@ -260,12 +260,12 @@ const BudgetLicensing = () => {
                 </div>
                 
                 <div className="flex flex-col gap-2 ml-4">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => alert(`Managing ${subscription.name} subscription settings.`)}>
                     <Settings className="w-4 h-4 mr-2" />
                     Manage
                   </Button>
                   {subscription.status === "pending" && (
-                    <Button size="sm">
+                    <Button size="sm" onClick={() => alert(`Activating ${subscription.name} subscription.`)}>
                       Activate
                     </Button>
                   )}

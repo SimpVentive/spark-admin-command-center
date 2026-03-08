@@ -91,11 +91,20 @@ const ContentManagement = () => {
           <p className="text-muted-foreground">Manage modules, lessons, and resources for learning paths</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = '.mp4,.pdf,.docx,.pptx,.zip';
+            input.click();
+          }}>
             <Upload className="h-4 w-4" />
             Bulk Upload
           </Button>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={() => {
+            const tabs = document.querySelector('[value="upload"]');
+            if (tabs) (tabs as HTMLElement).click();
+          }}>
             <Plus className="h-4 w-4" />
             Add Content
           </Button>
