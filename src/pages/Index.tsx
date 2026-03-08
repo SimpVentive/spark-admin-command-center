@@ -86,6 +86,7 @@ const Index = () => {
         <Button 
           size="lg" 
           className="bg-gradient-to-r from-[hsl(220,90%,56%)] to-[hsl(250,80%,50%)] hover:opacity-90 text-white border-0 shadow-lg"
+          onClick={() => navigate("/reports")}
         >
           View Full Report
         </Button>
