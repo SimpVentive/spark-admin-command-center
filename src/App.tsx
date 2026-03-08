@@ -120,6 +120,15 @@ import ImpactReports from "./pages/roi/ImpactReports";
 // Program Sessions
 import ProgramSessions from "./pages/programs/ProgramSessions";
 
+// LASER pages
+import LaserDashboard from "./pages/laser/LaserDashboard";
+import KpiConfiguration from "./pages/laser/KpiConfiguration";
+import CausalMaps from "./pages/laser/CausalMaps";
+import PerformanceData from "./pages/laser/PerformanceData";
+import LaserInterventions from "./pages/laser/Interventions";
+import ImpactValidation from "./pages/laser/ImpactValidation";
+import DataSources from "./pages/laser/DataSources";
+
 // Settings and Security pages
 import Security from "./pages/Security";
 import Settings from "./pages/Settings";
@@ -307,6 +316,15 @@ const App = () => (
               
               {/* Settings - Admin Only */}
               <Route path="/settings" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Settings /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              
+              {/* LASER - Admin Only */}
+              <Route path="/laser" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><LaserDashboard /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/laser/kpi-config" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><KpiConfiguration /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/laser/causal-maps" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><CausalMaps /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/laser/performance-data" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><PerformanceData /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/laser/interventions" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><LaserInterventions /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/laser/impact" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ImpactValidation /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/laser/data-sources" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><DataSources /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
