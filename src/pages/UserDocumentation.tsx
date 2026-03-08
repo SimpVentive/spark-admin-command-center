@@ -3280,9 +3280,9 @@ const UserDocumentation: React.FC = () => {
           </div>
         </div>
 
-        {/* Chapter 14: Best Practices & Troubleshooting */}
+        {/* Chapter 15: Best Practices & Troubleshooting */}
         <div className="new-page mb-12">
-          <h1 className="text-3xl font-bold mb-6">14. Best Practices & Troubleshooting</h1>
+          <h1 className="text-3xl font-bold mb-6">15. Best Practices & Troubleshooting</h1>
           
           <div className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">14.1 Implementation Best Practices</h2>
