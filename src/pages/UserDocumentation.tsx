@@ -572,46 +572,85 @@ const UserDocumentation: React.FC = () => {
             </div>
 
             <div className="flex justify-between border-b pb-2">
-              <span className="font-semibold">13. System Administration</span>
+              <span className="font-semibold">13. LASER — Performance Intelligence</span>
               <span>72</span>
             </div>
             <div className="ml-4 space-y-1">
               <div className="flex justify-between">
-                <span>13.1 Security & Access Control</span>
+                <span>13.1 LASER Overview & How It Works</span>
                 <span>72</span>
               </div>
               <div className="flex justify-between">
-                <span>13.2 System Settings</span>
+                <span>13.2 KPI Configuration & Role Mapping</span>
                 <span>74</span>
               </div>
               <div className="flex justify-between">
-                <span>13.3 Process & Workflow Management</span>
+                <span>13.3 Causal Map Builder</span>
                 <span>76</span>
+              </div>
+              <div className="flex justify-between">
+                <span>13.4 Performance Data & Deviation Detection</span>
+                <span>78</span>
+              </div>
+              <div className="flex justify-between">
+                <span>13.5 Root Cause Analysis (RCA) Engine</span>
+                <span>80</span>
+              </div>
+              <div className="flex justify-between">
+                <span>13.6 Interventions & Auto-Assignment</span>
+                <span>82</span>
+              </div>
+              <div className="flex justify-between">
+                <span>13.7 Impact Validation & Pattern Repository</span>
+                <span>84</span>
+              </div>
+              <div className="flex justify-between">
+                <span>13.8 Data Sources & External Integration</span>
+                <span>86</span>
               </div>
             </div>
 
             <div className="flex justify-between border-b pb-2">
-              <span className="font-semibold">14. Best Practices & Troubleshooting</span>
-              <span>78</span>
+              <span className="font-semibold">14. System Administration</span>
+              <span>88</span>
             </div>
             <div className="ml-4 space-y-1">
               <div className="flex justify-between">
-                <span>14.1 Implementation Best Practices</span>
-                <span>78</span>
+                <span>14.1 Security & Access Control</span>
+                <span>88</span>
               </div>
               <div className="flex justify-between">
-                <span>14.2 Common Issues & Solutions</span>
-                <span>80</span>
+                <span>14.2 System Settings</span>
+                <span>90</span>
               </div>
               <div className="flex justify-between">
-                <span>14.3 Support & Contact Information</span>
-                <span>82</span>
+                <span>14.3 Process & Workflow Management</span>
+                <span>92</span>
+              </div>
+            </div>
+
+            <div className="flex justify-between border-b pb-2">
+              <span className="font-semibold">15. Best Practices & Troubleshooting</span>
+              <span>94</span>
+            </div>
+            <div className="ml-4 space-y-1">
+              <div className="flex justify-between">
+                <span>15.1 Implementation Best Practices</span>
+                <span>94</span>
+              </div>
+              <div className="flex justify-between">
+                <span>15.2 Common Issues & Solutions</span>
+                <span>96</span>
+              </div>
+              <div className="flex justify-between">
+                <span>15.3 Support & Contact Information</span>
+                <span>98</span>
               </div>
             </div>
 
             <div className="flex justify-between">
-              <span className="font-semibold">15. Appendix</span>
-              <span>84</span>
+              <span className="font-semibold">16. Appendix</span>
+              <span>100</span>
             </div>
           </div>
         </div>
