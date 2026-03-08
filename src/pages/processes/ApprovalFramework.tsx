@@ -189,6 +189,7 @@ export default function ApprovalFramework() {
   const [selectedRequests, setSelectedRequests] = useState<string[]>([]);
   const [filterStatus, setFilterStatus] = useState("all");
   const [activeTab, setActiveTab] = useState("kanban");
+  const { toast } = useToast();
   
   // React Flow state
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
