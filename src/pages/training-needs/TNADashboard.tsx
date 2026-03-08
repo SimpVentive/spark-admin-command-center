@@ -416,7 +416,7 @@ export default function TNADashboard() {
                       </div>
                     )}
 
-                    <Button variant="ghost" size="sm" className="w-full mt-2" onClick={() => navigate(`/training-needs/cycles/${cycle.id}`)}>
+                    <Button variant="ghost" size="sm" className="w-full mt-2" onClick={() => navigate(`/training-needs/cycles/${cs.cycle.id}`)}>
                       <Eye className="h-4 w-4 mr-2" /> View Dashboard
                     </Button>
                   </CardContent>
