@@ -1019,6 +1019,626 @@ export type Database = {
         }
         Relationships: []
       }
+      laser_assigned_interventions: {
+        Row: {
+          assigned_at: string
+          cause_intervention_id: string | null
+          completed_at: string | null
+          created_at: string
+          deviation_id: string
+          employee_id: string
+          id: string
+          intervention_type: string
+          learning_path_id: string | null
+          micro_intervention_content: string | null
+          micro_intervention_title: string | null
+          program_id: string | null
+          rca_result_id: string
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          assigned_at?: string
+          cause_intervention_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          deviation_id: string
+          employee_id: string
+          id?: string
+          intervention_type: string
+          learning_path_id?: string | null
+          micro_intervention_content?: string | null
+          micro_intervention_title?: string | null
+          program_id?: string | null
+          rca_result_id: string
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          assigned_at?: string
+          cause_intervention_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          deviation_id?: string
+          employee_id?: string
+          id?: string
+          intervention_type?: string
+          learning_path_id?: string | null
+          micro_intervention_content?: string | null
+          micro_intervention_title?: string | null
+          program_id?: string | null
+          rca_result_id?: string
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_assigned_interventions_cause_intervention_id_fkey"
+            columns: ["cause_intervention_id"]
+            isOneToOne: false
+            referencedRelation: "laser_cause_interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_assigned_interventions_deviation_id_fkey"
+            columns: ["deviation_id"]
+            isOneToOne: false
+            referencedRelation: "laser_deviations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_assigned_interventions_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_assigned_interventions_learning_path_id_fkey"
+            columns: ["learning_path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_assigned_interventions_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_assigned_interventions_rca_result_id_fkey"
+            columns: ["rca_result_id"]
+            isOneToOne: false
+            referencedRelation: "laser_rca_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_cause_definitions: {
+        Row: {
+          cause_category: string
+          cause_name: string
+          created_at: string
+          default_weight: number
+          description: string | null
+          escalation_target: string | null
+          id: string
+          is_active: boolean | null
+          kpi_id: string
+          requires_training: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          cause_category?: string
+          cause_name: string
+          created_at?: string
+          default_weight?: number
+          description?: string | null
+          escalation_target?: string | null
+          id?: string
+          is_active?: boolean | null
+          kpi_id: string
+          requires_training?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          cause_category?: string
+          cause_name?: string
+          created_at?: string
+          default_weight?: number
+          description?: string | null
+          escalation_target?: string | null
+          id?: string
+          is_active?: boolean | null
+          kpi_id?: string
+          requires_training?: boolean | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_cause_definitions_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_cause_interventions: {
+        Row: {
+          cause_id: string
+          created_at: string
+          id: string
+          intervention_type: string
+          is_active: boolean | null
+          learning_path_id: string | null
+          micro_intervention_content: string | null
+          micro_intervention_title: string | null
+          micro_intervention_type: string | null
+          priority: number | null
+          program_id: string | null
+        }
+        Insert: {
+          cause_id: string
+          created_at?: string
+          id?: string
+          intervention_type?: string
+          is_active?: boolean | null
+          learning_path_id?: string | null
+          micro_intervention_content?: string | null
+          micro_intervention_title?: string | null
+          micro_intervention_type?: string | null
+          priority?: number | null
+          program_id?: string | null
+        }
+        Update: {
+          cause_id?: string
+          created_at?: string
+          id?: string
+          intervention_type?: string
+          is_active?: boolean | null
+          learning_path_id?: string | null
+          micro_intervention_content?: string | null
+          micro_intervention_title?: string | null
+          micro_intervention_type?: string | null
+          priority?: number | null
+          program_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_cause_interventions_cause_id_fkey"
+            columns: ["cause_id"]
+            isOneToOne: false
+            referencedRelation: "laser_cause_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_cause_interventions_learning_path_id_fkey"
+            columns: ["learning_path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_cause_interventions_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_data_sources: {
+        Row: {
+          api_endpoint: string | null
+          api_key_encrypted: string | null
+          config_data: Json | null
+          created_at: string
+          created_by: string | null
+          id: string
+          last_sync_at: string | null
+          name: string
+          source_type: string
+          status: string | null
+          sync_frequency: string | null
+          updated_at: string
+        }
+        Insert: {
+          api_endpoint?: string | null
+          api_key_encrypted?: string | null
+          config_data?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          last_sync_at?: string | null
+          name: string
+          source_type?: string
+          status?: string | null
+          sync_frequency?: string | null
+          updated_at?: string
+        }
+        Update: {
+          api_endpoint?: string | null
+          api_key_encrypted?: string | null
+          config_data?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          last_sync_at?: string | null
+          name?: string
+          source_type?: string
+          status?: string | null
+          sync_frequency?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      laser_deviations: {
+        Row: {
+          actual_value: number
+          created_at: string
+          detected_at: string
+          deviation_percentage: number
+          employee_id: string
+          id: string
+          kpi_id: string
+          resolved_at: string | null
+          role_kpi_mapping_id: string
+          severity: string
+          status: string
+          target_value: number
+        }
+        Insert: {
+          actual_value: number
+          created_at?: string
+          detected_at?: string
+          deviation_percentage: number
+          employee_id: string
+          id?: string
+          kpi_id: string
+          resolved_at?: string | null
+          role_kpi_mapping_id: string
+          severity?: string
+          status?: string
+          target_value: number
+        }
+        Update: {
+          actual_value?: number
+          created_at?: string
+          detected_at?: string
+          deviation_percentage?: number
+          employee_id?: string
+          id?: string
+          kpi_id?: string
+          resolved_at?: string | null
+          role_kpi_mapping_id?: string
+          severity?: string
+          status?: string
+          target_value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_deviations_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_deviations_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_deviations_role_kpi_mapping_id_fkey"
+            columns: ["role_kpi_mapping_id"]
+            isOneToOne: false
+            referencedRelation: "laser_role_kpi_mappings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_impact_validations: {
+        Row: {
+          created_at: string
+          id: string
+          improvement_percentage: number | null
+          intervention_id: string
+          kpi_id: string
+          measurement_date: string | null
+          notes: string | null
+          post_intervention_value: number | null
+          pre_intervention_value: number
+          updated_at: string
+          validation_status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          improvement_percentage?: number | null
+          intervention_id: string
+          kpi_id: string
+          measurement_date?: string | null
+          notes?: string | null
+          post_intervention_value?: number | null
+          pre_intervention_value: number
+          updated_at?: string
+          validation_status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          improvement_percentage?: number | null
+          intervention_id?: string
+          kpi_id?: string
+          measurement_date?: string | null
+          notes?: string | null
+          post_intervention_value?: number | null
+          pre_intervention_value?: number
+          updated_at?: string
+          validation_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_impact_validations_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "laser_assigned_interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_impact_validations_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_kpi_definitions: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          measurement_frequency: string
+          name: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          measurement_frequency?: string
+          name: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          measurement_frequency?: string
+          name?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      laser_pattern_repository: {
+        Row: {
+          avg_improvement_percentage: number | null
+          cause_id: string
+          created_at: string
+          failure_count: number | null
+          id: string
+          kpi_id: string
+          last_updated_at: string
+          refined_weight: number | null
+          success_count: number | null
+        }
+        Insert: {
+          avg_improvement_percentage?: number | null
+          cause_id: string
+          created_at?: string
+          failure_count?: number | null
+          id?: string
+          kpi_id: string
+          last_updated_at?: string
+          refined_weight?: number | null
+          success_count?: number | null
+        }
+        Update: {
+          avg_improvement_percentage?: number | null
+          cause_id?: string
+          created_at?: string
+          failure_count?: number | null
+          id?: string
+          kpi_id?: string
+          last_updated_at?: string
+          refined_weight?: number | null
+          success_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_pattern_repository_cause_id_fkey"
+            columns: ["cause_id"]
+            isOneToOne: false
+            referencedRelation: "laser_cause_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_pattern_repository_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_performance_signals: {
+        Row: {
+          batch_id: string | null
+          created_at: string
+          employee_id: string
+          id: string
+          kpi_id: string
+          kpi_value: number
+          measurement_date: string
+          operational_context: Json | null
+          source: string
+        }
+        Insert: {
+          batch_id?: string | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          kpi_id: string
+          kpi_value: number
+          measurement_date?: string
+          operational_context?: Json | null
+          source?: string
+        }
+        Update: {
+          batch_id?: string | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          kpi_id?: string
+          kpi_value?: number
+          measurement_date?: string
+          operational_context?: Json | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_performance_signals_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_performance_signals_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_rca_results: {
+        Row: {
+          analysis_data: Json | null
+          cause_id: string
+          created_at: string
+          deviation_id: string
+          id: string
+          is_primary_cause: boolean | null
+          probability_score: number
+        }
+        Insert: {
+          analysis_data?: Json | null
+          cause_id: string
+          created_at?: string
+          deviation_id: string
+          id?: string
+          is_primary_cause?: boolean | null
+          probability_score?: number
+        }
+        Update: {
+          analysis_data?: Json | null
+          cause_id?: string
+          created_at?: string
+          deviation_id?: string
+          id?: string
+          is_primary_cause?: boolean | null
+          probability_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_rca_results_cause_id_fkey"
+            columns: ["cause_id"]
+            isOneToOne: false
+            referencedRelation: "laser_cause_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_rca_results_deviation_id_fkey"
+            columns: ["deviation_id"]
+            isOneToOne: false
+            referencedRelation: "laser_deviations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_role_kpi_mappings: {
+        Row: {
+          comparison_operator: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          job_role_id: string
+          kpi_id: string
+          target_value: number
+          threshold_critical: number
+          threshold_warning: number
+          updated_at: string
+        }
+        Insert: {
+          comparison_operator?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          job_role_id: string
+          kpi_id: string
+          target_value: number
+          threshold_critical: number
+          threshold_warning: number
+          updated_at?: string
+        }
+        Update: {
+          comparison_operator?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          job_role_id?: string
+          kpi_id?: string
+          target_value?: number
+          threshold_critical?: number
+          threshold_warning?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_role_kpi_mappings_job_role_id_fkey"
+            columns: ["job_role_id"]
+            isOneToOne: false
+            referencedRelation: "job_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_role_kpi_mappings_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       learning_path_modules: {
         Row: {
           created_at: string
