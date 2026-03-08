@@ -260,12 +260,12 @@ const BudgetLicensing = () => {
                 </div>
                 
                 <div className="flex flex-col gap-2 ml-4">
-                  <Button variant="outline" size="sm" onClick={() => alert(`Managing ${subscription.name} subscription settings.`)}>
+                  <Button variant="outline" size="sm" onClick={() => alert(`Managing ${subscription.provider} ${subscription.plan} subscription settings.`)}>
                     <Settings className="w-4 h-4 mr-2" />
                     Manage
                   </Button>
                   {subscription.status === "pending" && (
-                    <Button size="sm" onClick={() => alert(`Activating ${subscription.name} subscription.`)}>
+                    <Button size="sm" onClick={() => alert(`Activating ${subscription.provider} subscription.`)}>
                       Activate
                     </Button>
                   )}
