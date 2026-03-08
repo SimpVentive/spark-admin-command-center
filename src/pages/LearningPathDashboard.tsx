@@ -12,6 +12,7 @@ import PathBuilderInterface from "@/components/path-builder/PathBuilderInterface
 
 const LearningPathDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const navigate = useNavigate();
 
   const dashboardStats = [
     {
