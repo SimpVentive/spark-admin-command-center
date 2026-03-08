@@ -3204,7 +3204,7 @@ const UserDocumentation: React.FC = () => {
           <h1 className="text-3xl font-bold mb-6">14. System Administration</h1>
           
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">13.1 Security & Access Control</h2>
+            <h2 className="text-2xl font-semibold mb-4">14.1 Security & Access Control</h2>
             
             <div className="space-y-6">
               <div className="bg-red-50 border-l-4 border-red-500 p-6">
