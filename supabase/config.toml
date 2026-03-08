@@ -74,3 +74,9 @@ verify_jwt = false
 
 [functions.laser-rca-engine]
 verify_jwt = false
+
+[functions.laser-data-ingestion]
+verify_jwt = false
+
+[functions.laser-learning-loop]
+verify_jwt = false
