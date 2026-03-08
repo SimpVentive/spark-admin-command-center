@@ -52,6 +52,27 @@ const LaserDashboard = () => {
     }
   };
 
+  const [rcaRunning, setRcaRunning] = useState(false);
+
+  const handleRunRCAScan = async () => {
+    setRcaRunning(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("laser-rca-engine", {
+        body: { mode: "scan" },
+      });
+      if (error) throw error;
+      toast({
+        title: "🧠 RCA Scan Complete",
+        description: `${data.deviations_processed} deviation(s) analyzed, ${data.interventions_assigned} intervention(s) assigned`,
+      });
+      fetchDashboardData();
+    } catch (err: any) {
+      toast({ title: "RCA scan failed", description: err.message, variant: "destructive" });
+    } finally {
+      setRcaRunning(false);
+    }
+  };
+
   // Mock trend data for visualization
   const trendData = [
     { month: "Jan", deviations: 12, resolved: 8, interventions: 10 },
