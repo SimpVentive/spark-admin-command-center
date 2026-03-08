@@ -89,15 +89,10 @@ const navigationItems: NavItem[] = [
     ]
   },
   {
-    title: "My Training Needs",
+    title: "Org. Training Needs",
     icon: Target,
-    url: "/my-training-needs",
-  },
-  {
-    title: "Team Training Needs",
-    icon: Users,
-    managerOnly: true,
-    url: "/team-training-needs",
+    adminOnly: true,
+    url: "/org-training-needs",
   },
   { 
     title: "Programs", 
