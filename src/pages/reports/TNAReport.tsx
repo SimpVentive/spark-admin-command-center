@@ -46,7 +46,7 @@ const TNAReport = () => {
       s.profiles?.full_name || "—",
       s.profiles?.department || "—",
       s.profiles?.location || "—",
-      cycle?.title || "—",
+      cycle?.name || "—",
       s.status || "pending",
       needs.length,
       s.created_at ? format(new Date(s.created_at), "MMM d, yyyy") : "—",
