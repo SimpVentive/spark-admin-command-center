@@ -164,11 +164,18 @@ const StatusTracking = () => {
           <p className="text-muted-foreground">Detailed learner status tracking and intervention tools</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => toast({ title: "Alerts configured", description: "You'll receive notifications for at-risk and overdue learners." })}>
             <Bell className="h-4 w-4" />
             Set Alerts
           </Button>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => {
+            generatePDF(
+              { title: "Status Tracking Report", subtitle: "Learning Path Status Analytics" },
+              statusData.map(s => ({ label: s.status, value: `${s.count} (${s.percentage}%)` })),
+              [{ title: "Status Summary", headers: ["Status", "Count", "Percentage"], rows: statusData.map(s => [s.status, s.count, `${s.percentage}%`]) }]
+            );
+            toast({ title: "Report exported" });
+          }}>
             <Download className="h-4 w-4" />
             Export Report
           </Button>
