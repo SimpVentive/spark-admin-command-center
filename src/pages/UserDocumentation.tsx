@@ -2811,9 +2811,397 @@ const UserDocumentation: React.FC = () => {
           </div>
         </div>
 
-        {/* Chapter 13: System Administration */}
+        {/* Chapter 13: LASER — Performance Intelligence */}
         <div className="new-page mb-12">
-          <h1 className="text-3xl font-bold mb-6">13. System Administration</h1>
+          <h1 className="text-3xl font-bold mb-6">13. LASER — Performance Intelligence</h1>
+          
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">13.1 LASER Overview & How It Works</h2>
+            <p className="mb-4 text-gray-700">
+              LASER (Learning & Application Specific to Employee Role) is L-Kurve's performance intelligence module. 
+              It automatically identifies KPI deviations, performs root cause analysis using Bayesian probability, 
+              assigns targeted learning interventions, and continuously improves through a feedback loop.
+            </p>
+            
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                Key Principle
+              </h4>
+              <p className="text-gray-700">
+                LASER operates autonomously once configured. Administrators set up KPIs, thresholds, causal maps, and 
+                intervention links. The system then monitors performance data, detects deviations, identifies probable 
+                causes, assigns training, and validates impact — all without manual intervention.
+              </p>
+            </div>
+
+            <div className="border rounded-lg p-4 mb-6">
+              <h3 className="font-semibold mb-3">The LASER Pipeline (6 Steps)</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="text-center p-3 border rounded">
+                  <div className="font-bold text-lg mb-1">1</div>
+                  <div className="font-medium text-sm">KPI Setup</div>
+                  <div className="text-xs text-gray-600">Define KPIs & map to job roles with thresholds</div>
+                </div>
+                <div className="text-center p-3 border rounded">
+                  <div className="font-bold text-lg mb-1">2</div>
+                  <div className="font-medium text-sm">Data Ingestion</div>
+                  <div className="text-xs text-gray-600">Import performance signals (manual or via API)</div>
+                </div>
+                <div className="text-center p-3 border rounded">
+                  <div className="font-bold text-lg mb-1">3</div>
+                  <div className="font-medium text-sm">Deviation Detection</div>
+                  <div className="text-xs text-gray-600">Auto-detect when KPI values breach thresholds</div>
+                </div>
+                <div className="text-center p-3 border rounded">
+                  <div className="font-bold text-lg mb-1">4</div>
+                  <div className="font-medium text-sm">Root Cause Analysis</div>
+                  <div className="text-xs text-gray-600">Bayesian engine scores probable causes</div>
+                </div>
+                <div className="text-center p-3 border rounded">
+                  <div className="font-bold text-lg mb-1">5</div>
+                  <div className="font-medium text-sm">Auto-Intervention</div>
+                  <div className="text-xs text-gray-600">Assign learning paths, programs, or micro-tasks</div>
+                </div>
+                <div className="text-center p-3 border rounded">
+                  <div className="font-bold text-lg mb-1">6</div>
+                  <div className="font-medium text-sm">Impact Validation</div>
+                  <div className="text-xs text-gray-600">Track KPI improvement & refine weights</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">13.2 KPI Configuration & Role Mapping</h2>
+            <p className="mb-4 text-gray-700">
+              Navigate to <strong>LASER → Configure KPIs</strong> to define the Key Performance Indicators that the system monitors.
+            </p>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Step-by-Step: Adding a KPI</h3>
+              <ol className="list-decimal ml-6 space-y-2 text-sm text-gray-700">
+                <li>Click <strong>"Add KPI"</strong> on the KPI Configuration page</li>
+                <li>Enter a <strong>KPI Name</strong> (e.g., "Production Output", "Customer Satisfaction Score")</li>
+                <li>Set the <strong>Unit</strong> (e.g., units/hour, %, score)</li>
+                <li>Choose a <strong>Category</strong> (productivity, quality, compliance, etc.)</li>
+                <li>Set <strong>Measurement Frequency</strong> (daily, weekly, monthly)</li>
+                <li>Optionally add a <strong>Description</strong></li>
+                <li>Click <strong>Save</strong></li>
+              </ol>
+            </div>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Step-by-Step: Mapping KPIs to Roles</h3>
+              <ol className="list-decimal ml-6 space-y-2 text-sm text-gray-700">
+                <li>In the <strong>Role-KPI Mappings</strong> section, click <strong>"Map KPI"</strong></li>
+                <li>Select a <strong>Job Role</strong> from the dropdown</li>
+                <li>Select the <strong>KPI</strong> to monitor for that role</li>
+                <li>Set the <strong>Target Value</strong> (e.g., 95)</li>
+                <li>Set the <strong>Warning Threshold</strong> (e.g., 85) — triggers a warning-level deviation</li>
+                <li>Set the <strong>Critical Threshold</strong> (e.g., 70) — triggers a critical deviation</li>
+                <li>Choose <strong>Comparison Operator</strong>: "Greater is Better" or "Less is Better"</li>
+                <li>Click <strong>Save Mapping</strong></li>
+              </ol>
+            </div>
+
+            <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                Important
+              </h4>
+              <p className="text-sm text-gray-700">
+                Thresholds must be set correctly based on the operator. For "Greater is Better" KPIs, warning 
+                should be less than target, and critical less than warning. The system uses these thresholds to 
+                automatically detect deviations when performance data arrives.
+              </p>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">13.3 Causal Map Builder</h2>
+            <p className="mb-4 text-gray-700">
+              Navigate to <strong>LASER → Causal Maps</strong>. This is where you define the probable causes for 
+              each KPI deviation and link interventions to those causes.
+            </p>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Step-by-Step: Adding a Probable Cause</h3>
+              <ol className="list-decimal ml-6 space-y-2 text-sm text-gray-700">
+                <li>Click <strong>"Add Cause"</strong></li>
+                <li>Select the <strong>KPI</strong> this cause relates to</li>
+                <li>Enter a <strong>Cause Name</strong> (e.g., "Insufficient machine calibration training")</li>
+                <li>Select a <strong>Category</strong>: Skill Gap, Equipment, Process, Material, Environment, Human Error, or Other</li>
+                <li>Set the <strong>Default Weight</strong> (0 to 1) — this is the prior probability used in Bayesian RCA</li>
+                <li>Toggle <strong>"Requires Training"</strong> on if a learning intervention can address this cause</li>
+                <li>If training is not applicable, enter an <strong>Escalation Target</strong> (e.g., "Maintenance Dept")</li>
+                <li>Click <strong>Add Cause</strong></li>
+              </ol>
+            </div>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Step-by-Step: Linking an Intervention</h3>
+              <ol className="list-decimal ml-6 space-y-2 text-sm text-gray-700">
+                <li>On a cause card, click the <strong>"Link"</strong> button</li>
+                <li>Choose an <strong>Intervention Type</strong>:
+                  <ul className="ml-4 mt-1 space-y-1">
+                    <li>• <strong>Learning Path</strong> — links to an existing learning path</li>
+                    <li>• <strong>Training Program</strong> — links to an existing program</li>
+                    <li>• <strong>Micro-Intervention</strong> — a quick task, checklist, video, or reference document</li>
+                  </ul>
+                </li>
+                <li>Select or fill in the intervention details</li>
+                <li>Click <strong>Link Intervention</strong></li>
+              </ol>
+            </div>
+
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                Best Practice
+              </h4>
+              <p className="text-sm text-gray-700">
+                Define multiple causes per KPI with varying weights that sum to approximately 1.0. 
+                This gives the Bayesian engine a richer model. Each cause should have at least one intervention 
+                linked to it. The system picks the highest-priority intervention when auto-assigning.
+              </p>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">13.4 Performance Data & Deviation Detection</h2>
+            <p className="mb-4 text-gray-700">
+              Navigate to <strong>LASER → Performance Data</strong> to view and record KPI signals.
+            </p>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Manual Data Entry</h3>
+              <ol className="list-decimal ml-6 space-y-2 text-sm text-gray-700">
+                <li>Click <strong>"Add Signal"</strong></li>
+                <li>Select the <strong>Employee</strong></li>
+                <li>Select the <strong>KPI</strong></li>
+                <li>Enter the <strong>Value</strong></li>
+                <li>Set the <strong>Measurement Date</strong></li>
+                <li>Click <strong>Record Signal</strong></li>
+              </ol>
+              <p className="text-sm text-gray-600 mt-3">
+                The system automatically checks the value against the role-KPI thresholds. If a deviation 
+                is detected, it immediately triggers the RCA engine and you'll see a notification.
+              </p>
+            </div>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Deviation Detection Logic</h3>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-2">Operator</th>
+                    <th className="text-left p-2">Warning Triggered When</th>
+                    <th className="text-left p-2">Critical Triggered When</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="p-2">Greater is Better</td>
+                    <td className="p-2">Value &lt; Warning Threshold</td>
+                    <td className="p-2">Value &lt; Critical Threshold</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2">Less is Better</td>
+                    <td className="p-2">Value &gt; Warning Threshold</td>
+                    <td className="p-2">Value &gt; Critical Threshold</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">13.5 Root Cause Analysis (RCA) Engine</h2>
+            <p className="mb-4 text-gray-700">
+              The RCA engine uses <strong>Bayesian probability scoring</strong> to identify the most likely causes 
+              for each KPI deviation. It runs automatically when deviations are detected, or can be triggered manually.
+            </p>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">How Bayesian RCA Works</h3>
+              <div className="space-y-3 text-sm text-gray-700">
+                <p><strong>Formula:</strong> P(cause | deviation) ∝ P(deviation | cause) × P(cause)</p>
+                <ul className="ml-4 space-y-2">
+                  <li><strong>Prior — P(cause):</strong> Starts from the default_weight you configured. Over time, 
+                  the Pattern Repository refines this based on historical success/failure data.</li>
+                  <li><strong>Likelihood — P(deviation | cause):</strong> Calculated from deviation severity, magnitude, 
+                  and cause category. Skill gaps and human errors score higher for large deviations.</li>
+                  <li><strong>Posterior:</strong> All cause scores are normalized so they sum to 1.0. The highest-scoring 
+                  cause is marked as the primary cause.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Manual RCA Scan</h3>
+              <ol className="list-decimal ml-6 space-y-2 text-sm text-gray-700">
+                <li>Go to the <strong>LASER Dashboard</strong></li>
+                <li>Click <strong>"Run RCA Scan"</strong> in the top-right corner</li>
+                <li>The engine analyzes all open deviations that haven't been processed yet</li>
+                <li>Results appear as RCA entries and auto-assigned interventions</li>
+              </ol>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">13.6 Interventions & Auto-Assignment</h2>
+            <p className="mb-4 text-gray-700">
+              Navigate to <strong>LASER → Interventions</strong> to view all auto-assigned learning interventions.
+            </p>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Intervention Types</h3>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-2">Type</th>
+                    <th className="text-left p-2">Description</th>
+                    <th className="text-left p-2">Example</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b">
+                    <td className="p-2 font-medium">Learning Path</td>
+                    <td className="p-2">Full structured learning path from the LMS</td>
+                    <td className="p-2">Safety Compliance Path</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-2 font-medium">Training Program</td>
+                    <td className="p-2">Instructor-led or scheduled program</td>
+                    <td className="p-2">Machine Calibration Workshop</td>
+                  </tr>
+                  <tr>
+                    <td className="p-2 font-medium">Micro-Intervention</td>
+                    <td className="p-2">Quick task, checklist, video, or document</td>
+                    <td className="p-2">Daily Calibration Checklist</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Intervention Lifecycle</h3>
+              <div className="flex flex-wrap gap-2 text-sm">
+                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded">Assigned</span>
+                <span>→</span>
+                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded">In Progress</span>
+                <span>→</span>
+                <span className="px-3 py-1 bg-green-100 text-green-800 rounded">Completed</span>
+                <span>or</span>
+                <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded">Skipped</span>
+              </div>
+              <p className="text-sm text-gray-600 mt-3">
+                When an intervention is completed, the system creates an impact validation record to 
+                compare pre- and post-intervention KPI values.
+              </p>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">13.7 Impact Validation & Pattern Repository</h2>
+            <p className="mb-4 text-gray-700">
+              Navigate to <strong>LASER → Impact Validation</strong> to track whether interventions actually improved KPIs.
+            </p>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Impact Results Tab</h3>
+              <p className="text-sm text-gray-700 mb-2">
+                Shows each intervention's pre/post KPI values and improvement percentage. Statuses:
+              </p>
+              <ul className="ml-4 space-y-1 text-sm text-gray-700">
+                <li>• <strong>Pending</strong> — Waiting for post-intervention data</li>
+                <li>• <strong>Improved</strong> — KPI improved by more than 5%</li>
+                <li>• <strong>No Change</strong> — KPI change within ±5%</li>
+                <li>• <strong>Declined</strong> — KPI worsened by more than 5%</li>
+              </ul>
+            </div>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Pattern Repository Tab</h3>
+              <p className="text-sm text-gray-700 mb-2">
+                The Pattern Repository is LASER's learning memory. It stores:
+              </p>
+              <ul className="ml-4 space-y-1 text-sm text-gray-700">
+                <li>• <strong>Success/Failure Counts</strong> per cause-KPI pair</li>
+                <li>• <strong>Average Improvement %</strong> using exponential moving average</li>
+                <li>• <strong>Refined Weight</strong> — Bayesian posterior that improves RCA accuracy over time</li>
+              </ul>
+              <p className="text-sm text-gray-600 mt-3">
+                Run the <strong>"Run Learning Loop"</strong> from the Data Sources page to process all completed 
+                validations and update pattern weights.
+              </p>
+            </div>
+
+            <div className="bg-green-50 border-l-4 border-green-500 p-4">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-600" />
+                Continuous Improvement
+              </h4>
+              <p className="text-sm text-gray-700">
+                As more interventions are completed and validated, the Pattern Repository accumulates evidence. 
+                After 5+ observations for a cause, the system begins adjusting the cause's default weight 
+                automatically, making future RCA predictions more accurate.
+              </p>
+            </div>
+          </div>
+
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4">13.8 Data Sources & External Integration</h2>
+            <p className="mb-4 text-gray-700">
+              Navigate to <strong>LASER → Data Sources</strong> to configure external systems that push KPI data into LASER.
+            </p>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">Step-by-Step: Adding a Data Source</h3>
+              <ol className="list-decimal ml-6 space-y-2 text-sm text-gray-700">
+                <li>Click <strong>"Add Source"</strong></li>
+                <li>Enter a <strong>Source Name</strong> (e.g., "Plant A ERP System")</li>
+                <li>Select the <strong>Source Type</strong>: CSV, REST API, ERP, MES, or HRIS</li>
+                <li>Optionally enter the <strong>Source System API Endpoint</strong></li>
+                <li>Set <strong>Sync Frequency</strong></li>
+                <li>Click <strong>Add Source</strong> — an API key is auto-generated</li>
+                <li>Copy the <strong>API key</strong> and configure it in your external system</li>
+              </ol>
+            </div>
+
+            <div className="border rounded-lg p-4 mb-4">
+              <h3 className="font-semibold mb-3">API Integration Guide</h3>
+              <p className="text-sm text-gray-700 mb-3">
+                External systems push data to the LASER Data Ingestion API endpoint. The API Documentation 
+                section on the Data Sources page provides:
+              </p>
+              <ul className="ml-4 space-y-1 text-sm text-gray-700">
+                <li>• <strong>Endpoint URL</strong> — the POST URL for your system to call</li>
+                <li>• <strong>Authentication</strong> — use the <code className="bg-gray-100 px-1 rounded">x-laser-api-key</code> header</li>
+                <li>• <strong>Payload Format</strong> — JSON array of signals with employee reference, KPI name/ID, value, and date</li>
+                <li>• <strong>Employee Lookup</strong> — supports lookup by UUID, employee code, or email</li>
+                <li>• <strong>Auto-Processing</strong> — deviations are detected and RCA runs automatically on ingested data</li>
+              </ul>
+            </div>
+
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <Info className="w-4 h-4" />
+                Supported Systems
+              </h4>
+              <p className="text-sm text-gray-700">
+                Any system that can make HTTP POST requests can integrate with LASER. Common integrations include 
+                SAP, Oracle ERP, Siemens MES, Wonderware, and custom HRIS systems. Contact your IT team to 
+                configure a scheduled job that pushes KPI data to the LASER endpoint.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Chapter 14: System Administration */}
+        <div className="new-page mb-12">
+          <h1 className="text-3xl font-bold mb-6">14. System Administration</h1>
           
           <div className="mb-8">
             <h2 className="text-2xl font-semibold mb-4">13.1 Security & Access Control</h2>
