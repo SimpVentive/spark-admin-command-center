@@ -18,11 +18,15 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { EnrollmentDetailsDialog } from "@/components/mooc/EnrollmentDetailsDialog";
 import { SendReminderDialog } from "@/components/mooc/SendReminderDialog";
+import { generatePDF } from "@/utils/reportExport";
 
 const EnrollmentManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   const enrollmentStats = {
     totalEnrollments: 390,
@@ -115,11 +119,19 @@ const EnrollmentManagement = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => {
+            const rows = enrollments.map(e => [e.employeeName, e.employeeId, e.department, e.course, e.provider, e.status, `${e.progress}%`]);
+            generatePDF(
+              { title: "MOOC Enrollment Report", subtitle: "Enrollment Management" },
+              [{ label: "Total", value: String(enrollmentStats.totalEnrollments) }, { label: "Active", value: String(enrollmentStats.activeEnrollments) }, { label: "Completed", value: String(enrollmentStats.completedThisMonth) }],
+              [{ title: "Enrollments", headers: ["Employee", "ID", "Department", "Course", "Provider", "Status", "Progress"], rows }]
+            );
+            toast({ title: "Report exported" });
+          }}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Button>
+          <Button onClick={() => navigate('/users/bulk-enrollment')}>
             <UserPlus className="w-4 h-4 mr-2" />
             Bulk Enroll
           </Button>

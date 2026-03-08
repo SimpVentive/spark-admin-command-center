@@ -128,7 +128,18 @@ const Users = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className="gap-2" onClick={() => {
+          const statuses = ["active", "inactive"];
+          const current = searchTerm;
+          // Toggle filter: cycle through statuses
+          if (!statuses.includes(current)) {
+            setSearchTerm("active");
+          } else if (current === "active") {
+            setSearchTerm("inactive");
+          } else {
+            setSearchTerm("");
+          }
+        }}>
           <Filter className="h-4 w-4" />
           Filter
         </Button>

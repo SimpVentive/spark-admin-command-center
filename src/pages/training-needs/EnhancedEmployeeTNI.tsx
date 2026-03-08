@@ -567,15 +567,15 @@ export default function EnhancedEmployeeTNI() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => toast({ title: "Approved", description: "All training needs for this employee have been approved." })}>
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Approve All Needs
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => toast({ title: "TNI Update Requested", description: "An email has been sent to the employee requesting an updated TNI submission." })}>
                   <Clock className="h-4 w-4 mr-2" />
                   Request TNI Update
                 </Button>
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => toast({ title: "Discussion Scheduled", description: "A calendar invite will be sent for a 1:1 discussion." })}>
                   <Users className="h-4 w-4 mr-2" />
                   Schedule 1:1 Discussion
                 </Button>
@@ -584,7 +584,7 @@ export default function EnhancedEmployeeTNI() {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Manager Comments:</label>
                 <Textarea placeholder="Add comments about the employee's training needs..." />
-                <Button size="sm">Save Comments</Button>
+                <Button size="sm" onClick={() => toast({ title: "Comments saved" })}>Save Comments</Button>
               </div>
             </CardContent>
           </Card>

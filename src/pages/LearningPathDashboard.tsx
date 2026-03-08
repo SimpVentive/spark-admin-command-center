@@ -70,7 +70,7 @@ const LearningPathDashboard = () => {
             Comprehensive dashboard for managing learning paths, content, and analytics
           </p>
         </div>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2" onClick={() => navigate('/learning-paths/create')}>
           <Plus className="h-4 w-4" />
           Create Learning Path
         </Button>

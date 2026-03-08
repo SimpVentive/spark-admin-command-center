@@ -113,8 +113,8 @@ const ContentManagement = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button variant="outline">Filter by Status</Button>
-        <Button variant="outline">Filter by Type</Button>
+        <Button variant="outline" onClick={() => setSearchTerm(searchTerm === "published" ? "" : "published")}>Filter by Status</Button>
+        <Button variant="outline" onClick={() => setSearchTerm(searchTerm === "video" ? "" : "video")}>Filter by Type</Button>
       </div>
 
       <Tabs defaultValue="tree" className="space-y-4">
@@ -280,7 +280,13 @@ const ContentManagement = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   Drag and drop files or click to browse. Supports videos, documents, and SCORM packages.
                 </p>
-                <Button>Choose Files</Button>
+                <Button onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.multiple = true;
+                  input.accept = '.mp4,.avi,.mov,.pdf,.docx,.pptx,.zip,.jpg,.png,.gif';
+                  input.click();
+                }}>Choose Files</Button>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
