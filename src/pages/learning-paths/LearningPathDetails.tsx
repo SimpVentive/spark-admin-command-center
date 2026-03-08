@@ -101,11 +101,9 @@ const LearningPathDetails = () => {
   };
 
   const handleExportExcel = () => {
+    const headers = ["Name", "Email", "Enrolled", "Progress", "Status", "Last Activity"];
     const rows = enrollmentData.map(l => [l.name, l.email, l.enrolledDate, `${l.progress}%`, l.status, l.lastActivity]);
-    generateExcel(
-      `${learningPath.title} - Enrollments`,
-      [{ title: "Enrolled Learners", headers: ["Name", "Email", "Enrolled", "Progress", "Status", "Last Activity"], rows }]
-    );
+    generateExcel(`${learningPath.title} - Enrollments`, headers, rows);
     toast({ title: "Excel exported successfully" });
   };
 
