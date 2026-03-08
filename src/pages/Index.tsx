@@ -65,10 +65,10 @@ const Index = () => {
 
   const quickActions = [
     { label: "Create New Course", icon: PlusCircle, onClick: () => navigate('/programs/create') },
-    { label: "Send Announcement", icon: Megaphone, onClick: () => toast({ title: "Send Announcement", description: "Announcement functionality will be implemented soon." }) },
-    { label: "Generate Report", icon: FileBarChart, onClick: () => toast({ title: "Generate Report", description: "Report generation functionality will be implemented soon." }) },
-    { label: "Manage Permissions", icon: Shield, onClick: () => navigate('/processes/user-role-management') },
-    { label: "System Settings", icon: Settings, onClick: () => toast({ title: "System Settings", description: "System settings functionality will be implemented soon." }) },
+    { label: "Send Announcement", icon: Megaphone, onClick: () => navigate('/processes/workflows') },
+    { label: "Generate Report", icon: FileBarChart, onClick: () => navigate('/reports') },
+    { label: "Manage Permissions", icon: Shield, onClick: () => navigate('/processes/user-roles') },
+    { label: "System Settings", icon: Settings, onClick: () => navigate('/settings') },
   ];
 
   return (
