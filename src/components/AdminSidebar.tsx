@@ -6,6 +6,7 @@ import {
   BarChart3,
   Settings,
   Shield,
+  Crosshair,
   Building2,
   GraduationCap,
   FileText,
@@ -160,6 +161,20 @@ const navigationItems: NavItem[] = [
       { title: "ROI Dashboard", url: "/roi" },
       { title: "Cost Analysis", url: "/roi/costs" },
       { title: "Impact Reports", url: "/roi/impact" }
+    ]
+  },
+  {
+    title: "LASER",
+    icon: Crosshair,
+    adminOnly: true,
+    subItems: [
+      { title: "LASER Dashboard", url: "/laser" },
+      { title: "KPI Configuration", url: "/laser/kpi-config" },
+      { title: "Causal Maps", url: "/laser/causal-maps" },
+      { title: "Performance Data", url: "/laser/performance-data" },
+      { title: "Interventions", url: "/laser/interventions" },
+      { title: "Impact Validation", url: "/laser/impact" },
+      { title: "Data Sources", url: "/laser/data-sources" },
     ]
   },
   { 
