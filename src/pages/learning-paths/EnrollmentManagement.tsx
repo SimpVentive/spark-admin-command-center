@@ -251,7 +251,7 @@ const EnrollmentManagement = () => {
               </SelectContent>
             </Select>
             <Button variant="outline" className="gap-2" onClick={() => {
-              const rows = filteredEnrollments.map(e => [e.learner, e.email, e.learningPath, e.status, `${e.progress}%`, e.enrolledDate]);
+              const rows = enrollments.map(e => [e.learner, e.email, e.learningPath, e.status, `${e.progress}%`, e.enrolledDate]);
               generatePDF(
                 { title: "Enrollment Report", subtitle: "Learning Path Enrollments" },
                 [{ label: "Total", value: String(enrollments.length) }],
