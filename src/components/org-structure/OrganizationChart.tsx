@@ -283,7 +283,37 @@ export const OrganizationChart: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => console.log('Export functionality coming soon')}>
+            <Button variant="outline" size="sm" onClick={() => {
+              const svgEl = document.querySelector('.react-flow__viewport');
+              if (!svgEl) return;
+              const canvas = document.createElement('canvas');
+              const rect = svgEl.getBoundingClientRect();
+              canvas.width = rect.width * 2;
+              canvas.height = rect.height * 2;
+              const ctx = canvas.getContext('2d');
+              if (!ctx) return;
+              ctx.scale(2, 2);
+              const svgData = new XMLSerializer().serializeToString(svgEl);
+              const img = new Image();
+              const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+              const url = URL.createObjectURL(svgBlob);
+              img.onload = () => {
+                ctx.drawImage(img, 0, 0);
+                URL.revokeObjectURL(url);
+                const link = document.createElement('a');
+                link.download = 'org-chart.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+              };
+              img.onerror = () => {
+                // Fallback: export as SVG
+                const link = document.createElement('a');
+                link.download = 'org-chart.svg';
+                link.href = url;
+                link.click();
+              };
+              img.src = url;
+            }}>
               <Download className="h-4 w-4 mr-1" />
               Export
             </Button>
