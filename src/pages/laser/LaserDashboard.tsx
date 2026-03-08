@@ -4,10 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   Activity, AlertTriangle, CheckCircle, TrendingUp, TrendingDown, 
-  Target, Brain, Zap, BarChart3, ArrowRight, Users, Clock
+  Target, Brain, Zap, BarChart3, ArrowRight, Users, Clock, Play
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from "recharts";
 
 const LaserDashboard = () => {
@@ -48,6 +49,27 @@ const LaserDashboard = () => {
       console.error("Error fetching LASER dashboard:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const [rcaRunning, setRcaRunning] = useState(false);
+
+  const handleRunRCAScan = async () => {
+    setRcaRunning(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("laser-rca-engine", {
+        body: { mode: "scan" },
+      });
+      if (error) throw error;
+      toast({
+        title: "🧠 RCA Scan Complete",
+        description: `${data.deviations_processed} deviation(s) analyzed, ${data.interventions_assigned} intervention(s) assigned`,
+      });
+      fetchDashboardData();
+    } catch (err: any) {
+      toast({ title: "RCA scan failed", description: err.message, variant: "destructive" });
+    } finally {
+      setRcaRunning(false);
     }
   };
 
@@ -106,6 +128,10 @@ const LaserDashboard = () => {
             Learning & Application Specific to Employee Role — Performance Intelligence
           </p>
         </div>
+        <Button onClick={handleRunRCAScan} disabled={rcaRunning} variant="outline">
+          <Play className="h-4 w-4 mr-2" />
+          {rcaRunning ? "Running RCA..." : "Run RCA Scan"}
+        </Button>
       </div>
 
       {/* Stats Grid */}

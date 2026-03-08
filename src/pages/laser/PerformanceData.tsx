@@ -123,95 +123,36 @@ const PerformanceData = () => {
     }
   };
 
-  const autoRunRCA = async (kpiId: string, employeeId: string) => {
-    // Get causes for this KPI
-    const { data: causes } = await supabase
-      .from("laser_cause_definitions")
-      .select("*")
-      .eq("kpi_id", kpiId)
-      .eq("is_active", true)
-      .order("default_weight", { ascending: false });
-
-    if (!causes || causes.length === 0) return;
-
-    // Get latest deviation
-    const { data: deviations } = await supabase
+  const autoRunRCA = async (_kpiId: string, employeeId: string) => {
+    // Get latest deviation for this employee/KPI
+    const { data: devs } = await supabase
       .from("laser_deviations")
       .select("id")
       .eq("employee_id", employeeId)
-      .eq("kpi_id", kpiId)
       .eq("status", "open")
       .order("detected_at", { ascending: false })
       .limit(1);
 
-    if (!deviations || deviations.length === 0) return;
-    const deviationId = deviations[0].id;
+    if (!devs?.length) return;
 
-    // Check pattern repository for refined weights
-    const { data: patterns } = await supabase
-      .from("laser_pattern_repository")
-      .select("*")
-      .eq("kpi_id", kpiId);
+    try {
+      const { data, error } = await supabase.functions.invoke("laser-rca-engine", {
+        body: { deviation_id: devs[0].id, mode: "analyze" },
+      });
 
-    // Calculate probability scores (use refined weights if available)
-    const totalWeight = causes.reduce((sum: number, c: any) => {
-      const pattern = patterns?.find((p: any) => p.cause_id === c.id);
-      return sum + (pattern?.refined_weight || c.default_weight);
-    }, 0);
+      if (error) {
+        console.error("RCA engine error:", error);
+        return;
+      }
 
-    let primaryCauseId = causes[0].id;
-    let maxScore = 0;
-
-    const rcaInserts = causes.map((cause: any) => {
-      const pattern = patterns?.find((p: any) => p.cause_id === cause.id);
-      const weight = pattern?.refined_weight || cause.default_weight;
-      const score = totalWeight > 0 ? weight / totalWeight : 1 / causes.length;
-      if (score > maxScore) { maxScore = score; primaryCauseId = cause.id; }
-      return {
-        deviation_id: deviationId,
-        cause_id: cause.id,
-        probability_score: parseFloat(score.toFixed(3)),
-        is_primary_cause: false,
-      };
-    });
-
-    // Mark primary cause
-    rcaInserts.forEach(r => { if (r.cause_id === primaryCauseId) r.is_primary_cause = true; });
-
-    await supabase.from("laser_rca_results").insert(rcaInserts);
-
-    // Auto-assign intervention for primary cause
-    const { data: interventions } = await supabase
-      .from("laser_cause_interventions")
-      .select("*")
-      .eq("cause_id", primaryCauseId)
-      .eq("is_active", true)
-      .order("priority")
-      .limit(1);
-
-    if (interventions && interventions.length > 0) {
-      const intervention = interventions[0];
-      const { data: rcaResults } = await supabase
-        .from("laser_rca_results")
-        .select("id")
-        .eq("deviation_id", deviationId)
-        .eq("cause_id", primaryCauseId)
-        .limit(1);
-
-      if (rcaResults && rcaResults.length > 0) {
-        await supabase.from("laser_assigned_interventions").insert({
-          deviation_id: deviationId,
-          rca_result_id: rcaResults[0].id,
-          employee_id: employeeId,
-          cause_intervention_id: intervention.id,
-          intervention_type: intervention.intervention_type,
-          learning_path_id: intervention.learning_path_id,
-          program_id: intervention.program_id,
-          micro_intervention_title: intervention.micro_intervention_title,
-          micro_intervention_content: intervention.micro_intervention_content,
-          status: "assigned",
+      if (data?.interventions_assigned > 0) {
+        toast({
+          title: "🧠 RCA Complete",
+          description: `${data.interventions_assigned} intervention(s) auto-assigned`,
         });
       }
+    } catch (err) {
+      console.error("Failed to invoke RCA engine:", err);
     }
   };
 

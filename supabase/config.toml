@@ -71,3 +71,6 @@ verify_jwt = false
 
 [functions.ai-content-analysis]
 verify_jwt = false
+
+[functions.laser-rca-engine]
+verify_jwt = false
