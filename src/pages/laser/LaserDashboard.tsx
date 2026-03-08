@@ -128,6 +128,10 @@ const LaserDashboard = () => {
             Learning & Application Specific to Employee Role — Performance Intelligence
           </p>
         </div>
+        <Button onClick={handleRunRCAScan} disabled={rcaRunning} variant="outline">
+          <Play className="h-4 w-4 mr-2" />
+          {rcaRunning ? "Running RCA..." : "Run RCA Scan"}
+        </Button>
       </div>
 
       {/* Stats Grid */}
