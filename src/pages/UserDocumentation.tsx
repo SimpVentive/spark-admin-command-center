@@ -3241,7 +3241,7 @@ const UserDocumentation: React.FC = () => {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">13.2 System Settings</h2>
+            <h2 className="text-2xl font-semibold mb-4">14.2 System Settings</h2>
             
             <div className="space-y-4">
               <div className="border rounded-lg p-4">
