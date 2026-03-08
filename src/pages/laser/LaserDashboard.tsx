@@ -4,10 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   Activity, AlertTriangle, CheckCircle, TrendingUp, TrendingDown, 
-  Target, Brain, Zap, BarChart3, ArrowRight, Users, Clock
+  Target, Brain, Zap, BarChart3, ArrowRight, Users, Clock, Play
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from "recharts";
 
 const LaserDashboard = () => {
