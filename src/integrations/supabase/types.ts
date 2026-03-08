@@ -1019,6 +1019,76 @@ export type Database = {
         }
         Relationships: []
       }
+      laser_action_tasks: {
+        Row: {
+          assigned_by: string | null
+          checklist: Json | null
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          employee_id: string
+          id: string
+          intervention_id: string | null
+          status: string
+          supervisor_notes: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          checklist?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          employee_id: string
+          id?: string
+          intervention_id?: string | null
+          status?: string
+          supervisor_notes?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_by?: string | null
+          checklist?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          employee_id?: string
+          id?: string
+          intervention_id?: string | null
+          status?: string
+          supervisor_notes?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_action_tasks_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_action_tasks_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_action_tasks_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "laser_assigned_interventions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       laser_assigned_interventions: {
         Row: {
           assigned_at: string
@@ -1437,6 +1507,119 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      laser_learning_diary: {
+        Row: {
+          created_at: string
+          description: string | null
+          employee_id: string
+          entry_type: string
+          id: string
+          performance_improvement_note: string | null
+          related_intervention_id: string | null
+          related_kpi_id: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          employee_id: string
+          entry_type?: string
+          id?: string
+          performance_improvement_note?: string | null
+          related_intervention_id?: string | null
+          related_kpi_id?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          employee_id?: string
+          entry_type?: string
+          id?: string
+          performance_improvement_note?: string | null
+          related_intervention_id?: string | null
+          related_kpi_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_learning_diary_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_learning_diary_related_intervention_id_fkey"
+            columns: ["related_intervention_id"]
+            isOneToOne: false
+            referencedRelation: "laser_assigned_interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_learning_diary_related_kpi_id_fkey"
+            columns: ["related_kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_manager_feedback: {
+        Row: {
+          created_at: string
+          employee_id: string
+          feedback_type: string
+          id: string
+          is_read: boolean
+          manager_id: string
+          message: string
+          related_intervention_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          feedback_type?: string
+          id?: string
+          is_read?: boolean
+          manager_id: string
+          message: string
+          related_intervention_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          feedback_type?: string
+          id?: string
+          is_read?: boolean
+          manager_id?: string
+          message?: string
+          related_intervention_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_manager_feedback_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_manager_feedback_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_manager_feedback_related_intervention_id_fkey"
+            columns: ["related_intervention_id"]
+            isOneToOne: false
+            referencedRelation: "laser_assigned_interventions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       laser_pattern_repository: {
         Row: {
