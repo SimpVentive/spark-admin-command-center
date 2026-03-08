@@ -93,7 +93,7 @@ const LearningPathDetails = () => {
   const handleExportEnrollments = () => {
     const rows = enrollmentData.map(l => [l.name, l.email, l.enrolledDate, `${l.progress}%`, l.status, l.lastActivity]);
     generatePDF(
-      { title: `${learningPath.title} - Enrollments`, subtitle: "Enrollment Report", dateRange: "" },
+      { title: `${learningPath.title} - Enrollments`, subtitle: "Enrollment Report" },
       [{ label: "Enrolled", value: String(learningPath.enrolled) }, { label: "Completed", value: String(learningPath.completed) }, { label: "Completion Rate", value: `${learningPath.completionRate}%` }],
       [{ title: "Enrolled Learners", headers: ["Name", "Email", "Enrolled", "Progress", "Status", "Last Activity"], rows }]
     );

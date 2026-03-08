@@ -121,7 +121,7 @@ const LearningPathManagement = () => {
   const handleExportLearners = () => {
     const rows = enrolledLearners.map(l => [l.name, l.email, l.enrolledDate, `${l.progress}%`]);
     generatePDF(
-      { title: `${formData.title} - Learners`, subtitle: "Enrolled Learners Report", dateRange: "" },
+      { title: `${formData.title} - Learners`, subtitle: "Enrolled Learners Report" },
       [{ label: "Total Learners", value: String(enrolledLearners.length) }],
       [{ title: "Learners", headers: ["Name", "Email", "Enrolled", "Progress"], rows }]
     );
