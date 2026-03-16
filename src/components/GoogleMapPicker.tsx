@@ -4,11 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
-declare global {
-  interface Window {
-    google: typeof google;
-  }
-}
+// @ts-ignore - Google Maps types
+declare const google: any;
 
 interface GoogleMapPickerProps {
   onLocationSelect: (address: string, lat: number, lng: number) => void;
@@ -17,8 +14,8 @@ interface GoogleMapPickerProps {
 
 const GoogleMapPicker = ({ onLocationSelect, defaultValue = "" }: GoogleMapPickerProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [marker, setMarker] = useState<google.maps.Marker | null>(null);
+  const [map, setMap] = useState<any>(null);
+  const [marker, setMarker] = useState<any>(null);
   const [address, setAddress] = useState(defaultValue);
   const [useGoogleMaps, setUseGoogleMaps] = useState(false);
   const [apiKey, setApiKey] = useState('');
@@ -60,7 +57,7 @@ const GoogleMapPicker = ({ onLocationSelect, defaultValue = "" }: GoogleMapPicke
         }
       });
 
-      mapInstance.addListener('click', (e: google.maps.MapMouseEvent) => {
+      mapInstance.addListener('click', (e: any) => {
         if (e.latLng) {
           markerInstance.setPosition(e.latLng);
           geocoder.geocode({ location: e.latLng }, (results, status) => {
