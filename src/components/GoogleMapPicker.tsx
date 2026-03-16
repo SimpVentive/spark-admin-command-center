@@ -14,8 +14,8 @@ interface GoogleMapPickerProps {
 
 const GoogleMapPicker = ({ onLocationSelect, defaultValue = "" }: GoogleMapPickerProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [marker, setMarker] = useState<google.maps.Marker | null>(null);
+  const [map, setMap] = useState<any>(null);
+  const [marker, setMarker] = useState<any>(null);
   const [address, setAddress] = useState(defaultValue);
   const [useGoogleMaps, setUseGoogleMaps] = useState(false);
   const [apiKey, setApiKey] = useState('');
