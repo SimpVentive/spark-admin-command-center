@@ -57,7 +57,7 @@ const GoogleMapPicker = ({ onLocationSelect, defaultValue = "" }: GoogleMapPicke
         }
       });
 
-      mapInstance.addListener('click', (e: google.maps.MapMouseEvent) => {
+      mapInstance.addListener('click', (e: any) => {
         if (e.latLng) {
           markerInstance.setPosition(e.latLng);
           geocoder.geocode({ location: e.latLng }, (results, status) => {
