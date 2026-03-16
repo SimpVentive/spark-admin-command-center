@@ -4,11 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
-declare global {
-  interface Window {
-    google: typeof google;
-  }
-}
+// @ts-ignore - Google Maps types
+declare const google: any;
 
 interface GoogleMapPickerProps {
   onLocationSelect: (address: string, lat: number, lng: number) => void;
