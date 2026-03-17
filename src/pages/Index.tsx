@@ -8,6 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PlusCircle, Megaphone, FileBarChart, Shield, Settings } from "lucide-react";
+import { useUserRole } from "@/hooks/useUserRole";
+import SuperAdminDashboard from "@/pages/super-admin/SuperAdminDashboard";
 
 const CHART_COLORS = [
   "hsl(220, 90%, 56%)",
