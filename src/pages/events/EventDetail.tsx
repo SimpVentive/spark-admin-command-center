@@ -45,6 +45,10 @@ const EventDetail = () => {
   const [attendanceSessionId, setAttendanceSessionId] = useState("");
   const [attendanceRecords, setAttendanceRecords] = useState<Record<string, string>>({});
 
+  // Assessment dialog
+  const [isAssessmentDialogOpen, setIsAssessmentDialogOpen] = useState(false);
+  const [assessmentForm, setAssessmentForm] = useState({ assessment_id: "", assessment_purpose: "pre_test", session_id: "", is_mandatory: true });
+
   useEffect(() => { if (id) fetchAll(); }, [id]);
 
   const fetchAll = async () => {
