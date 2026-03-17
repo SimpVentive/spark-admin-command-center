@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Building, Plus, Edit, Trash2, Users, MapPin, Loader2, Phone, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface Venue {
   id: string;
