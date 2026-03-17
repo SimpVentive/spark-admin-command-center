@@ -210,6 +210,9 @@ const App = () => (
               <Route path="/workflow-guide" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><WorkflowGuide /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/user-documentation" element={<ProtectedRoute><AuthenticatedLayout><UserDocumentation /></AuthenticatedLayout></ProtectedRoute>} />
               
+              {/* Super Admin */}
+              <Route path="/super-admin/companies" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><CompanyManagement /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
+              
               {/* User Management - Admin Only */}
               <Route path="/users" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Users /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/users/add" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
