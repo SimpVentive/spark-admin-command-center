@@ -1,8 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import {
   Target, Users, GraduationCap, DollarSign, FileText,
-  BarChart3, UserCheck, Crosshair, Shield, ClipboardList
+  BarChart3, UserCheck, Crosshair, Shield, ClipboardList, Wand2
 } from "lucide-react";
 
 const reports = [
@@ -22,11 +23,17 @@ const ReportsHub = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <FileText className="h-7 w-7 text-primary" /> Reports Center
-        </h1>
-        <p className="text-muted-foreground">Generate, filter, and export reports in PDF and Excel formats</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <FileText className="h-7 w-7 text-primary" /> Reports Center
+          </h1>
+          <p className="text-muted-foreground">Generate, filter, and export reports in PDF and Excel formats</p>
+        </div>
+        <Button onClick={() => navigate("/reports/builder")} className="gap-2">
+          <Wand2 className="h-4 w-4" />
+          Build Custom Report
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
