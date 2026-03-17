@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LibraryProvider } from "@/contexts/LibraryContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { CompanyProvider } from "@/contexts/CompanyContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
 import AdminSidebar from "@/components/AdminSidebar";
