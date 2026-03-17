@@ -293,6 +293,7 @@ const EventDetail = () => {
           )}
         </TabsContent>
 
+        <TabsContent value="enrollments" className="space-y-4">
           <div className="flex justify-end">
             <Button onClick={() => setIsEnrollDialogOpen(true)} className="gap-2"><Plus className="h-4 w-4" />Enroll Employee</Button>
           </div>
