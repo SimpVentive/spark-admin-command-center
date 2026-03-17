@@ -25,6 +25,7 @@ interface Trainer {
 
 const Trainers = () => {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [trainers, setTrainers] = useState<Trainer[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
