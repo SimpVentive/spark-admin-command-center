@@ -49,6 +49,11 @@ const superAdminNavigationItems: NavItem[] = [
     url: "/super-admin/companies",
   },
   {
+    title: "AI Report Builder",
+    icon: Zap,
+    url: "/super-admin/report-builder",
+  },
+  {
     title: "Platform Reports",
     icon: FileText,
     subItems: [

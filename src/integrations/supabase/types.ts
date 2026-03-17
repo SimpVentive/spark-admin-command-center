@@ -599,6 +599,12 @@ export type Database = {
       }
       companies: {
         Row: {
+          address_line_1: string | null
+          address_line_2: string | null
+          address_line_3: string | null
+          contact_person_email: string | null
+          contact_person_name: string | null
+          contact_person_phone: string | null
           created_at: string
           created_by: string | null
           id: string
@@ -607,8 +613,15 @@ export type Database = {
           name: string
           slug: string
           updated_at: string
+          website: string | null
         }
         Insert: {
+          address_line_1?: string | null
+          address_line_2?: string | null
+          address_line_3?: string | null
+          contact_person_email?: string | null
+          contact_person_name?: string | null
+          contact_person_phone?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -617,8 +630,15 @@ export type Database = {
           name: string
           slug: string
           updated_at?: string
+          website?: string | null
         }
         Update: {
+          address_line_1?: string | null
+          address_line_2?: string | null
+          address_line_3?: string | null
+          contact_person_email?: string | null
+          contact_person_name?: string | null
+          contact_person_phone?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -627,8 +647,86 @@ export type Database = {
           name?: string
           slug?: string
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
+      }
+      company_customizations: {
+        Row: {
+          ai_affected_modules: string[] | null
+          ai_analysis_notes: string | null
+          ai_estimated_hours: number | null
+          ai_impact_score: number | null
+          ai_risk_level: string | null
+          approved_at: string | null
+          approved_by: string | null
+          change_type: string
+          company_id: string
+          completed_at: string | null
+          created_at: string
+          description: string
+          id: string
+          notes: string | null
+          priority: string
+          requested_at: string
+          requested_by: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          ai_affected_modules?: string[] | null
+          ai_analysis_notes?: string | null
+          ai_estimated_hours?: number | null
+          ai_impact_score?: number | null
+          ai_risk_level?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          change_type?: string
+          company_id: string
+          completed_at?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          notes?: string | null
+          priority?: string
+          requested_at?: string
+          requested_by?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          ai_affected_modules?: string[] | null
+          ai_analysis_notes?: string | null
+          ai_estimated_hours?: number | null
+          ai_impact_score?: number | null
+          ai_risk_level?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          change_type?: string
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          notes?: string | null
+          priority?: string
+          requested_at?: string
+          requested_by?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_customizations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       company_notes: {
         Row: {
