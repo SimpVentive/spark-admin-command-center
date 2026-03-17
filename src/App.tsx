@@ -213,6 +213,7 @@ const App = () => (
               
               {/* Super Admin */}
               <Route path="/super-admin/companies" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><CompanyManagement /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
+              <Route path="/super-admin/report-builder" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><AIReportBuilder /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
               
               {/* User Management - Admin Only */}
               <Route path="/users" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Users /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
