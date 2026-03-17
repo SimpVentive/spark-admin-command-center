@@ -312,12 +312,12 @@ export function AdminSidebar() {
       {/* Header */}
       <div className="p-4 border-b border-border flex-shrink-0">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isSuperAdmin ? 'bg-amber-500' : 'bg-primary'}`}>
             <Shield className="w-4 h-4 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="font-bold text-lg">LMSAdmin</h1>
-            <p className="text-xs text-muted-foreground">Skill Spark Manager</p>
+            <h1 className="font-bold text-lg">{isSuperAdmin ? 'L-Kurve' : 'LMSAdmin'}</h1>
+            <p className="text-xs text-muted-foreground">{isSuperAdmin ? 'Super Admin Console' : 'Skill Spark Manager'}</p>
           </div>
         </div>
       </div>
