@@ -98,7 +98,7 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     mutationFn: async (unitData: { name: string; description?: string; level: string; parent_id?: string; manager_name?: string }) => {
       const { data, error } = await supabase
         .from('organizational_units')
-        .insert([unitData])
+        .insert([scopeData(unitData)])
         .select()
         .single();
       
