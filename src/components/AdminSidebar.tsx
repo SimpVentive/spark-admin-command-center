@@ -40,18 +40,39 @@ interface NavItem {
   superAdminOnly?: boolean;
 }
 
-// superAdminOnly: true means only visible to super_admin role
-const navigationItems: NavItem[] = [
-  { title: "Dashboard", url: "/", icon: BarChart3 },
+// Super Admin sees only global-level navigation
+const superAdminNavigationItems: NavItem[] = [
+  { title: "Global Dashboard", url: "/", icon: BarChart3 },
   {
-    title: "🏢 Super Admin",
-    icon: Shield,
-    superAdminOnly: true,
+    title: "Company Management",
+    icon: Building2,
+    url: "/super-admin/companies",
+  },
+  {
+    title: "Platform Reports",
+    icon: FileText,
     subItems: [
-      { title: "Global Dashboard", url: "/" },
-      { title: "Company Management", url: "/super-admin/companies" },
+      { title: "Reports Center", url: "/reports" },
+      { title: "Audit Trail", url: "/reports/audit" },
     ],
   },
+  {
+    title: "Security & Compliance",
+    icon: Shield,
+    subItems: [
+      { title: "System Access", url: "/security/system-access" },
+      { title: "Audit Trail", url: "/security/audit-trail" },
+      { title: "Security Infrastructure", url: "/security/infrastructure" },
+    ],
+  },
+  { title: "Settings", url: "/settings", icon: Settings },
+  { separator: true },
+  { title: "User Documentation", url: "/user-documentation", icon: FileText },
+];
+
+// Regular admin / other roles navigation
+const navigationItems: NavItem[] = [
+  { title: "Dashboard", url: "/", icon: BarChart3 },
   { title: "Workflow Guide", url: "/workflow-guide", icon: Workflow, adminOnly: true },
   { title: "AI Recommendations", icon: Zap, url: "/ai-recommendations", adminOnly: true },
   { 
@@ -275,8 +296,10 @@ export function AdminSidebar() {
     );
   };
 
-  // Filter navigation items based on user role
-  const filteredItems = navigationItems.filter(item => {
+  // Super admin gets a focused global menu; regular users get the full admin menu
+  const itemsToUse = isSuperAdmin ? superAdminNavigationItems : navigationItems;
+  
+  const filteredItems = itemsToUse.filter(item => {
     if (item.separator) return true;
     if (item.superAdminOnly && !isSuperAdmin) return false;
     if (item.adminOnly && !isAdmin) return false;
@@ -289,12 +312,12 @@ export function AdminSidebar() {
       {/* Header */}
       <div className="p-4 border-b border-border flex-shrink-0">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isSuperAdmin ? 'bg-amber-500' : 'bg-primary'}`}>
             <Shield className="w-4 h-4 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="font-bold text-lg">LMSAdmin</h1>
-            <p className="text-xs text-muted-foreground">Skill Spark Manager</p>
+            <h1 className="font-bold text-lg">{isSuperAdmin ? 'L-Kurve' : 'LMSAdmin'}</h1>
+            <p className="text-xs text-muted-foreground">{isSuperAdmin ? 'Super Admin Console' : 'Skill Spark Manager'}</p>
           </div>
         </div>
       </div>

@@ -25,12 +25,7 @@ const Index = () => {
   const { toast } = useToast();
   const { isSuperAdmin, loading: roleLoading } = useUserRole();
 
-  // Super Admins get their own dashboard
-  if (!roleLoading && isSuperAdmin) {
-    return <SuperAdminDashboard />;
-  }
-
-  // Fetch department distribution for pie chart
+  // All hooks must be called before any conditional returns
   const { data: departments } = useQuery({
     queryKey: ['dashboard-dept-distribution'],
     queryFn: async () => {
@@ -42,10 +37,10 @@ const Index = () => {
         .limit(6);
       if (error) throw error;
       return data || [];
-    }
+    },
+    enabled: !isSuperAdmin,
   });
 
-  // Fetch recent programs for bar chart
   const { data: programs } = useQuery({
     queryKey: ['dashboard-programs-overview'],
     queryFn: async () => {
@@ -57,8 +52,22 @@ const Index = () => {
         .limit(6);
       if (error) throw error;
       return data || [];
-    }
+    },
+    enabled: !isSuperAdmin,
   });
+
+  // Super Admins get their own dashboard
+  if (roleLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (isSuperAdmin) {
+    return <SuperAdminDashboard />;
+  }
 
   const programChartData = programs?.map(p => ({
     name: p.title?.length > 15 ? p.title.substring(0, 15) + '...' : p.title,
