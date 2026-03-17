@@ -19,12 +19,13 @@ const EventDetail = () => {
   const { toast } = useToast();
   const [event, setEvent] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
-  const [trainers, setTrainers] = useState<any[]>([]);
   const [eventTrainers, setEventTrainers] = useState<any[]>([]);
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [attendance, setAttendance] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
   const [allTrainers, setAllTrainers] = useState<any[]>([]);
+  const [eventAssessments, setEventAssessments] = useState<any[]>([]);
+  const [allAssessments, setAllAssessments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Session dialog
