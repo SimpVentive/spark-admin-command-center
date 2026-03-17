@@ -200,7 +200,7 @@ export default function ProgramManagementSection({
       } else {
         const { error } = await supabase
           .from('training_programs')
-          .insert([submissionData]);
+          .insert([scopeData(submissionData)]);
         
         if (error) throw error;
         

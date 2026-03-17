@@ -170,7 +170,7 @@ Training Team`,
         tm_batch: 'TM Batch Input by Department',
       };
 
-      const { error } = await supabase.from('tna_cycles').insert({
+      const { error } = await supabase.from('tna_cycles').insert(scopeData({
         name: cycleData.name,
         start_date: cycleData.startDate.toISOString().split('T')[0],
         end_date: cycleData.endDate.toISOString().split('T')[0],
@@ -181,7 +181,7 @@ Training Team`,
         status: 'draft',
         created_by: user.id,
         manager_ratification_required: cycleData.managerRatificationRequired,
-      });
+      }));
 
       if (error) throw error;
 

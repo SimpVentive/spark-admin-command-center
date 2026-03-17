@@ -9,6 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Building2, Factory, Users, Plus, ArrowRight, ChevronRight, ChevronDown, Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import OrgUnitModal from './OrgUnitModal';
+import { useCompanyScope } from '@/hooks/useCompanyScope';
 
 interface OrgUnit {
   id: string;
