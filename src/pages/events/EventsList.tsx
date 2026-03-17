@@ -11,6 +11,7 @@ import { Calendar, Plus, Edit, Trash2, Users, MapPin, Loader2, Eye } from "lucid
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface Event {
   id: string;
