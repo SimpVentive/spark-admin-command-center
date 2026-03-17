@@ -42,6 +42,7 @@ export default function ProgramManagementSection({
   compact = false 
 }: ProgramManagementSectionProps) {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [programs, setPrograms] = useState<TrainingProgram[]>([]);
   const [filteredPrograms, setFilteredPrograms] = useState<TrainingProgram[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
