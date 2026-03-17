@@ -17,6 +17,7 @@ import { useCompanyScope } from "@/hooks/useCompanyScope";
 const CreateAssessment = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [currentStep, setCurrentStep] = useState(1);
   const [assessmentData, setAssessmentData] = useState({
     title: "",
