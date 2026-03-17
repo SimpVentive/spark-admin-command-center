@@ -277,6 +277,7 @@ export function AdminSidebar() {
   // Filter navigation items based on user role
   const filteredItems = navigationItems.filter(item => {
     if (item.separator) return true;
+    if (item.superAdminOnly && !isSuperAdmin) return false;
     if (item.adminOnly && !isAdmin) return false;
     if (item.managerOnly && !isManager) return false;
     return true;
