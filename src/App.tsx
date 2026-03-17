@@ -355,6 +355,7 @@ const App = () => (
               <Route path="/reports/employee-profile" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><EmployeeProfileReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/reports/laser" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><LaserReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/reports/audit" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AuditReport /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/reports/builder" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><ReportBuilder /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
 
               {/* Settings - Admin Only */}
               <Route path="/settings" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Settings /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />

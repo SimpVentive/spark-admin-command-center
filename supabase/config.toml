@@ -86,3 +86,6 @@ verify_jwt = false
 
 [functions.ai-report-builder]
 verify_jwt = false
+
+[functions.client-report-builder]
+verify_jwt = false
