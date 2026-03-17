@@ -238,6 +238,11 @@ const App = () => (
               <Route path="/organization/roles" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Roles /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/organization/hierarchy" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Hierarchy /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/organization/locations" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Locations /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/organization/venues" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Venues /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              
+              {/* Events */}
+              <Route path="/events" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><EventsList /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
+              <Route path="/events/:id" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><EventDetail /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               
               {/* Processes - Admin Only */}
               <Route path="/processes" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Processes /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
