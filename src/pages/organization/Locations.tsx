@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin, Plus, Edit, Trash2, Settings, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface Location {
   id: string;

@@ -51,7 +51,7 @@ const UploadContent = () => {
 
       const { data: { publicUrl } } = supabase.storage.from('content-uploads').getPublicUrl(filePath);
 
-      const { error: dbError } = await (supabase as any).from('content_items').insert([{
+      const { error: dbError } = await (supabase as any).from('content_items').insert([scopeData({
         title: formData.title.trim(),
         description: formData.description || null,
         content_type: getContentType(selectedFile),
@@ -63,7 +63,7 @@ const UploadContent = () => {
         tags: formData.tags ? formData.tags.split(',').map(t => t.trim()) : [],
         language: formData.language,
         duration_seconds: formData.duration ? parseInt(formData.duration) * 60 : null,
-      }]);
+      })]);
       if (dbError) throw dbError;
 
       toast({ title: "Success", description: "Content uploaded successfully!" });

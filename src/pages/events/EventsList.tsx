@@ -107,7 +107,7 @@ const EventsList = () => {
         toast({ title: "Success", description: "Event updated" });
       } else {
         payload.status = 'scheduled';
-        const { error } = await (supabase as any).from('events').insert([payload]);
+        const { error } = await (supabase as any).from('events').insert([scopeData(payload)]);
         if (error) throw error;
         toast({ title: "Success", description: "Event created" });
       }

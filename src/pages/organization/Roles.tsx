@@ -53,12 +53,12 @@ const Roles = () => {
       return;
     }
     try {
-      const { error } = await supabase.from('job_roles').insert([{
+      const { error } = await supabase.from('job_roles').insert([scopeData({
         title: newRole.title.trim(),
         level: newRole.level,
         department_id: newRole.department_id || null,
         description: newRole.description || null,
-      }]);
+      })]);
       if (error) throw error;
       toast({ title: "Success", description: "Role added successfully" });
       setNewRole({ title: "", department_id: "", level: "", description: "" });

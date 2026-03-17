@@ -75,7 +75,7 @@ const CreateProgram = () => {
           max_participants: formData.maxParticipants ? parseInt(formData.maxParticipants) : null,
           status: 'scheduled',
         }));
-        const { error: sessionError } = await supabase.from('program_sessions').insert(sessionInserts);
+        const { error: sessionError } = await supabase.from('program_sessions').insert(scopeArray(sessionInserts));
         if (sessionError) console.error('Session insert error:', sessionError);
       }
 

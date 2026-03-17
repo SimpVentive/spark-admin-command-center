@@ -127,13 +127,13 @@ const CreateAssessment = () => {
       return;
     }
     try {
-      const { data: assessment, error } = await supabase.from('assessments').insert([{
+      const { data: assessment, error } = await supabase.from('assessments').insert([scopeData({
         title: assessmentData.title,
         assessment_type: assessmentData.type,
         time_limit_minutes: assessmentData.timeLimit ? parseInt(assessmentData.timeLimit) : null,
         passing_score: assessmentData.passingScore,
         max_attempts: assessmentData.maxAttempts,
-      }]).select().single();
+      })]).select().single();
       if (error) throw error;
 
       // Link selected questions

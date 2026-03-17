@@ -85,7 +85,7 @@ const Venues = () => {
         if (error) throw error;
         toast({ title: "Success", description: "Venue updated" });
       } else {
-        const { error } = await (supabase as any).from('venues').insert([payload]);
+        const { error } = await (supabase as any).from('venues').insert([scopeData(payload)]);
         if (error) throw error;
         toast({ title: "Success", description: "Venue added" });
       }

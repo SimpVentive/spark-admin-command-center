@@ -48,13 +48,13 @@ const Trainers = () => {
       return;
     }
     try {
-      const { error } = await (supabase as any).from('trainers').insert([{
+      const { error } = await (supabase as any).from('trainers').insert([scopeData({
         name: newTrainer.name.trim(),
         specialization: newTrainer.specialization || null,
         location: newTrainer.location || null,
         email: newTrainer.email || null,
         phone: newTrainer.phone || null,
-      }]);
+      })]);
       if (error) throw error;
       toast({ title: "Success", description: "Trainer added successfully" });
       setNewTrainer({ name: "", specialization: "", location: "", email: "", phone: "" });
