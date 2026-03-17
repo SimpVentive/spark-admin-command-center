@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { CompanySwitcher } from "@/components/CompanySwitcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
