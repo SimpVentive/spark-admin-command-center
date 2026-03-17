@@ -37,6 +37,7 @@ interface NavItem {
   separator?: boolean;
   adminOnly?: boolean;
   managerOnly?: boolean;
+  superAdminOnly?: boolean;
 }
 
 // superAdminOnly: true means only visible to super_admin role
