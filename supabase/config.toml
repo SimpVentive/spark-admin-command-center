@@ -80,3 +80,9 @@ verify_jwt = false
 
 [functions.laser-learning-loop]
 verify_jwt = false
+
+[functions.ai-change-analysis]
+verify_jwt = false
+
+[functions.ai-report-builder]
+verify_jwt = false
