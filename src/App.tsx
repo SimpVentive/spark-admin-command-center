@@ -109,6 +109,7 @@ import UserDocumentation from "./pages/UserDocumentation";
 
 // Super Admin
 import CompanyManagement from "./pages/super-admin/CompanyManagement";
+import AIReportBuilder from "./pages/super-admin/AIReportBuilder";
 
 // MOOC Integration
 import MOOC from "./pages/MOOC";
