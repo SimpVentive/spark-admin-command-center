@@ -150,6 +150,7 @@ import KirkpatrickReport from "./pages/reports/KirkpatrickReport";
 import EmployeeProfileReport from "./pages/reports/EmployeeProfileReport";
 import LaserReport from "./pages/reports/LaserReport";
 import AuditReport from "./pages/reports/AuditReport";
+import ReportBuilder from "./pages/reports/ReportBuilder";
 
 // Settings and Security pages
 import Security from "./pages/Security";
