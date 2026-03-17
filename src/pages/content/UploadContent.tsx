@@ -14,6 +14,7 @@ import { useCompanyScope } from "@/hooks/useCompanyScope";
 const UploadContent = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { scopeData } = useCompanyScope();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
