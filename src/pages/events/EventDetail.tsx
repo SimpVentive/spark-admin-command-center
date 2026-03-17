@@ -261,7 +261,38 @@ const EventDetail = () => {
           ))}
         </TabsContent>
 
-        <TabsContent value="enrollments" className="space-y-4">
+        <TabsContent value="assessments" className="space-y-4">
+          <div className="flex justify-end">
+            <Button onClick={() => setIsAssessmentDialogOpen(true)} className="gap-2"><Plus className="h-4 w-4" />Link Assessment</Button>
+          </div>
+          {eventAssessments.length === 0 ? (
+            <Card><CardContent className="p-6 text-center text-muted-foreground">No assessments linked. Add PRE test, POST test, Feedback, or L3 Feedback.</CardContent></Card>
+          ) : (
+            <div className="space-y-3">
+              {eventAssessments.map(ea => {
+                const sessionName = sessions.find(s => s.id === ea.session_id)?.title;
+                return (
+                  <Card key={ea.id}>
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{ea.assessments?.title || 'Unknown'}</p>
+                          <Badge variant={purposeColors[ea.assessment_purpose]}>{purposeLabels[ea.assessment_purpose]}</Badge>
+                          {ea.is_mandatory && <Badge variant="outline" className="text-xs">Mandatory</Badge>}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {sessionName ? `Session: ${sessionName}` : 'Event-level'} • Type: {ea.assessments?.assessment_type}
+                        </p>
+                      </div>
+                      <Button variant="ghost" size="icon" onClick={() => removeAssessment(ea.id)} className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </TabsContent>
+
           <div className="flex justify-end">
             <Button onClick={() => setIsEnrollDialogOpen(true)} className="gap-2"><Plus className="h-4 w-4" />Enroll Employee</Button>
           </div>
