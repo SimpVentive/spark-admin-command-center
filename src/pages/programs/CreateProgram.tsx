@@ -50,7 +50,7 @@ const CreateProgram = () => {
     setIsLoading(true);
     try {
       const durationHours = formData.duration ? parseInt(formData.duration) || null : null;
-      const { data: program, error: programError } = await supabase.from('training_programs').insert([{
+      const { data: program, error: programError } = await supabase.from('training_programs').insert([scopeData({
         title: formData.title.trim(),
         category: formData.category,
         level: formData.level || null,
@@ -61,7 +61,7 @@ const CreateProgram = () => {
         duration_hours: durationHours,
         prerequisites: formData.prerequisites ? formData.prerequisites.split(',').map(s => s.trim()) : [],
         skills_covered: formData.learningObjectives ? formData.learningObjectives.split(',').map(s => s.trim()) : [],
-      }]).select().single();
+      })]).select().single();
 
       if (programError) throw programError;
 
