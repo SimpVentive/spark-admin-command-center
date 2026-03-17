@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
+import SuperAdminRoute from "@/components/SuperAdminRoute";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 import Index from "./pages/Index";
