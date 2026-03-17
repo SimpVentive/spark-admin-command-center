@@ -58,11 +58,11 @@ const Departments = () => {
       return;
     }
     try {
-      const { error } = await (supabase as any).from('departments').insert([{
+      const { error } = await (supabase as any).from('departments').insert([scopeData({
         name: newDepartment.name.trim(),
         manager_name: newDepartment.manager_name.trim() || null,
         location: newDepartment.location || null,
-      }]);
+      })]);
       if (error) throw error;
       toast({ title: "Success", description: "Department added successfully" });
       setNewDepartment({ name: "", manager_name: "", location: "" });

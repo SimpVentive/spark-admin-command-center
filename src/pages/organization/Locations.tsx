@@ -57,7 +57,7 @@ const Locations = () => {
       return;
     }
     try {
-      const { error } = await (supabase as any).from('locations').insert([{ name: newLocation.name.trim(), address: newLocation.address.trim(), type: newLocation.type || null }]);
+      const { error } = await (supabase as any).from('locations').insert([scopeData({ name: newLocation.name.trim(), address: newLocation.address.trim(), type: newLocation.type || null })]);
       if (error) throw error;
       toast({ title: "Success", description: "Location added successfully" });
       setNewLocation({ name: "", address: "", type: "" });
