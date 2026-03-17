@@ -55,6 +55,11 @@ import Departments from "./pages/organization/Departments";
 import Roles from "./pages/organization/Roles";
 import Hierarchy from "./pages/organization/Hierarchy";
 import Locations from "./pages/organization/Locations";
+import Venues from "./pages/organization/Venues";
+
+// Event pages
+import EventsList from "./pages/events/EventsList";
+import EventDetail from "./pages/events/EventDetail";
 
 // Process pages
 import WorkflowManagement from "./pages/processes/WorkflowManagement";
