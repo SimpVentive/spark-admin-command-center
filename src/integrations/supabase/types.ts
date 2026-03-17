@@ -630,6 +630,109 @@ export type Database = {
         }
         Relationships: []
       }
+      company_notes: {
+        Row: {
+          author_id: string
+          company_id: string
+          content: string
+          created_at: string
+          id: string
+          is_pinned: boolean | null
+          note_type: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          company_id: string
+          content: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean | null
+          note_type?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          company_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean | null
+          note_type?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_notes_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_payments: {
+        Row: {
+          amount: number | null
+          billing_cycle: string | null
+          company_id: string
+          created_at: string
+          currency: string | null
+          end_date: string | null
+          id: string
+          last_payment_date: string | null
+          notes: string | null
+          payment_method: string | null
+          plan_name: string
+          plan_status: string
+          start_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          billing_cycle?: string | null
+          company_id: string
+          created_at?: string
+          currency?: string | null
+          end_date?: string | null
+          id?: string
+          last_payment_date?: string | null
+          notes?: string | null
+          payment_method?: string | null
+          plan_name?: string
+          plan_status?: string
+          start_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          billing_cycle?: string | null
+          company_id?: string
+          created_at?: string
+          currency?: string | null
+          end_date?: string | null
+          id?: string
+          last_payment_date?: string | null
+          notes?: string | null
+          payment_method?: string | null
+          plan_name?: string
+          plan_status?: string
+          start_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_payments_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       competencies: {
         Row: {
           company_id: string | null
