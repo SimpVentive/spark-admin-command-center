@@ -40,18 +40,39 @@ interface NavItem {
   superAdminOnly?: boolean;
 }
 
-// superAdminOnly: true means only visible to super_admin role
-const navigationItems: NavItem[] = [
-  { title: "Dashboard", url: "/", icon: BarChart3 },
+// Super Admin sees only global-level navigation
+const superAdminNavigationItems: NavItem[] = [
+  { title: "Global Dashboard", url: "/", icon: BarChart3 },
   {
-    title: "🏢 Super Admin",
-    icon: Shield,
-    superAdminOnly: true,
+    title: "Company Management",
+    icon: Building2,
+    url: "/super-admin/companies",
+  },
+  {
+    title: "Platform Reports",
+    icon: FileText,
     subItems: [
-      { title: "Global Dashboard", url: "/" },
-      { title: "Company Management", url: "/super-admin/companies" },
+      { title: "Reports Center", url: "/reports" },
+      { title: "Audit Trail", url: "/reports/audit" },
     ],
   },
+  {
+    title: "Security & Compliance",
+    icon: Shield,
+    subItems: [
+      { title: "System Access", url: "/security/system-access" },
+      { title: "Audit Trail", url: "/security/audit-trail" },
+      { title: "Security Infrastructure", url: "/security/infrastructure" },
+    ],
+  },
+  { title: "Settings", url: "/settings", icon: Settings },
+  { separator: true },
+  { title: "User Documentation", url: "/user-documentation", icon: FileText },
+];
+
+// Regular admin / other roles navigation
+const navigationItems: NavItem[] = [
+  { title: "Dashboard", url: "/", icon: BarChart3 },
   { title: "Workflow Guide", url: "/workflow-guide", icon: Workflow, adminOnly: true },
   { title: "AI Recommendations", icon: Zap, url: "/ai-recommendations", adminOnly: true },
   { 
