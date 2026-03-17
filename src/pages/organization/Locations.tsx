@@ -23,6 +23,7 @@ interface Location {
 
 const Locations = () => {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [locations, setLocations] = useState<Location[]>([]);
   const [locationTypes, setLocationTypes] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
