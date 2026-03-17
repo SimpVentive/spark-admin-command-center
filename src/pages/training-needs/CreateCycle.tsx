@@ -16,6 +16,7 @@ import { CalendarIcon, Plus, Trash2, Users, Building2, MapPin, Target } from "lu
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 import ProgramManagementSection from "@/components/ProgramManagementSection";
 
 interface MandatoryProgram {
