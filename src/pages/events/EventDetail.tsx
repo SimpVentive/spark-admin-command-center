@@ -448,6 +448,52 @@ const EventDetail = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Assessment Dialog */}
+      <Dialog open={isAssessmentDialogOpen} onOpenChange={setIsAssessmentDialogOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Link Assessment to Event</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Assessment *</Label>
+              <Select value={assessmentForm.assessment_id} onValueChange={v => setAssessmentForm(p => ({ ...p, assessment_id: v }))}>
+                <SelectTrigger><SelectValue placeholder="Select assessment" /></SelectTrigger>
+                <SelectContent>{allAssessments.map(a => <SelectItem key={a.id} value={a.id}>{a.title} ({a.assessment_type})</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Purpose *</Label>
+              <Select value={assessmentForm.assessment_purpose} onValueChange={v => setAssessmentForm(p => ({ ...p, assessment_purpose: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pre_test">PRE Test</SelectItem>
+                  <SelectItem value="post_test">POST Test</SelectItem>
+                  <SelectItem value="feedback">Feedback</SelectItem>
+                  <SelectItem value="l3_feedback">L3 Feedback</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Link to Session (optional)</Label>
+              <Select value={assessmentForm.session_id} onValueChange={v => setAssessmentForm(p => ({ ...p, session_id: v }))}>
+                <SelectTrigger><SelectValue placeholder="Event-level (no specific session)" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Event-level</SelectItem>
+                  {sessions.map(s => <SelectItem key={s.id} value={s.id}>{s.title} ({s.session_date})</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox id="mandatory" checked={assessmentForm.is_mandatory} onCheckedChange={v => setAssessmentForm(p => ({ ...p, is_mandatory: !!v }))} />
+              <Label htmlFor="mandatory">Mandatory</Label>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsAssessmentDialogOpen(false)}>Cancel</Button>
+              <Button onClick={addAssessment}>Link Assessment</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
