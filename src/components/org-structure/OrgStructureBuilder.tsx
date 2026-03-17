@@ -60,6 +60,7 @@ interface OrgStructureBuilderProps {
 const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { scopeData } = useCompanyScope();
   
   // State
   const [structureType, setStructureType] = useState<StructureType>('corp');
