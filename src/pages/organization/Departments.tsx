@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Users, MapPin, Plus, Edit, Trash2, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface Department {
   id: string;
