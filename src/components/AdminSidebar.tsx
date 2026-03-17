@@ -37,11 +37,20 @@ interface NavItem {
   separator?: boolean;
   adminOnly?: boolean;
   managerOnly?: boolean;
+  superAdminOnly?: boolean;
 }
 
-// adminOnly: true means the menu is hidden for non-admin users
+// superAdminOnly: true means only visible to super_admin role
 const navigationItems: NavItem[] = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
+  {
+    title: "🏢 Super Admin",
+    icon: Shield,
+    superAdminOnly: true,
+    subItems: [
+      { title: "Company Management", url: "/super-admin/companies" },
+    ],
+  },
   { title: "Workflow Guide", url: "/workflow-guide", icon: Workflow, adminOnly: true },
   { title: "AI Recommendations", icon: Zap, url: "/ai-recommendations", adminOnly: true },
   { 
@@ -253,7 +262,7 @@ export function AdminSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const [openGroups, setOpenGroups] = useState<string[]>([]);
-  const { isAdmin, isManager, loading } = useUserRole();
+  const { isAdmin, isManager, isSuperAdmin, loading } = useUserRole();
 
   const isActive = (path: string) => currentPath === path;
   
@@ -268,6 +277,7 @@ export function AdminSidebar() {
   // Filter navigation items based on user role
   const filteredItems = navigationItems.filter(item => {
     if (item.separator) return true;
+    if (item.superAdminOnly && !isSuperAdmin) return false;
     if (item.adminOnly && !isAdmin) return false;
     if (item.managerOnly && !isManager) return false;
     return true;

@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
+import SuperAdminRoute from "@/components/SuperAdminRoute";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
 import Index from "./pages/Index";
@@ -105,6 +106,9 @@ import AIRecommendationsPage from "./pages/AIRecommendations";
 // Workflow Guide
 import WorkflowGuide from "./pages/WorkflowGuide";
 import UserDocumentation from "./pages/UserDocumentation";
+
+// Super Admin
+import CompanyManagement from "./pages/super-admin/CompanyManagement";
 
 // MOOC Integration
 import MOOC from "./pages/MOOC";
@@ -205,6 +209,9 @@ const App = () => (
               <Route path="/" element={<ProtectedRoute><AuthenticatedLayout><Index /></AuthenticatedLayout></ProtectedRoute>} />
               <Route path="/workflow-guide" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><WorkflowGuide /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/user-documentation" element={<ProtectedRoute><AuthenticatedLayout><UserDocumentation /></AuthenticatedLayout></ProtectedRoute>} />
+              
+              {/* Super Admin */}
+              <Route path="/super-admin/companies" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><CompanyManagement /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
               
               {/* User Management - Admin Only */}
               <Route path="/users" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Users /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
