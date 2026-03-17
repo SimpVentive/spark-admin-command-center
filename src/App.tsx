@@ -107,6 +107,9 @@ import AIRecommendationsPage from "./pages/AIRecommendations";
 import WorkflowGuide from "./pages/WorkflowGuide";
 import UserDocumentation from "./pages/UserDocumentation";
 
+// Super Admin
+import CompanyManagement from "./pages/super-admin/CompanyManagement";
+
 // MOOC Integration
 import MOOC from "./pages/MOOC";
 import CourseCatalog from "./pages/mooc/CourseCatalog";
