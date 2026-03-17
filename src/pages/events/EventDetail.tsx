@@ -215,6 +215,7 @@ const EventDetail = () => {
         <TabsList>
           <TabsTrigger value="sessions" className="gap-1"><Calendar className="h-4 w-4" />Sessions ({sessions.length})</TabsTrigger>
           <TabsTrigger value="trainers" className="gap-1"><UserCheck className="h-4 w-4" />Trainers ({eventTrainers.length})</TabsTrigger>
+          <TabsTrigger value="assessments" className="gap-1"><FileText className="h-4 w-4" />Assessments ({eventAssessments.length})</TabsTrigger>
           <TabsTrigger value="enrollments" className="gap-1"><Users className="h-4 w-4" />Enrollments ({enrollments.length})</TabsTrigger>
           <TabsTrigger value="attendance" className="gap-1"><ClipboardCheck className="h-4 w-4" />Attendance</TabsTrigger>
         </TabsList>
