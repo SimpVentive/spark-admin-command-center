@@ -152,7 +152,6 @@ const EventDetail = () => {
       const inserts = Object.entries(attendanceRecords).map(([empId, status]) => ({
         event_id: id, session_id: attendanceSessionId || null, employee_id: empId, status
       }));
-      // Upsert attendance
       for (const record of inserts) {
         const { error } = await (supabase as any).from('attendance').upsert(record, { onConflict: 'event_id,session_id,employee_id' });
         if (error) throw error;
@@ -162,6 +161,38 @@ const EventDetail = () => {
       fetchAll();
     } catch (e: any) { toast({ title: "Error", description: e.message, variant: "destructive" }); }
   };
+
+  const addAssessment = async () => {
+    if (!assessmentForm.assessment_id || !assessmentForm.assessment_purpose) {
+      toast({ title: "Error", description: "Assessment and purpose are required", variant: "destructive" }); return;
+    }
+    try {
+      const { error } = await (supabase as any).from('event_assessments').insert([{
+        event_id: id,
+        assessment_id: assessmentForm.assessment_id,
+        assessment_purpose: assessmentForm.assessment_purpose,
+        session_id: assessmentForm.session_id || null,
+        is_mandatory: assessmentForm.is_mandatory
+      }]);
+      if (error) throw error;
+      toast({ title: "Success", description: "Assessment linked to event" });
+      setIsAssessmentDialogOpen(false);
+      setAssessmentForm({ assessment_id: "", assessment_purpose: "pre_test", session_id: "", is_mandatory: true });
+      fetchAll();
+    } catch (e: any) { toast({ title: "Error", description: e.message, variant: "destructive" }); }
+  };
+
+  const removeAssessment = async (eaId: string) => {
+    try {
+      const { error } = await (supabase as any).from('event_assessments').delete().eq('id', eaId);
+      if (error) throw error;
+      toast({ title: "Success", description: "Assessment removed" });
+      fetchAll();
+    } catch (e: any) { toast({ title: "Error", description: e.message, variant: "destructive" }); }
+  };
+
+  const purposeLabels: Record<string, string> = { pre_test: "PRE Test", post_test: "POST Test", feedback: "Feedback", l3_feedback: "L3 Feedback" };
+  const purposeColors: Record<string, "default" | "secondary" | "outline" | "destructive"> = { pre_test: "secondary", post_test: "default", feedback: "outline", l3_feedback: "outline" };
 
   if (loading) return <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   if (!event) return <div className="text-center py-12">Event not found</div>;
