@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin, Plus, Edit, Trash2, Settings, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface Location {
   id: string;
@@ -22,6 +23,7 @@ interface Location {
 
 const Locations = () => {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [locations, setLocations] = useState<Location[]>([]);
   const [locationTypes, setLocationTypes] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,7 +57,7 @@ const Locations = () => {
       return;
     }
     try {
-      const { error } = await (supabase as any).from('locations').insert([{ name: newLocation.name.trim(), address: newLocation.address.trim(), type: newLocation.type || null }]);
+      const { error } = await (supabase as any).from('locations').insert([scopeData({ name: newLocation.name.trim(), address: newLocation.address.trim(), type: newLocation.type || null })]);
       if (error) throw error;
       toast({ title: "Success", description: "Location added successfully" });
       setNewLocation({ name: "", address: "", type: "" });

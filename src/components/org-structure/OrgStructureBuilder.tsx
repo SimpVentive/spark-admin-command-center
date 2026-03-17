@@ -9,6 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Building2, Factory, Users, Plus, ArrowRight, ChevronRight, ChevronDown, Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import OrgUnitModal from './OrgUnitModal';
+import { useCompanyScope } from '@/hooks/useCompanyScope';
 
 interface OrgUnit {
   id: string;
@@ -59,6 +60,7 @@ interface OrgStructureBuilderProps {
 const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { scopeData } = useCompanyScope();
   
   // State
   const [structureType, setStructureType] = useState<StructureType>('corp');
@@ -96,7 +98,7 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
     mutationFn: async (unitData: { name: string; description?: string; level: string; parent_id?: string; manager_name?: string }) => {
       const { data, error } = await supabase
         .from('organizational_units')
-        .insert([unitData])
+        .insert([scopeData(unitData)])
         .select()
         .single();
       

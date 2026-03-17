@@ -10,12 +10,14 @@ import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 import ProgramCategoryManagement from "@/components/ProgramCategoryManagement";
 import ResourceSelector from "@/components/library/ResourceSelector";
 
 const CreateProgram = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { scopeData, scopeArray } = useCompanyScope();
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -48,7 +50,7 @@ const CreateProgram = () => {
     setIsLoading(true);
     try {
       const durationHours = formData.duration ? parseInt(formData.duration) || null : null;
-      const { data: program, error: programError } = await supabase.from('training_programs').insert([{
+      const { data: program, error: programError } = await supabase.from('training_programs').insert([scopeData({
         title: formData.title.trim(),
         category: formData.category,
         level: formData.level || null,
@@ -59,7 +61,7 @@ const CreateProgram = () => {
         duration_hours: durationHours,
         prerequisites: formData.prerequisites ? formData.prerequisites.split(',').map(s => s.trim()) : [],
         skills_covered: formData.learningObjectives ? formData.learningObjectives.split(',').map(s => s.trim()) : [],
-      }]).select().single();
+      })]).select().single();
 
       if (programError) throw programError;
 
@@ -73,7 +75,7 @@ const CreateProgram = () => {
           max_participants: formData.maxParticipants ? parseInt(formData.maxParticipants) : null,
           status: 'scheduled',
         }));
-        const { error: sessionError } = await supabase.from('program_sessions').insert(sessionInserts);
+        const { error: sessionError } = await supabase.from('program_sessions').insert(scopeArray(sessionInserts));
         if (sessionError) console.error('Session insert error:', sessionError);
       }
 

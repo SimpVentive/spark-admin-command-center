@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface TrainingProgram {
   id: string;
@@ -41,6 +42,7 @@ export default function ProgramManagementSection({
   compact = false 
 }: ProgramManagementSectionProps) {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [programs, setPrograms] = useState<TrainingProgram[]>([]);
   const [filteredPrograms, setFilteredPrograms] = useState<TrainingProgram[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -198,7 +200,7 @@ export default function ProgramManagementSection({
       } else {
         const { error } = await supabase
           .from('training_programs')
-          .insert([submissionData]);
+          .insert([scopeData(submissionData)]);
         
         if (error) throw error;
         

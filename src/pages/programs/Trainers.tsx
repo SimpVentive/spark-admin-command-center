@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Search, Plus, ExternalLink, Star, MapPin, Calendar, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface Trainer {
   id: string;
@@ -24,6 +25,7 @@ interface Trainer {
 
 const Trainers = () => {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [trainers, setTrainers] = useState<Trainer[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -46,13 +48,13 @@ const Trainers = () => {
       return;
     }
     try {
-      const { error } = await (supabase as any).from('trainers').insert([{
+      const { error } = await (supabase as any).from('trainers').insert([scopeData({
         name: newTrainer.name.trim(),
         specialization: newTrainer.specialization || null,
         location: newTrainer.location || null,
         email: newTrainer.email || null,
         phone: newTrainer.phone || null,
-      }]);
+      })]);
       if (error) throw error;
       toast({ title: "Success", description: "Trainer added successfully" });
       setNewTrainer({ name: "", specialization: "", location: "", email: "", phone: "" });

@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { UserCheck, Plus, Edit, Trash2, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface JobRole {
   id: string;
@@ -20,6 +21,7 @@ interface JobRole {
 
 const Roles = () => {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [jobRoles, setJobRoles] = useState<JobRole[]>([]);
   const [departments, setDepartments] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,12 +53,12 @@ const Roles = () => {
       return;
     }
     try {
-      const { error } = await supabase.from('job_roles').insert([{
+      const { error } = await supabase.from('job_roles').insert([scopeData({
         title: newRole.title.trim(),
         level: newRole.level,
         department_id: newRole.department_id || null,
         description: newRole.description || null,
-      }]);
+      })]);
       if (error) throw error;
       toast({ title: "Success", description: "Role added successfully" });
       setNewRole({ title: "", department_id: "", level: "", description: "" });

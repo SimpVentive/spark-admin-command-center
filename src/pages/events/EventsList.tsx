@@ -11,6 +11,7 @@ import { Calendar, Plus, Edit, Trash2, Users, MapPin, Loader2, Eye } from "lucid
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface Event {
   id: string;
@@ -43,6 +44,7 @@ const statusColors: Record<string, string> = {
 const EventsList = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { scopeData } = useCompanyScope();
   const [events, setEvents] = useState<Event[]>([]);
   const [venues, setVenues] = useState<any[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
@@ -105,7 +107,7 @@ const EventsList = () => {
         toast({ title: "Success", description: "Event updated" });
       } else {
         payload.status = 'scheduled';
-        const { error } = await (supabase as any).from('events').insert([payload]);
+        const { error } = await (supabase as any).from('events').insert([scopeData(payload)]);
         if (error) throw error;
         toast({ title: "Success", description: "Event created" });
       }

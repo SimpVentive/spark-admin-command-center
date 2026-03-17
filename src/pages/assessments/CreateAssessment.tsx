@@ -12,10 +12,12 @@ import { ArrowRight, ArrowLeft, Plus, Trash2, Search, Filter } from "lucide-reac
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 const CreateAssessment = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [currentStep, setCurrentStep] = useState(1);
   const [assessmentData, setAssessmentData] = useState({
     title: "",
@@ -125,13 +127,13 @@ const CreateAssessment = () => {
       return;
     }
     try {
-      const { data: assessment, error } = await supabase.from('assessments').insert([{
+      const { data: assessment, error } = await supabase.from('assessments').insert([scopeData({
         title: assessmentData.title,
         assessment_type: assessmentData.type,
         time_limit_minutes: assessmentData.timeLimit ? parseInt(assessmentData.timeLimit) : null,
         passing_score: assessmentData.passingScore,
         max_attempts: assessmentData.maxAttempts,
-      }]).select().single();
+      })]).select().single();
       if (error) throw error;
 
       // Link selected questions

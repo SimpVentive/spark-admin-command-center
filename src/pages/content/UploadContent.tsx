@@ -9,10 +9,12 @@ import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 const UploadContent = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { scopeData } = useCompanyScope();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -49,7 +51,7 @@ const UploadContent = () => {
 
       const { data: { publicUrl } } = supabase.storage.from('content-uploads').getPublicUrl(filePath);
 
-      const { error: dbError } = await (supabase as any).from('content_items').insert([{
+      const { error: dbError } = await (supabase as any).from('content_items').insert([scopeData({
         title: formData.title.trim(),
         description: formData.description || null,
         content_type: getContentType(selectedFile),
@@ -61,7 +63,7 @@ const UploadContent = () => {
         tags: formData.tags ? formData.tags.split(',').map(t => t.trim()) : [],
         language: formData.language,
         duration_seconds: formData.duration ? parseInt(formData.duration) * 60 : null,
-      }]);
+      })]);
       if (dbError) throw dbError;
 
       toast({ title: "Success", description: "Content uploaded successfully!" });

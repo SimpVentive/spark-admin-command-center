@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Building, Plus, Edit, Trash2, Users, MapPin, Loader2, Phone, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface Venue {
   id: string;
@@ -36,6 +37,7 @@ const emptyVenue = {
 
 const Venues = () => {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [venues, setVenues] = useState<Venue[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -83,7 +85,7 @@ const Venues = () => {
         if (error) throw error;
         toast({ title: "Success", description: "Venue updated" });
       } else {
-        const { error } = await (supabase as any).from('venues').insert([payload]);
+        const { error } = await (supabase as any).from('venues').insert([scopeData(payload)]);
         if (error) throw error;
         toast({ title: "Success", description: "Venue added" });
       }

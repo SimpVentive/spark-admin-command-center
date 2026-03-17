@@ -16,6 +16,7 @@ import { CalendarIcon, Plus, Trash2, Users, Building2, MapPin, Target } from "lu
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 import ProgramManagementSection from "@/components/ProgramManagementSection";
 
 interface MandatoryProgram {
@@ -50,6 +51,7 @@ const tabOrder = ["basic", "workflow", "programs", "notifications", "preview", "
 export default function CreateCycle() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { scopeData } = useCompanyScope();
   const [activeTab, setActiveTab] = useState("basic");
   
   const [cycleData, setCycleData] = useState<CycleData>({
@@ -168,7 +170,7 @@ Training Team`,
         tm_batch: 'TM Batch Input by Department',
       };
 
-      const { error } = await supabase.from('tna_cycles').insert({
+      const { error } = await supabase.from('tna_cycles').insert(scopeData({
         name: cycleData.name,
         start_date: cycleData.startDate.toISOString().split('T')[0],
         end_date: cycleData.endDate.toISOString().split('T')[0],
@@ -179,7 +181,7 @@ Training Team`,
         status: 'draft',
         created_by: user.id,
         manager_ratification_required: cycleData.managerRatificationRequired,
-      });
+      }));
 
       if (error) throw error;
 

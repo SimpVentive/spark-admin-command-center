@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Users, MapPin, Plus, Edit, Trash2, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface Department {
   id: string;
@@ -18,6 +19,7 @@ interface Department {
 
 const Departments = () => {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -56,11 +58,11 @@ const Departments = () => {
       return;
     }
     try {
-      const { error } = await (supabase as any).from('departments').insert([{
+      const { error } = await (supabase as any).from('departments').insert([scopeData({
         name: newDepartment.name.trim(),
         manager_name: newDepartment.manager_name.trim() || null,
         location: newDepartment.location || null,
-      }]);
+      })]);
       if (error) throw error;
       toast({ title: "Success", description: "Department added successfully" });
       setNewDepartment({ name: "", manager_name: "", location: "" });
