@@ -19,6 +19,7 @@ interface Department {
 
 const Departments = () => {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
