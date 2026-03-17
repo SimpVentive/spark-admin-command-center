@@ -8,7 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Plus, Trash2, Loader2, Calendar, Users, ClipboardCheck, UserCheck, MessageSquare } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Calendar, Users, ClipboardCheck, UserCheck, FileText } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -18,12 +19,13 @@ const EventDetail = () => {
   const { toast } = useToast();
   const [event, setEvent] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
-  const [trainers, setTrainers] = useState<any[]>([]);
   const [eventTrainers, setEventTrainers] = useState<any[]>([]);
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [attendance, setAttendance] = useState<any[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
   const [allTrainers, setAllTrainers] = useState<any[]>([]);
+  const [eventAssessments, setEventAssessments] = useState<any[]>([]);
+  const [allAssessments, setAllAssessments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Session dialog
@@ -43,18 +45,24 @@ const EventDetail = () => {
   const [attendanceSessionId, setAttendanceSessionId] = useState("");
   const [attendanceRecords, setAttendanceRecords] = useState<Record<string, string>>({});
 
+  // Assessment dialog
+  const [isAssessmentDialogOpen, setIsAssessmentDialogOpen] = useState(false);
+  const [assessmentForm, setAssessmentForm] = useState({ assessment_id: "", assessment_purpose: "pre_test", session_id: "", is_mandatory: true });
+
   useEffect(() => { if (id) fetchAll(); }, [id]);
 
   const fetchAll = async () => {
     try {
-      const [evRes, sesRes, etRes, enRes, atRes, empRes, trRes] = await Promise.all([
+      const [evRes, sesRes, etRes, enRes, atRes, empRes, trRes, eaRes, asRes] = await Promise.all([
         (supabase as any).from('events').select('*').eq('id', id).single(),
         (supabase as any).from('event_sessions').select('*').eq('event_id', id).eq('is_active', true).order('session_order'),
         (supabase as any).from('event_trainers').select('*, trainers(id, name, type)').eq('event_id', id),
         (supabase as any).from('event_enrollments').select('*, profiles(id, full_name, email)').eq('event_id', id),
         (supabase as any).from('attendance').select('*').eq('event_id', id),
         (supabase as any).from('profiles').select('id, full_name, email').order('full_name'),
-        (supabase as any).from('trainers').select('id, name, type').eq('is_active', true)
+        (supabase as any).from('trainers').select('id, name, type').eq('is_active', true),
+        (supabase as any).from('event_assessments').select('*, assessments(id, title, assessment_type)').eq('event_id', id),
+        (supabase as any).from('assessments').select('id, title, assessment_type').order('title')
       ]);
       setEvent(evRes.data);
       setSessions(sesRes.data || []);
@@ -63,6 +71,8 @@ const EventDetail = () => {
       setAttendance(atRes.data || []);
       setEmployees(empRes.data || []);
       setAllTrainers(trRes.data || []);
+      setEventAssessments(eaRes.data || []);
+      setAllAssessments(asRes.data || []);
     } catch (e) { console.error(e); } finally { setLoading(false); }
   };
 
@@ -142,7 +152,6 @@ const EventDetail = () => {
       const inserts = Object.entries(attendanceRecords).map(([empId, status]) => ({
         event_id: id, session_id: attendanceSessionId || null, employee_id: empId, status
       }));
-      // Upsert attendance
       for (const record of inserts) {
         const { error } = await (supabase as any).from('attendance').upsert(record, { onConflict: 'event_id,session_id,employee_id' });
         if (error) throw error;
@@ -152,6 +161,38 @@ const EventDetail = () => {
       fetchAll();
     } catch (e: any) { toast({ title: "Error", description: e.message, variant: "destructive" }); }
   };
+
+  const addAssessment = async () => {
+    if (!assessmentForm.assessment_id || !assessmentForm.assessment_purpose) {
+      toast({ title: "Error", description: "Assessment and purpose are required", variant: "destructive" }); return;
+    }
+    try {
+      const { error } = await (supabase as any).from('event_assessments').insert([{
+        event_id: id,
+        assessment_id: assessmentForm.assessment_id,
+        assessment_purpose: assessmentForm.assessment_purpose,
+        session_id: assessmentForm.session_id || null,
+        is_mandatory: assessmentForm.is_mandatory
+      }]);
+      if (error) throw error;
+      toast({ title: "Success", description: "Assessment linked to event" });
+      setIsAssessmentDialogOpen(false);
+      setAssessmentForm({ assessment_id: "", assessment_purpose: "pre_test", session_id: "", is_mandatory: true });
+      fetchAll();
+    } catch (e: any) { toast({ title: "Error", description: e.message, variant: "destructive" }); }
+  };
+
+  const removeAssessment = async (eaId: string) => {
+    try {
+      const { error } = await (supabase as any).from('event_assessments').delete().eq('id', eaId);
+      if (error) throw error;
+      toast({ title: "Success", description: "Assessment removed" });
+      fetchAll();
+    } catch (e: any) { toast({ title: "Error", description: e.message, variant: "destructive" }); }
+  };
+
+  const purposeLabels: Record<string, string> = { pre_test: "PRE Test", post_test: "POST Test", feedback: "Feedback", l3_feedback: "L3 Feedback" };
+  const purposeColors: Record<string, "default" | "secondary" | "outline" | "destructive"> = { pre_test: "secondary", post_test: "default", feedback: "outline", l3_feedback: "outline" };
 
   if (loading) return <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   if (!event) return <div className="text-center py-12">Event not found</div>;
@@ -174,6 +215,7 @@ const EventDetail = () => {
         <TabsList>
           <TabsTrigger value="sessions" className="gap-1"><Calendar className="h-4 w-4" />Sessions ({sessions.length})</TabsTrigger>
           <TabsTrigger value="trainers" className="gap-1"><UserCheck className="h-4 w-4" />Trainers ({eventTrainers.length})</TabsTrigger>
+          <TabsTrigger value="assessments" className="gap-1"><FileText className="h-4 w-4" />Assessments ({eventAssessments.length})</TabsTrigger>
           <TabsTrigger value="enrollments" className="gap-1"><Users className="h-4 w-4" />Enrollments ({enrollments.length})</TabsTrigger>
           <TabsTrigger value="attendance" className="gap-1"><ClipboardCheck className="h-4 w-4" />Attendance</TabsTrigger>
         </TabsList>
@@ -217,6 +259,38 @@ const EventDetail = () => {
               </CardContent>
             </Card>
           ))}
+        </TabsContent>
+
+        <TabsContent value="assessments" className="space-y-4">
+          <div className="flex justify-end">
+            <Button onClick={() => setIsAssessmentDialogOpen(true)} className="gap-2"><Plus className="h-4 w-4" />Link Assessment</Button>
+          </div>
+          {eventAssessments.length === 0 ? (
+            <Card><CardContent className="p-6 text-center text-muted-foreground">No assessments linked. Add PRE test, POST test, Feedback, or L3 Feedback.</CardContent></Card>
+          ) : (
+            <div className="space-y-3">
+              {eventAssessments.map(ea => {
+                const sessionName = sessions.find(s => s.id === ea.session_id)?.title;
+                return (
+                  <Card key={ea.id}>
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{ea.assessments?.title || 'Unknown'}</p>
+                          <Badge variant={purposeColors[ea.assessment_purpose]}>{purposeLabels[ea.assessment_purpose]}</Badge>
+                          {ea.is_mandatory && <Badge variant="outline" className="text-xs">Mandatory</Badge>}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {sessionName ? `Session: ${sessionName}` : 'Event-level'} • Type: {ea.assessments?.assessment_type}
+                        </p>
+                      </div>
+                      <Button variant="ghost" size="icon" onClick={() => removeAssessment(ea.id)} className="text-destructive"><Trash2 className="h-4 w-4" /></Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="enrollments" className="space-y-4">
@@ -370,6 +444,52 @@ const EventDetail = () => {
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIsAttendanceDialogOpen(false)}>Cancel</Button>
               <Button onClick={saveAttendance}>Save Attendance</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Assessment Dialog */}
+      <Dialog open={isAssessmentDialogOpen} onOpenChange={setIsAssessmentDialogOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Link Assessment to Event</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Assessment *</Label>
+              <Select value={assessmentForm.assessment_id} onValueChange={v => setAssessmentForm(p => ({ ...p, assessment_id: v }))}>
+                <SelectTrigger><SelectValue placeholder="Select assessment" /></SelectTrigger>
+                <SelectContent>{allAssessments.map(a => <SelectItem key={a.id} value={a.id}>{a.title} ({a.assessment_type})</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Purpose *</Label>
+              <Select value={assessmentForm.assessment_purpose} onValueChange={v => setAssessmentForm(p => ({ ...p, assessment_purpose: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pre_test">PRE Test</SelectItem>
+                  <SelectItem value="post_test">POST Test</SelectItem>
+                  <SelectItem value="feedback">Feedback</SelectItem>
+                  <SelectItem value="l3_feedback">L3 Feedback</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Link to Session (optional)</Label>
+              <Select value={assessmentForm.session_id} onValueChange={v => setAssessmentForm(p => ({ ...p, session_id: v }))}>
+                <SelectTrigger><SelectValue placeholder="Event-level (no specific session)" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Event-level</SelectItem>
+                  {sessions.map(s => <SelectItem key={s.id} value={s.id}>{s.title} ({s.session_date})</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2">
+              <Checkbox id="mandatory" checked={assessmentForm.is_mandatory} onCheckedChange={v => setAssessmentForm(p => ({ ...p, is_mandatory: !!v }))} />
+              <Label htmlFor="mandatory">Mandatory</Label>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsAssessmentDialogOpen(false)}>Cancel</Button>
+              <Button onClick={addAssessment}>Link Assessment</Button>
             </div>
           </div>
         </DialogContent>
