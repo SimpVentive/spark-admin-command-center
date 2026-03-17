@@ -44,6 +44,7 @@ const statusColors: Record<string, string> = {
 const EventsList = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { scopeData } = useCompanyScope();
   const [events, setEvents] = useState<Event[]>([]);
   const [venues, setVenues] = useState<any[]>([]);
   const [locations, setLocations] = useState<any[]>([]);
