@@ -23,6 +23,12 @@ const CHART_COLORS = [
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isSuperAdmin, loading: roleLoading } = useUserRole();
+
+  // Super Admins get their own dashboard
+  if (!roleLoading && isSuperAdmin) {
+    return <SuperAdminDashboard />;
+  }
 
   // Fetch department distribution for pie chart
   const { data: departments } = useQuery({
