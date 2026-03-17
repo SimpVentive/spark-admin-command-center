@@ -208,6 +208,70 @@ export type Database = {
           },
         ]
       }
+      attendance: {
+        Row: {
+          check_in_time: string | null
+          check_out_time: string | null
+          created_at: string | null
+          employee_id: string
+          event_id: string
+          id: string
+          marked_by: string | null
+          notes: string | null
+          session_id: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          check_in_time?: string | null
+          check_out_time?: string | null
+          created_at?: string | null
+          employee_id: string
+          event_id: string
+          id?: string
+          marked_by?: string | null
+          notes?: string | null
+          session_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          check_in_time?: string | null
+          check_out_time?: string | null
+          created_at?: string | null
+          employee_id?: string
+          event_id?: string
+          id?: string
+          marked_by?: string | null
+          notes?: string | null
+          session_id?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "event_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: Database["public"]["Enums"]["audit_action"]
@@ -932,6 +996,280 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_assessments: {
+        Row: {
+          assessment_id: string
+          assessment_purpose: string
+          created_at: string | null
+          event_id: string
+          id: string
+          is_mandatory: boolean | null
+          session_id: string | null
+        }
+        Insert: {
+          assessment_id: string
+          assessment_purpose: string
+          created_at?: string | null
+          event_id: string
+          id?: string
+          is_mandatory?: boolean | null
+          session_id?: string | null
+        }
+        Update: {
+          assessment_id?: string
+          assessment_purpose?: string
+          created_at?: string | null
+          event_id?: string
+          id?: string
+          is_mandatory?: boolean | null
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_assessments_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_assessments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_assessments_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "event_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_enrollments: {
+        Row: {
+          completed_at: string | null
+          employee_id: string
+          enrolled_at: string | null
+          enrolled_by: string | null
+          enrollment_status: string | null
+          event_id: string
+          id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          employee_id: string
+          enrolled_at?: string | null
+          enrolled_by?: string | null
+          enrollment_status?: string | null
+          event_id: string
+          id?: string
+        }
+        Update: {
+          completed_at?: string | null
+          employee_id?: string
+          enrolled_at?: string | null
+          enrolled_by?: string | null
+          enrollment_status?: string | null
+          event_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_enrollments_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_enrollments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_sessions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          end_time: string | null
+          event_id: string
+          id: string
+          is_active: boolean | null
+          session_date: string
+          session_order: number | null
+          start_time: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          end_time?: string | null
+          event_id: string
+          id?: string
+          is_active?: boolean | null
+          session_date: string
+          session_order?: number | null
+          start_time?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          end_time?: string | null
+          event_id?: string
+          id?: string
+          is_active?: boolean | null
+          session_date?: string
+          session_order?: number | null
+          start_time?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_sessions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_trainers: {
+        Row: {
+          created_at: string | null
+          event_id: string
+          id: string
+          role: string | null
+          trainer_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_id: string
+          id?: string
+          role?: string | null
+          trainer_id: string
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string
+          id?: string
+          role?: string | null
+          trainer_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_trainers_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_trainers_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "trainers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          budget_allocated: number | null
+          budget_spent: number | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          end_date: string
+          end_time: string | null
+          event_type: string
+          id: string
+          is_active: boolean | null
+          location_id: string | null
+          max_participants: number | null
+          meeting_link: string | null
+          program_id: string | null
+          start_date: string
+          start_time: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          venue_id: string | null
+        }
+        Insert: {
+          budget_allocated?: number | null
+          budget_spent?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_date: string
+          end_time?: string | null
+          event_type?: string
+          id?: string
+          is_active?: boolean | null
+          location_id?: string | null
+          max_participants?: number | null
+          meeting_link?: string | null
+          program_id?: string | null
+          start_date: string
+          start_time?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          venue_id?: string | null
+        }
+        Update: {
+          budget_allocated?: number | null
+          budget_spent?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_date?: string
+          end_time?: string | null
+          event_type?: string
+          id?: string
+          is_active?: boolean | null
+          location_id?: string | null
+          max_participants?: number | null
+          meeting_link?: string | null
+          program_id?: string | null
+          start_date?: string
+          start_time?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          venue_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
             referencedColumns: ["id"]
           },
         ]
@@ -3734,6 +4072,77 @@ export type Database = {
           },
         ]
       }
+      trainer_feedback: {
+        Row: {
+          areas_of_improvement: string | null
+          created_at: string | null
+          employee_id: string
+          event_id: string
+          feedback_text: string | null
+          id: string
+          rating: number | null
+          session_id: string | null
+          strengths: string | null
+          trainer_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          areas_of_improvement?: string | null
+          created_at?: string | null
+          employee_id: string
+          event_id: string
+          feedback_text?: string | null
+          id?: string
+          rating?: number | null
+          session_id?: string | null
+          strengths?: string | null
+          trainer_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          areas_of_improvement?: string | null
+          created_at?: string | null
+          employee_id?: string
+          event_id?: string
+          feedback_text?: string | null
+          id?: string
+          rating?: number | null
+          session_id?: string | null
+          strengths?: string | null
+          trainer_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainer_feedback_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_feedback_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_feedback_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "event_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trainer_feedback_trainer_id_fkey"
+            columns: ["trainer_id"]
+            isOneToOne: false
+            referencedRelation: "trainers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trainers: {
         Row: {
           bio: string | null
@@ -4330,6 +4739,71 @@ export type Database = {
           },
         ]
       }
+      venues: {
+        Row: {
+          address: string | null
+          capacity: number | null
+          city: string | null
+          contact_email: string | null
+          contact_person: string | null
+          contact_phone: string | null
+          created_at: string | null
+          facilities: string[] | null
+          hourly_rate: number | null
+          id: string
+          is_active: boolean | null
+          location_id: string | null
+          name: string
+          notes: string | null
+          updated_at: string | null
+          venue_type: string
+        }
+        Insert: {
+          address?: string | null
+          capacity?: number | null
+          city?: string | null
+          contact_email?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          facilities?: string[] | null
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean | null
+          location_id?: string | null
+          name: string
+          notes?: string | null
+          updated_at?: string | null
+          venue_type?: string
+        }
+        Update: {
+          address?: string | null
+          capacity?: number | null
+          city?: string | null
+          contact_email?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          facilities?: string[] | null
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean | null
+          location_id?: string | null
+          name?: string
+          notes?: string | null
+          updated_at?: string | null
+          venue_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venues_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       question_bank_safe: {
@@ -4445,7 +4919,13 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user" | "manager" | "trainer"
+      app_role:
+        | "admin"
+        | "moderator"
+        | "user"
+        | "manager"
+        | "trainer"
+        | "location_admin"
       audit_action:
         | "INSERT"
         | "UPDATE"
@@ -4586,7 +5066,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user", "manager", "trainer"],
+      app_role: [
+        "admin",
+        "moderator",
+        "user",
+        "manager",
+        "trainer",
+        "location_admin",
+      ],
       audit_action: [
         "INSERT",
         "UPDATE",
