@@ -21,6 +21,7 @@ interface JobRole {
 
 const Roles = () => {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [jobRoles, setJobRoles] = useState<JobRole[]>([]);
   const [departments, setDepartments] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
