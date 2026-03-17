@@ -296,8 +296,10 @@ export function AdminSidebar() {
     );
   };
 
-  // Filter navigation items based on user role
-  const filteredItems = navigationItems.filter(item => {
+  // Super admin gets a focused global menu; regular users get the full admin menu
+  const itemsToUse = isSuperAdmin ? superAdminNavigationItems : navigationItems;
+  
+  const filteredItems = itemsToUse.filter(item => {
     if (item.separator) return true;
     if (item.superAdminOnly && !isSuperAdmin) return false;
     if (item.adminOnly && !isAdmin) return false;
