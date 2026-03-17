@@ -48,6 +48,7 @@ const navigationItems: NavItem[] = [
     icon: Shield,
     superAdminOnly: true,
     subItems: [
+      { title: "Global Dashboard", url: "/" },
       { title: "Company Management", url: "/super-admin/companies" },
     ],
   },
