@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Edit, Trash2, Search } from "lucide-react";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 interface TrainingProgram {
   id: string;
