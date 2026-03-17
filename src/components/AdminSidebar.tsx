@@ -103,6 +103,7 @@ const navigationItems: NavItem[] = [
       { title: "All Programs", url: "/programs" },
       { title: "Program Categories", url: "/programs/categories" },
       { title: "Program Sessions", url: "/programs/sessions" },
+      { title: "Events", url: "/events" },
       { title: "Trainers", url: "/programs/trainers" }
     ]
   },
