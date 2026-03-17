@@ -12,6 +12,7 @@ import { ArrowRight, ArrowLeft, Plus, Trash2, Search, Filter } from "lucide-reac
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 const CreateAssessment = () => {
   const navigate = useNavigate();
