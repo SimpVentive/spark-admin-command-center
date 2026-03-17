@@ -39,9 +39,17 @@ interface NavItem {
   managerOnly?: boolean;
 }
 
-// adminOnly: true means the menu is hidden for non-admin users
+// superAdminOnly: true means only visible to super_admin role
 const navigationItems: NavItem[] = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
+  {
+    title: "🏢 Super Admin",
+    icon: Shield,
+    superAdminOnly: true,
+    subItems: [
+      { title: "Company Management", url: "/super-admin/companies" },
+    ],
+  },
   { title: "Workflow Guide", url: "/workflow-guide", icon: Workflow, adminOnly: true },
   { title: "AI Recommendations", icon: Zap, url: "/ai-recommendations", adminOnly: true },
   { 
