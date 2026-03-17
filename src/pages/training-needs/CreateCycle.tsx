@@ -51,6 +51,7 @@ const tabOrder = ["basic", "workflow", "programs", "notifications", "preview", "
 export default function CreateCycle() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { scopeData } = useCompanyScope();
   const [activeTab, setActiveTab] = useState("basic");
   
   const [cycleData, setCycleData] = useState<CycleData>({
