@@ -37,6 +37,7 @@ const emptyVenue = {
 
 const Venues = () => {
   const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [venues, setVenues] = useState<Venue[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
