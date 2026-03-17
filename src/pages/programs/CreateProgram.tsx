@@ -17,6 +17,7 @@ import ResourceSelector from "@/components/library/ResourceSelector";
 const CreateProgram = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { scopeData, scopeArray } = useCompanyScope();
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
