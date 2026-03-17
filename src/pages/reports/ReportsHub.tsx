@@ -1,8 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import {
   Target, Users, GraduationCap, DollarSign, FileText,
-  BarChart3, UserCheck, Crosshair, Shield, ClipboardList
+  BarChart3, UserCheck, Crosshair, Shield, ClipboardList, Wand2
 } from "lucide-react";
 
 const reports = [
