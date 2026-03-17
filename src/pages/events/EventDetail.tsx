@@ -53,14 +53,16 @@ const EventDetail = () => {
 
   const fetchAll = async () => {
     try {
-      const [evRes, sesRes, etRes, enRes, atRes, empRes, trRes] = await Promise.all([
+      const [evRes, sesRes, etRes, enRes, atRes, empRes, trRes, eaRes, asRes] = await Promise.all([
         (supabase as any).from('events').select('*').eq('id', id).single(),
         (supabase as any).from('event_sessions').select('*').eq('event_id', id).eq('is_active', true).order('session_order'),
         (supabase as any).from('event_trainers').select('*, trainers(id, name, type)').eq('event_id', id),
         (supabase as any).from('event_enrollments').select('*, profiles(id, full_name, email)').eq('event_id', id),
         (supabase as any).from('attendance').select('*').eq('event_id', id),
         (supabase as any).from('profiles').select('id, full_name, email').order('full_name'),
-        (supabase as any).from('trainers').select('id, name, type').eq('is_active', true)
+        (supabase as any).from('trainers').select('id, name, type').eq('is_active', true),
+        (supabase as any).from('event_assessments').select('*, assessments(id, title, assessment_type)').eq('event_id', id),
+        (supabase as any).from('assessments').select('id, title, assessment_type').order('title')
       ]);
       setEvent(evRes.data);
       setSessions(sesRes.data || []);
@@ -69,6 +71,8 @@ const EventDetail = () => {
       setAttendance(atRes.data || []);
       setEmployees(empRes.data || []);
       setAllTrainers(trRes.data || []);
+      setEventAssessments(eaRes.data || []);
+      setAllAssessments(asRes.data || []);
     } catch (e) { console.error(e); } finally { setLoading(false); }
   };
 
