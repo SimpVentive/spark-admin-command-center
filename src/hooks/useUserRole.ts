@@ -34,10 +34,12 @@ export const useUserRole = () => {
     fetchRoles();
   }, [user]);
 
-  const isAdmin = roles.includes("admin");
+  const isSuperAdmin = roles.includes("super_admin");
+  const isAdmin = roles.includes("admin") || isSuperAdmin;
   const isManager = roles.includes("manager");
   const isTrainer = roles.includes("trainer");
+  const isLocationAdmin = roles.includes("location_admin");
   const hasRole = (role: AppRole) => roles.includes(role);
 
-  return { roles, isAdmin, isManager, isTrainer, hasRole, loading };
+  return { roles, isSuperAdmin, isAdmin, isManager, isTrainer, isLocationAdmin, hasRole, loading };
 };
