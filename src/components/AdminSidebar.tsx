@@ -262,7 +262,7 @@ export function AdminSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const [openGroups, setOpenGroups] = useState<string[]>([]);
-  const { isAdmin, isManager, loading } = useUserRole();
+  const { isAdmin, isManager, isSuperAdmin, loading } = useUserRole();
 
   const isActive = (path: string) => currentPath === path;
   
