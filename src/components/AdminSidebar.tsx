@@ -52,6 +52,7 @@ const navigationItems: NavItem[] = [
       { title: "Hierarchy Builder", url: "/organization/hierarchy" },
       { title: "Organization Chart", url: "/organization/chart" },
       { title: "Plants & Locations", url: "/organization/locations" },
+      { title: "Venues", url: "/organization/venues" },
       { title: "Job Roles", url: "/organization/roles" }
     ]
   },
