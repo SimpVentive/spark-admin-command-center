@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LibraryProvider } from "@/contexts/LibraryContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { UserRoleProvider } from "@/contexts/UserRoleContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminRoute from "@/components/AdminRoute";
@@ -197,6 +198,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
+        <UserRoleProvider>
         <CompanyProvider>
         <LibraryProvider>
           <Toaster />
@@ -377,6 +379,7 @@ const App = () => (
           </BrowserRouter>
         </LibraryProvider>
         </CompanyProvider>
+        </UserRoleProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
