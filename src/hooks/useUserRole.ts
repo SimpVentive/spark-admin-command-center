@@ -11,12 +11,13 @@ export type AppRole =
   | "location_admin";
 
 export const useUserRole = () => {
-  const { user, session, loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
     if (authLoading) {
       setLoading(true);
@@ -25,7 +26,7 @@ export const useUserRole = () => {
       };
     }
 
-    if (!user || !session) {
+    if (!user) {
       setRoles([]);
       setLoading(false);
       return () => {
@@ -36,11 +37,18 @@ export const useUserRole = () => {
     const fetchRoles = async () => {
       setLoading(true);
       try {
+        // Ensure we have a valid session before querying
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!isMounted) return;
+        
+        if (!sessionData.session) {
+          console.warn("[useUserRole] No active session, cannot fetch roles");
+          setLoading(false);
+          return;
+        }
+
         const [rolesResult, rpcResult] = await Promise.all([
-          supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", user.id),
+          supabase.from("user_roles").select("role").eq("user_id", user.id),
           supabase.rpc("is_super_admin"),
         ]);
 
@@ -67,35 +75,38 @@ export const useUserRole = () => {
           ])
         );
 
-        console.log("[useUserRole] detected roles:", normalizedRoles);
+        console.log("[useUserRole] detected roles:", normalizedRoles, "for user:", user.email);
         setRoles(normalizedRoles);
         setLoading(false);
 
-        // Retry once after a short delay if no roles detected (session may not be ready)
+        // Retry once if no roles detected (auth token might not have propagated yet)
         if (normalizedRoles.length === 0) {
-          console.log("[useUserRole] no roles found, retrying in 1s...");
-          setTimeout(async () => {
+          console.log("[useUserRole] no roles found, retrying in 1.5s...");
+          retryTimer = setTimeout(async () => {
             if (!isMounted) return;
-            const [retryRoles, retryRpc] = await Promise.all([
-              supabase.from("user_roles").select("role").eq("user_id", user.id),
-              supabase.rpc("is_super_admin"),
-            ]);
-            if (!isMounted) return;
-            const retryFetched = !retryRoles.error && retryRoles.data
-              ? retryRoles.data.map((r: { role: string }) => r.role as AppRole)
-              : [];
-            const retryIsSA = retryRpc.data === true;
-            const retryNormalized = Array.from(
-              new Set<AppRole>([
-                ...retryFetched,
-                ...(retryIsSA ? (["super_admin"] as AppRole[]) : []),
-              ])
-            );
-            console.log("[useUserRole] retry detected roles:", retryNormalized);
-            if (isMounted) {
-              setRoles(retryNormalized);
+            try {
+              const [retryRoles, retryRpc] = await Promise.all([
+                supabase.from("user_roles").select("role").eq("user_id", user.id),
+                supabase.rpc("is_super_admin"),
+              ]);
+              if (!isMounted) return;
+              const retryFetched =
+                !retryRoles.error && retryRoles.data
+                  ? retryRoles.data.map((r: { role: string }) => r.role as AppRole)
+                  : [];
+              const retryIsSA = retryRpc.data === true;
+              const retryNormalized = Array.from(
+                new Set<AppRole>([
+                  ...retryFetched,
+                  ...(retryIsSA ? (["super_admin"] as AppRole[]) : []),
+                ])
+              );
+              console.log("[useUserRole] retry detected roles:", retryNormalized);
+              if (isMounted) setRoles(retryNormalized);
+            } catch (e) {
+              console.error("[useUserRole] retry error:", e);
             }
-          }, 1000);
+          }, 1500);
         }
       } catch (err) {
         console.error("[useUserRole] unexpected error:", err);
@@ -107,8 +118,9 @@ export const useUserRole = () => {
 
     return () => {
       isMounted = false;
+      if (retryTimer) clearTimeout(retryTimer);
     };
-  }, [user, session, authLoading]);
+  }, [user?.id, authLoading]);
 
   const isSuperAdmin = roles.includes("super_admin");
   const isAdmin = roles.includes("admin") || isSuperAdmin;
