@@ -5,21 +5,31 @@ import { useAuth } from "@/contexts/AuthContext";
 export type AppRole = "super_admin" | "admin" | "manager" | "trainer" | "user" | "location_admin";
 
 export const useUserRole = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
 
+    if (authLoading) {
+      setLoading(true);
+      return () => {
+        isMounted = false;
+      };
+    }
+
     if (!user) {
       setRoles([]);
       setLoading(false);
-      return;
+      return () => {
+        isMounted = false;
+      };
     }
 
     const fetchRoles = async () => {
       setLoading(true);
+
       const [{ data, error }, { data: isSuperAdminRpc }] = await Promise.all([
         supabase
           .from("user_roles")
@@ -36,17 +46,10 @@ export const useUserRole = () => {
 
       const normalizedRoles = Array.from(new Set<AppRole>([
         ...fetchedRoles,
-        ...(isSuperAdminRpc ? ["super_admin"] as AppRole[] : []),
+        ...(isSuperAdminRpc ? (["super_admin"] as AppRole[]) : []),
       ]));
 
-      setRoles(normalizedRoles);
-
-      if (!error && data) {
-        setRoles(normalizedRoles);
-      } else {
-        setRoles(isSuperAdminRpc ? ["super_admin"] : []);
-      }
-
+      setRoles(!error && data ? normalizedRoles : isSuperAdminRpc ? ["super_admin"] : []);
       setLoading(false);
     };
 
@@ -55,7 +58,7 @@ export const useUserRole = () => {
     return () => {
       isMounted = false;
     };
-  }, [user]);
+  }, [user, authLoading]);
 
   const isSuperAdmin = roles.includes("super_admin");
   const isAdmin = roles.includes("admin") || isSuperAdmin;
