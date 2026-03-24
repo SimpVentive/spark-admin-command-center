@@ -18,6 +18,8 @@ export const useUserRole = () => {
   useEffect(() => {
     let isMounted = true;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
+    let sessionRetryCount = 0;
+    const MAX_SESSION_RETRIES = 8;
 
     if (authLoading) {
       setLoading(true);
@@ -42,10 +44,22 @@ export const useUserRole = () => {
         if (!isMounted) return;
         
         if (!sessionData.session) {
-          console.warn("[useUserRole] No active session, cannot fetch roles");
+          if (sessionRetryCount < MAX_SESSION_RETRIES) {
+            sessionRetryCount += 1;
+            console.warn(`[useUserRole] No active session yet, retrying (${sessionRetryCount}/${MAX_SESSION_RETRIES})`);
+            retryTimer = setTimeout(() => {
+              if (isMounted) fetchRoles();
+            }, 500);
+            return;
+          }
+
+          console.warn("[useUserRole] No active session after retries, cannot fetch roles");
+          setRoles([]);
           setLoading(false);
           return;
         }
+
+        sessionRetryCount = 0;
 
         const [rolesResult, rpcResult] = await Promise.all([
           supabase.from("user_roles").select("role").eq("user_id", user.id),
@@ -102,9 +116,13 @@ export const useUserRole = () => {
                 ])
               );
               console.log("[useUserRole] retry detected roles:", retryNormalized);
-              if (isMounted) setRoles(retryNormalized);
+              if (isMounted) {
+                setRoles(retryNormalized);
+                setLoading(false);
+              }
             } catch (e) {
               console.error("[useUserRole] retry error:", e);
+              if (isMounted) setLoading(false);
             }
           }, 1500);
         }

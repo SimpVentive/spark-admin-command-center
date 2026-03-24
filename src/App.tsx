@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LibraryProvider } from "@/contexts/LibraryContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
@@ -12,6 +12,7 @@ import AdminRoute from "@/components/AdminRoute";
 import SuperAdminRoute from "@/components/SuperAdminRoute";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminHeader from "@/components/AdminHeader";
+import RoleHome from "@/components/RoleHome";
 import Index from "./pages/Index";
 import Users from "./pages/Users";
 import Programs from "./pages/Programs";
@@ -208,7 +209,8 @@ const App = () => (
               <Route path="/reset-password" element={<ResetPassword />} />
               
               {/* Protected routes with layout */}
-              <Route path="/" element={<ProtectedRoute><AuthenticatedLayout><Index /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/" element={<ProtectedRoute><AuthenticatedLayout><RoleHome /></AuthenticatedLayout></ProtectedRoute>} />
+              <Route path="/super-admin" element={<ProtectedRoute><SuperAdminRoute><Navigate to="/super-admin/companies" replace /></SuperAdminRoute></ProtectedRoute>} />
               <Route path="/workflow-guide" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><WorkflowGuide /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/user-documentation" element={<ProtectedRoute><AuthenticatedLayout><UserDocumentation /></AuthenticatedLayout></ProtectedRoute>} />
               
