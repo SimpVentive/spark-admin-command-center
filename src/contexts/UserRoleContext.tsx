@@ -45,11 +45,11 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
     }
 
     const fetchRoles = async (attempt = 0) => {
-      setLoading(true);
+      if (attempt === 0) setLoading(true);
       try {
         const [rolesResult, rpcResult] = await Promise.all([
           supabase.from("user_roles").select("role").eq("user_id", user.id),
-          supabase.rpc("has_role", { _user_id: user.id, _role: "super_admin" }),
+          supabase.rpc("is_super_admin"),
         ]);
 
         if (!isMounted) return;
@@ -73,13 +73,14 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
 
         console.log("[UserRoleProvider] roles:", normalizedRoles, "user:", user.email);
         setRoles(normalizedRoles);
-        setLoading(false);
 
         if (normalizedRoles.length === 0 && attempt < MAX_ROLE_RETRIES) {
           console.log(`[UserRoleProvider] no roles yet, retrying ${attempt + 1}/${MAX_ROLE_RETRIES}...`);
           retryTimer = setTimeout(() => {
             if (isMounted) fetchRoles(attempt + 1);
           }, 800);
+        } else {
+          setLoading(false);
         }
       } catch (err) {
         console.error("[UserRoleProvider] error:", err);
