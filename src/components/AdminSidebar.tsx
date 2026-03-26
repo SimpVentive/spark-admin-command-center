@@ -43,35 +43,18 @@ interface NavItem {
 // Super Admin sees only global-level navigation
 const superAdminNavigationItems: NavItem[] = [
   { title: "Global Dashboard", url: "/", icon: BarChart3 },
-  {
-    title: "Company Management",
-    icon: Building2,
-    url: "/super-admin/companies",
-  },
-  {
-    title: "AI Report Builder",
-    icon: Zap,
-    url: "/super-admin/report-builder",
-  },
-  {
-    title: "Platform Reports",
-    icon: FileText,
-    subItems: [
-      { title: "Reports Center", url: "/reports" },
-      { title: "Audit Trail", url: "/reports/audit" },
-    ],
-  },
-  {
-    title: "Security & Compliance",
-    icon: Shield,
-    subItems: [
-      { title: "System Access", url: "/security/system-access" },
-      { title: "Audit Trail", url: "/security/audit-trail" },
-      { title: "Security Infrastructure", url: "/security/infrastructure" },
-    ],
-  },
-  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Company Management", url: "/super-admin/companies", icon: Building2 },
+  { title: "Subscription & Billing", url: "/super-admin/billing", icon: DollarSign },
+  { title: "License & Seat Mgmt", url: "/super-admin/licenses", icon: Users },
+  { title: "Feature Flags / Plans", url: "/super-admin/feature-flags", icon: Monitor },
   { separator: true },
+  { title: "AI Report Builder", url: "/super-admin/report-builder", icon: Zap },
+  { title: "Announcements", url: "/super-admin/announcements", icon: FileText },
+  { title: "Global Content Library", url: "/super-admin/content-library", icon: Library },
+  { title: "Tenant Onboarding", url: "/super-admin/onboarding", icon: GraduationCap },
+  { separator: true },
+  { title: "Security & Compliance", url: "/security", icon: Shield },
+  { title: "Settings", url: "/settings", icon: Settings },
   { title: "User Documentation", url: "/user-documentation", icon: FileText },
 ];
 
