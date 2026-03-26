@@ -3975,6 +3975,106 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_checklist: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          is_done: boolean
+          label: string
+          onboarding_id: string
+          sort_order: number
+          target_day: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          is_done?: boolean
+          label: string
+          onboarding_id: string
+          sort_order?: number
+          target_day?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          is_done?: boolean
+          label?: string
+          onboarding_id?: string
+          sort_order?: number
+          target_day?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_checklist_onboarding_id_fkey"
+            columns: ["onboarding_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_onboarding"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_checklist_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_default: boolean | null
+          name: string
+          target_days: number | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean | null
+          name: string
+          target_days?: number | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean | null
+          name?: string
+          target_days?: number | null
+        }
+        Relationships: []
+      }
+      onboarding_template_items: {
+        Row: {
+          id: string
+          label: string
+          sort_order: number
+          target_day: string | null
+          template_id: string
+        }
+        Insert: {
+          id?: string
+          label: string
+          sort_order?: number
+          target_day?: string | null
+          template_id: string
+        }
+        Update: {
+          id?: string
+          label?: string
+          sort_order?: number
+          target_day?: string | null
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_template_items_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_checklist_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizational_units: {
         Row: {
           company_id: string | null
@@ -4806,6 +4906,98 @@ export type Database = {
             columns: ["payment_id"]
             isOneToOne: false
             referencedRelation: "company_payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenant_onboarding: {
+        Row: {
+          add_to_pipeline: boolean | null
+          admin_designation: string | null
+          admin_email: string | null
+          admin_name: string | null
+          admin_role: string | null
+          auto_configure: boolean | null
+          billing_contact_email: string | null
+          billing_contact_name: string | null
+          billing_same_as_admin: boolean | null
+          company_id: string
+          content_template: string | null
+          contract_start_date: string | null
+          create_checklist: boolean | null
+          created_at: string
+          csm_assigned: string | null
+          days_in_pipeline: number
+          generate_invoice: boolean | null
+          id: string
+          internal_notes: string | null
+          onboarded_at: string | null
+          progress: number
+          send_invite: boolean | null
+          stage: string
+          updated_at: string
+          went_live_at: string | null
+        }
+        Insert: {
+          add_to_pipeline?: boolean | null
+          admin_designation?: string | null
+          admin_email?: string | null
+          admin_name?: string | null
+          admin_role?: string | null
+          auto_configure?: boolean | null
+          billing_contact_email?: string | null
+          billing_contact_name?: string | null
+          billing_same_as_admin?: boolean | null
+          company_id: string
+          content_template?: string | null
+          contract_start_date?: string | null
+          create_checklist?: boolean | null
+          created_at?: string
+          csm_assigned?: string | null
+          days_in_pipeline?: number
+          generate_invoice?: boolean | null
+          id?: string
+          internal_notes?: string | null
+          onboarded_at?: string | null
+          progress?: number
+          send_invite?: boolean | null
+          stage?: string
+          updated_at?: string
+          went_live_at?: string | null
+        }
+        Update: {
+          add_to_pipeline?: boolean | null
+          admin_designation?: string | null
+          admin_email?: string | null
+          admin_name?: string | null
+          admin_role?: string | null
+          auto_configure?: boolean | null
+          billing_contact_email?: string | null
+          billing_contact_name?: string | null
+          billing_same_as_admin?: boolean | null
+          company_id?: string
+          content_template?: string | null
+          contract_start_date?: string | null
+          create_checklist?: boolean | null
+          created_at?: string
+          csm_assigned?: string | null
+          days_in_pipeline?: number
+          generate_invoice?: boolean | null
+          id?: string
+          internal_notes?: string | null
+          onboarded_at?: string | null
+          progress?: number
+          send_invite?: boolean | null
+          stage?: string
+          updated_at?: string
+          went_live_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_onboarding_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
