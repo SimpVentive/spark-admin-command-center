@@ -2,10 +2,8 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { X, LogIn, Edit, Mail, Phone, AlertTriangle } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { X, LogIn, Edit, Mail, Phone, AlertTriangle, Lock, Plus, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -64,6 +62,70 @@ export default function CompanyDetailDrawer({ company, onClose, companyAdmins, e
     },
   });
 
+  // Bandwidth data for this company (last 8 months)
+  const { data: bandwidthHistory = [] } = useQuery({
+    queryKey: ["company-bandwidth-history", company?.id],
+    enabled: !!company?.id,
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("company_bandwidth")
+        .select("*")
+        .eq("company_id", company!.id)
+        .order("month_year", { ascending: false })
+        .limit(8);
+      if (error) throw error;
+      return (data || []).reverse();
+    },
+  });
+
+  // Content pool for this company
+  const { data: contentPool = [] } = useQuery({
+    queryKey: ["company-content-pool", company?.id],
+    enabled: !!company?.id,
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("company_content_pool")
+        .select("*, content_items(id, title, content_type, category_id, content_categories(name))")
+        .eq("company_id", company!.id)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  // Available content from global library (not in this company's pool)
+  const { data: availableContent = [] } = useQuery({
+    queryKey: ["available-content", company?.id],
+    enabled: !!company?.id && activeTab === "content",
+    queryFn: async () => {
+      const poolContentIds = contentPool.map((cp: any) => cp.content_id);
+      let query = (supabase as any).from("content_items").select("id, title, content_type, category_id, content_categories(name)").eq("is_active", true).limit(20);
+      if (poolContentIds.length > 0) {
+        // We'll filter client-side since .not('id', 'in', ...) can be tricky
+      }
+      const { data, error } = await query;
+      if (error) throw error;
+      const items = data || [];
+      return items.filter((item: any) => !poolContentIds.includes(item.id));
+    },
+  });
+
+  const pushContentMutation = useMutation({
+    mutationFn: async ({ contentId, poolType }: { contentId: string; poolType: string }) => {
+      const { error } = await (supabase as any).from("company_content_pool").insert({
+        company_id: company!.id,
+        content_id: contentId,
+        pool_type: poolType,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["company-content-pool", company?.id] });
+      queryClient.invalidateQueries({ queryKey: ["available-content", company?.id] });
+      toast({ title: "Content pushed to pool" });
+    },
+  });
+
   const toggleFeatureMutation = useMutation({
     mutationFn: async ({ featureKey, enabled }: { featureKey: string; enabled: boolean }) => {
       const { error } = await (supabase as any).from("company_features").upsert({
@@ -105,10 +167,17 @@ export default function CompanyDetailDrawer({ company, onClose, companyAdmins, e
     return Math.min(score, 100);
   })();
 
+  const currentBw = bandwidthHistory.length > 0 ? bandwidthHistory[bandwidthHistory.length - 1] : null;
+
+  const mandatoryContent = contentPool.filter((cp: any) => cp.pool_type === "mandatory");
+  const optionalContent = contentPool.filter((cp: any) => cp.pool_type === "optional");
+  const pulledContent = contentPool.filter((cp: any) => cp.pool_type === "pulled");
+
   const tabs = [
     { id: "overview", label: "Overview" },
     { id: "contacts", label: "People" },
     { id: "features", label: "Feature Access" },
+    { id: "content", label: "Content Pool" },
     { id: "bandwidth", label: "Bandwidth" },
     { id: "activity", label: "Activity" },
   ];
@@ -150,12 +219,12 @@ export default function CompanyDetailDrawer({ company, onClose, companyAdmins, e
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b px-5 shrink-0">
+        <div className="flex border-b px-5 shrink-0 overflow-x-auto">
           {tabs.map(t => (
             <button
               key={t.id}
               onClick={() => setActiveTab(t.id)}
-              className={`px-3 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              className={`px-3 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                 activeTab === t.id
                   ? "text-primary border-primary"
                   : "text-muted-foreground border-transparent hover:text-foreground"
@@ -171,12 +240,16 @@ export default function CompanyDetailDrawer({ company, onClose, companyAdmins, e
           {/* OVERVIEW TAB */}
           {activeTab === "overview" && (
             <div className="space-y-5">
-              {/* KPI Grid */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-muted/50 rounded-lg p-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Active Users</p>
                   <p className="text-lg font-bold font-mono">{empCount}</p>
                   <p className="text-[11px] text-muted-foreground">of {(payment as any)?.seats_included || Math.max(empCount, 20)} licensed</p>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Completions (30d)</p>
+                  <p className="text-lg font-bold font-mono">—</p>
+                  <p className="text-[11px] text-muted-foreground">Courses completed</p>
                 </div>
                 <div className="bg-muted/50 rounded-lg p-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">MRR</p>
@@ -188,14 +261,8 @@ export default function CompanyDetailDrawer({ company, onClose, companyAdmins, e
                   <p className="text-lg font-bold font-mono">{healthScore}</p>
                   <p className="text-[11px] text-muted-foreground">{healthScore >= 80 ? "Good standing" : healthScore >= 50 ? "Needs monitoring" : "Urgent attention"}</p>
                 </div>
-                <div className="bg-muted/50 rounded-lg p-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Completions (30d)</p>
-                  <p className="text-lg font-bold font-mono">—</p>
-                  <p className="text-[11px] text-muted-foreground">Courses completed</p>
-                </div>
               </div>
 
-              {/* Company Info */}
               <div>
                 <h3 className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground mb-2">Company Info</h3>
                 <div className="space-y-1.5 text-sm">
@@ -210,7 +277,6 @@ export default function CompanyDetailDrawer({ company, onClose, companyAdmins, e
                 </div>
               </div>
 
-              {/* Contract */}
               <div>
                 <h3 className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground mb-2">Contract</h3>
                 <div className="space-y-1.5 text-sm">
@@ -221,7 +287,6 @@ export default function CompanyDetailDrawer({ company, onClose, companyAdmins, e
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="flex gap-2 flex-wrap pt-2">
                 <Button variant="outline" size="sm" onClick={() => toast({ title: "Plan modal opened" })}>Change Plan</Button>
                 <Button variant="outline" size="sm" onClick={() => toast({ title: "Billing history opened" })}>Billing History</Button>
@@ -309,40 +374,151 @@ export default function CompanyDetailDrawer({ company, onClose, companyAdmins, e
             </div>
           )}
 
+          {/* CONTENT POOL TAB */}
+          {activeTab === "content" && (
+            <div className="space-y-5">
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-muted/50 rounded-lg p-3 text-center">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Total Items</p>
+                  <p className="text-lg font-bold font-mono">{contentPool.length}</p>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-3 text-center">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Avg Completion</p>
+                  <p className="text-lg font-bold font-mono text-emerald-600">
+                    {contentPool.length > 0 ? `${Math.round(contentPool.reduce((s: number, c: any) => s + (Number(c.completion_pct) || 0), 0) / contentPool.length)}%` : "—"}
+                  </p>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-3 text-center">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Overdue</p>
+                  <p className="text-lg font-bold font-mono text-red-600">—</p>
+                </div>
+              </div>
+
+              {/* Mandatory */}
+              <ContentSection
+                title="🔒 Mandatory"
+                subtitle="SA pushed · cannot be removed"
+                items={mandatoryContent}
+                variant="mandatory"
+              />
+
+              {/* Optional */}
+              <ContentSection
+                title="📋 Optional"
+                subtitle=""
+                items={optionalContent}
+                variant="optional"
+                onPush={() => toast({ title: "Push content dialog" })}
+              />
+
+              {/* Pulled by Company */}
+              <ContentSection
+                title="⬇ Pulled by Company"
+                subtitle="Self-added by company admin"
+                items={pulledContent}
+                variant="pulled"
+              />
+
+              {/* Available from Global Library */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <h3 className="text-sm font-semibold flex items-center gap-1.5">📚 Available from Global Library</h3>
+                    <p className="text-[11px] text-muted-foreground">Not yet in this company's pool</p>
+                  </div>
+                </div>
+                {availableContent.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-2">All content is already in the pool.</p>
+                ) : (
+                  <div className="space-y-1.5">
+                    {availableContent.slice(0, 5).map((item: any) => (
+                      <div key={item.id} className="border rounded-lg p-2.5 flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <BookOpen className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <p className="text-sm font-medium">{item.title}</p>
+                            <p className="text-[11px] text-muted-foreground">{item.content_categories?.name || item.content_type}</p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-6 text-[10px] gap-1"
+                          onClick={() => pushContentMutation.mutate({ contentId: item.id, poolType: "optional" })}
+                        >
+                          <Plus className="h-3 w-3" /> Push to Pool
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <Button variant="link" size="sm" className="mt-2 text-xs p-0 h-auto" onClick={() => toast({ title: "View all items in Global Library" })}>
+                  View all items in Global Library →
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* BANDWIDTH TAB */}
           {activeTab === "bandwidth" && (
             <div className="space-y-5">
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-muted/50 rounded-lg p-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">This Month</p>
-                  <p className="text-lg font-bold font-mono">—</p>
-                  <p className="text-[11px] text-muted-foreground">—</p>
+                  <p className="text-lg font-bold font-mono">{currentBw ? `${currentBw.bandwidth_used_gb}GB` : "—"}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {currentBw && Number(currentBw.bandwidth_quota_gb) > 0
+                      ? `${Math.round((Number(currentBw.bandwidth_used_gb) / Number(currentBw.bandwidth_quota_gb)) * 100)}% of quota`
+                      : "—"}
+                  </p>
                 </div>
                 <div className="bg-muted/50 rounded-lg p-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Monthly Quota</p>
-                  <p className="text-lg font-bold font-mono">—</p>
+                  <p className="text-lg font-bold font-mono">{currentBw ? `${currentBw.bandwidth_quota_gb}GB` : "—"}</p>
                   <p className="text-[11px] text-muted-foreground">—</p>
                 </div>
                 <div className="bg-muted/50 rounded-lg p-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">Video Streaming</p>
-                  <p className="text-lg font-bold font-mono">—</p>
+                  <p className="text-lg font-bold font-mono">{currentBw ? `${currentBw.bandwidth_video_gb}GB` : "—"}</p>
                   <p className="text-[11px] text-muted-foreground">Highest consumer</p>
                 </div>
                 <div className="bg-muted/50 rounded-lg p-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">SCORM / Downloads</p>
-                  <p className="text-lg font-bold font-mono">—</p>
+                  <p className="text-lg font-bold font-mono">{currentBw ? `${currentBw.bandwidth_scorm_gb}GB` : "—"}</p>
                   <p className="text-[11px] text-muted-foreground">Packages & files</p>
                 </div>
               </div>
 
+              {/* 8-Month Trend */}
+              {bandwidthHistory.length > 0 && (
+                <div>
+                  <h3 className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground mb-3">8-Month Trend (GB)</h3>
+                  <div className="flex items-end gap-1 h-20">
+                    {bandwidthHistory.map((bw: any, i: number) => {
+                      const maxBw = Math.max(...bandwidthHistory.map((b: any) => Number(b.bandwidth_used_gb) || 1));
+                      const pct = Math.max(5, (Number(bw.bandwidth_used_gb) / maxBw) * 100);
+                      return (
+                        <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                          <div className="w-full bg-primary/20 rounded-t relative" style={{ height: `${pct}%` }}>
+                            <div className="absolute inset-0 bg-primary rounded-t" style={{ height: "100%" }} />
+                          </div>
+                          <span className="text-[9px] text-muted-foreground">{bw.month_year?.slice(5)}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               <div>
                 <h3 className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground mb-2">Breakdown by Type</h3>
                 <div className="space-y-1.5 text-sm">
-                  <InfoRow label="🎥 Video Streaming" value="—" mono />
-                  <InfoRow label="📦 SCORM Packages" value="—" mono />
-                  <InfoRow label="📄 Document Downloads" value="—" mono />
-                  <InfoRow label="🖼 Image Assets" value="—" mono />
-                  <InfoRow label="🔌 API Calls" value="—" mono />
+                  <InfoRow label="🎥 Video Streaming" value={currentBw ? `${currentBw.bandwidth_video_gb}GB` : "—"} mono />
+                  <InfoRow label="📦 SCORM Packages" value={currentBw ? `${currentBw.bandwidth_scorm_gb}GB` : "—"} mono />
+                  <InfoRow label="📄 Document Downloads" value={currentBw ? `${currentBw.bandwidth_docs_gb}GB` : "—"} mono />
+                  <InfoRow label="🖼 Image Assets" value={currentBw ? `${currentBw.bandwidth_img_gb}GB` : "—"} mono />
+                  <InfoRow label="🔌 API Calls" value={currentBw ? `${currentBw.bandwidth_api_gb}GB` : "—"} mono />
                 </div>
               </div>
             </div>
@@ -379,6 +555,54 @@ function InfoRow({ label, value, mono }: { label: string; value: string; mono?: 
     <div className="flex justify-between items-center py-1.5 border-b last:border-0">
       <span className="text-muted-foreground">{label}</span>
       <span className={mono ? "font-mono font-medium" : ""}>{value}</span>
+    </div>
+  );
+}
+
+function ContentSection({ title, subtitle, items, variant, onPush }: {
+  title: string;
+  subtitle: string;
+  items: any[];
+  variant: "mandatory" | "optional" | "pulled";
+  onPush?: () => void;
+}) {
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5">
+            {title}
+            <Badge variant="secondary" className="text-[9px] h-4 ml-1">{items.length}</Badge>
+          </h3>
+          {subtitle && <p className="text-[11px] text-muted-foreground">{subtitle}</p>}
+        </div>
+        {variant === "optional" && onPush && (
+          <Button variant="outline" size="sm" className="h-6 text-[10px] gap-1" onClick={onPush}>
+            <Plus className="h-3 w-3" /> Push Content
+          </Button>
+        )}
+      </div>
+      {items.length === 0 ? (
+        <p className="text-[11px] text-muted-foreground py-2 italic">No items</p>
+      ) : (
+        <div className="space-y-1.5">
+          {items.map((cp: any) => (
+            <div key={cp.id} className="border rounded-lg p-2.5 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <BookOpen className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-sm font-medium">{cp.content_items?.title || "Untitled"}</p>
+                  <p className="text-[11px] text-muted-foreground">{cp.content_items?.content_categories?.name || cp.content_items?.content_type || "—"}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-medium">{Number(cp.completion_pct) || 0}%</span>
+                <Progress value={Number(cp.completion_pct) || 0} className="w-16 h-1.5" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

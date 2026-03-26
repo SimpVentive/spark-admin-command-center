@@ -7,9 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Progress } from "@/components/ui/progress";
 import {
   Building2, Plus, Search, CheckCircle, UserCheck, BarChart3,
-  Download, AlertTriangle, Eye, LogIn, ChevronLeft, ChevronRight
+  Download, AlertTriangle, Eye, LogIn, ChevronLeft, ChevronRight, Wifi
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -156,10 +157,30 @@ export default function CompanyManagement() {
     },
   });
 
+  // Fetch bandwidth (current month for all companies)
+  const { data: bandwidthData = [] } = useQuery({
+    queryKey: ["company-bandwidth"],
+    queryFn: async () => {
+      const now = new Date();
+      const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      const { data, error } = await (supabase as any)
+        .from("company_bandwidth")
+        .select("*")
+        .eq("month_year", currentMonth);
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
+  const getBandwidthForCompany = (companyId: string) => bandwidthData.find((b: any) => b.company_id === companyId);
   const getAdminsForCompany = (companyId: string) => companyAdmins.filter((a: any) => a.company_id === companyId);
   const getPaymentForCompany = (companyId: string) => payments.find((p: any) => p.company_id === companyId);
   const getFeaturesForCompany = (companyId: string) => (companyFeatures as any[]).filter((f: any) => f.company_id === companyId && f.is_enabled);
   const totalAdmins = companyAdmins.filter((a: any) => a.role === "admin").length;
+
+  // Total bandwidth across all companies
+  const totalBandwidthUsed = bandwidthData.reduce((sum: number, b: any) => sum + (Number(b.bandwidth_used_gb) || 0), 0);
+  const totalBandwidthQuota = bandwidthData.reduce((sum: number, b: any) => sum + (Number(b.bandwidth_quota_gb) || 0), 0);
 
   const getCompanyStatus = (company: Company) => {
     const payment = getPaymentForCompany(company.id);
@@ -215,9 +236,15 @@ export default function CompanyManagement() {
     if (sortBy === "seats") list.sort((a, b) => (employeeCounts[b.id] || 0) - (employeeCounts[a.id] || 0));
     if (sortBy === "health") list.sort((a, b) => getHealthScore(b.id) - getHealthScore(a.id));
     if (sortBy === "recent") list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    if (sortBy === "bandwidth") list.sort((a, b) => {
+      const bwA = Number(getBandwidthForCompany(a.id)?.bandwidth_used_gb) || 0;
+      const bwB = Number(getBandwidthForCompany(b.id)?.bandwidth_used_gb) || 0;
+      return bwB - bwA;
+    });
+    if (sortBy === "lastactive") list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
     return list;
-  }, [companies, searchTerm, activeTab, planFilter, industryFilter, sortBy, employeeCounts, payments, companyAdmins]);
+  }, [companies, searchTerm, activeTab, planFilter, industryFilter, sortBy, employeeCounts, payments, companyAdmins, bandwidthData]);
 
   const totalPages = Math.max(1, Math.ceil(filteredCompanies.length / PAGE_SIZE));
   const paginatedCompanies = filteredCompanies.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
@@ -311,13 +338,17 @@ export default function CompanyManagement() {
         <Card>
           <CardContent className="pt-5 pb-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-violet-50 dark:bg-violet-900/30">
-                <BarChart3 className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+              <div className="p-2 rounded-lg bg-red-50 dark:bg-red-900/30">
+                <Wifi className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
             </div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Seats</p>
-            <p className="text-3xl font-bold mt-1">{Object.values(employeeCounts).reduce((a: number, b: number) => a + b, 0)}</p>
-            <p className="text-xs text-muted-foreground mt-1">Across all tenants</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Bandwidth (Month)</p>
+            <p className="text-3xl font-bold mt-1">
+              {totalBandwidthUsed >= 1000 ? `${(totalBandwidthUsed / 1000).toFixed(1)}TB` : `${totalBandwidthUsed}GB`}
+            </p>
+            <p className="text-xs text-amber-600 mt-1">
+              {totalBandwidthQuota > 0 ? `${((totalBandwidthUsed / totalBandwidthQuota) * 100).toFixed(0)}% of ${totalBandwidthQuota >= 1000 ? `${(totalBandwidthQuota / 1000).toFixed(1)}TB` : `${totalBandwidthQuota}GB`} quota` : "No quota set"}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -367,6 +398,8 @@ export default function CompanyManagement() {
               <SelectItem value="name">Sort: Company Name</SelectItem>
               <SelectItem value="seats">Sort: Seats</SelectItem>
               <SelectItem value="health">Sort: Health Score</SelectItem>
+              <SelectItem value="bandwidth">Sort: Bandwidth</SelectItem>
+              <SelectItem value="lastactive">Sort: Last Active</SelectItem>
               <SelectItem value="recent">Sort: Recently Added</SelectItem>
             </SelectContent>
           </Select>
@@ -401,6 +434,7 @@ export default function CompanyManagement() {
                   <TableHead className="uppercase text-xs tracking-wider font-semibold">Status</TableHead>
                   <TableHead className="uppercase text-xs tracking-wider font-semibold">Seats</TableHead>
                   <TableHead className="uppercase text-xs tracking-wider font-semibold">Health</TableHead>
+                  <TableHead className="uppercase text-xs tracking-wider font-semibold">Bandwidth</TableHead>
                   <TableHead className="uppercase text-xs tracking-wider font-semibold">Features</TableHead>
                   <TableHead className="uppercase text-xs tracking-wider font-semibold">Last Active</TableHead>
                   <TableHead className="uppercase text-xs tracking-wider font-semibold">Actions</TableHead>
@@ -415,6 +449,10 @@ export default function CompanyManagement() {
                   const status = getCompanyStatus(company);
                   const featCount = getFeaturesForCompany(company.id).length;
                   const seatsAllowed = (payment as any)?.seats_included || Math.max(empCount, 20);
+                  const bw = getBandwidthForCompany(company.id);
+                  const bwUsed = Number(bw?.bandwidth_used_gb) || 0;
+                  const bwQuota = Number(bw?.bandwidth_quota_gb) || 0;
+                  const bwPct = bwQuota > 0 ? Math.round((bwUsed / bwQuota) * 100) : 0;
 
                   return (
                     <TableRow key={company.id} className="cursor-pointer" onClick={() => setDrawerCompany(company)}>
@@ -464,6 +502,24 @@ export default function CompanyManagement() {
                           </div>
                           <span className="text-xs font-medium">{healthLabel(healthScore)}</span>
                         </div>
+                      </TableCell>
+
+                      {/* Bandwidth */}
+                      <TableCell>
+                        {bwQuota > 0 ? (
+                          <div className="w-24">
+                            <div className="flex items-center justify-between text-[11px] mb-1">
+                              <span className="font-medium">{bwUsed}GB</span>
+                              <span className="text-muted-foreground">{bwQuota}GB</span>
+                            </div>
+                            <Progress
+                              value={bwPct}
+                              className={`h-1.5 ${bwPct > 90 ? "[&>div]:bg-red-500" : bwPct > 70 ? "[&>div]:bg-amber-500" : "[&>div]:bg-emerald-500"}`}
+                            />
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
                       </TableCell>
 
                       {/* Features */}
