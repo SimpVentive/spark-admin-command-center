@@ -805,6 +805,53 @@ export type Database = {
           },
         ]
       }
+      company_discounts: {
+        Row: {
+          company_id: string
+          created_at: string
+          created_by: string | null
+          discount_percent: number
+          discount_target: string
+          id: string
+          notes: string | null
+          reason: string | null
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          discount_percent?: number
+          discount_target?: string
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          discount_percent?: number
+          discount_target?: string
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_discounts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_features: {
         Row: {
           company_id: string
@@ -886,6 +933,7 @@ export type Database = {
       }
       company_payments: {
         Row: {
+          active_users: number | null
           amount: number | null
           billing_cycle: string | null
           block_id: string | null
@@ -898,6 +946,9 @@ export type Database = {
           created_at: string
           currency: string | null
           discount_percent: number | null
+          discount_reason: string | null
+          discount_target: string | null
+          discount_valid_until: string | null
           end_date: string | null
           id: string
           incremental_rate: number | null
@@ -914,6 +965,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          active_users?: number | null
           amount?: number | null
           billing_cycle?: string | null
           block_id?: string | null
@@ -926,6 +978,9 @@ export type Database = {
           created_at?: string
           currency?: string | null
           discount_percent?: number | null
+          discount_reason?: string | null
+          discount_target?: string | null
+          discount_valid_until?: string | null
           end_date?: string | null
           id?: string
           incremental_rate?: number | null
@@ -942,6 +997,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          active_users?: number | null
           amount?: number | null
           billing_cycle?: string | null
           block_id?: string | null
@@ -954,6 +1010,9 @@ export type Database = {
           created_at?: string
           currency?: string | null
           discount_percent?: number | null
+          discount_reason?: string | null
+          discount_target?: string | null
+          discount_valid_until?: string | null
           end_date?: string | null
           id?: string
           incremental_rate?: number | null
@@ -4462,6 +4521,83 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seat_blocks: {
+        Row: {
+          annual_rate_per_seat: number | null
+          created_at: string
+          id: string
+          incremental_rate: number
+          label: string
+          name: string
+          notes: string | null
+          rate_per_seat: number
+          seat_from: number
+          seat_to: number
+          updated_at: string
+        }
+        Insert: {
+          annual_rate_per_seat?: number | null
+          created_at?: string
+          id: string
+          incremental_rate?: number
+          label: string
+          name: string
+          notes?: string | null
+          rate_per_seat: number
+          seat_from: number
+          seat_to?: number
+          updated_at?: string
+        }
+        Update: {
+          annual_rate_per_seat?: number | null
+          created_at?: string
+          id?: string
+          incremental_rate?: number
+          label?: string
+          name?: string
+          notes?: string | null
+          rate_per_seat?: number
+          seat_from?: number
+          seat_to?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      seat_change_log: {
+        Row: {
+          change_type: string
+          company_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          performed_by: string | null
+        }
+        Insert: {
+          change_type: string
+          company_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          performed_by?: string | null
+        }
+        Update: {
+          change_type?: string
+          company_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          performed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seat_change_log_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]
