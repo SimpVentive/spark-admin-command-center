@@ -888,14 +888,20 @@ export type Database = {
         Row: {
           amount: number | null
           billing_cycle: string | null
+          block_id: string | null
+          block_seats: number | null
+          change_reason: string | null
           company_id: string
           contract_end_date: string | null
           contract_start_date: string | null
           contract_value: number | null
           created_at: string
           currency: string | null
+          discount_percent: number | null
           end_date: string | null
           id: string
+          incremental_rate: number | null
+          incremental_seats: number | null
           last_payment_date: string | null
           notes: string | null
           payment_method: string | null
@@ -910,14 +916,20 @@ export type Database = {
         Insert: {
           amount?: number | null
           billing_cycle?: string | null
+          block_id?: string | null
+          block_seats?: number | null
+          change_reason?: string | null
           company_id: string
           contract_end_date?: string | null
           contract_start_date?: string | null
           contract_value?: number | null
           created_at?: string
           currency?: string | null
+          discount_percent?: number | null
           end_date?: string | null
           id?: string
+          incremental_rate?: number | null
+          incremental_seats?: number | null
           last_payment_date?: string | null
           notes?: string | null
           payment_method?: string | null
@@ -932,14 +944,20 @@ export type Database = {
         Update: {
           amount?: number | null
           billing_cycle?: string | null
+          block_id?: string | null
+          block_seats?: number | null
+          change_reason?: string | null
           company_id?: string
           contract_end_date?: string | null
           contract_start_date?: string | null
           contract_value?: number | null
           created_at?: string
           currency?: string | null
+          discount_percent?: number | null
           end_date?: string | null
           id?: string
+          incremental_rate?: number | null
+          incremental_seats?: number | null
           last_payment_date?: string | null
           notes?: string | null
           payment_method?: string | null
@@ -4578,11 +4596,15 @@ export type Database = {
       subscription_invoices: {
         Row: {
           amount: number
+          block_charge: number | null
+          block_id: string | null
           company_id: string
           created_at: string
           currency: string
+          discount_amount: number | null
           due_date: string
           id: string
+          incremental_charge: number | null
           invoice_number: string
           notes: string | null
           payment_date: string | null
@@ -4595,11 +4617,15 @@ export type Database = {
         }
         Insert: {
           amount?: number
+          block_charge?: number | null
+          block_id?: string | null
           company_id: string
           created_at?: string
           currency?: string
+          discount_amount?: number | null
           due_date: string
           id?: string
+          incremental_charge?: number | null
           invoice_number: string
           notes?: string | null
           payment_date?: string | null
@@ -4612,11 +4638,15 @@ export type Database = {
         }
         Update: {
           amount?: number
+          block_charge?: number | null
+          block_id?: string | null
           company_id?: string
           created_at?: string
           currency?: string
+          discount_amount?: number | null
           due_date?: string
           id?: string
+          incremental_charge?: number | null
           invoice_number?: string
           notes?: string | null
           payment_date?: string | null
