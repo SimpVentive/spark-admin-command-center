@@ -24,51 +24,32 @@ interface UserRoleContextType {
 const UserRoleContext = createContext<UserRoleContextType | undefined>(undefined);
 
 export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, session, loading: authLoading } = useAuth();
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
-    let sessionRetryCount = 0;
-    const MAX_SESSION_RETRIES = 8;
+    const MAX_ROLE_RETRIES = 6;
 
     if (authLoading) {
       setLoading(true);
       return () => { isMounted = false; };
     }
 
-    if (!user) {
+    if (!user || !session) {
       setRoles([]);
       setLoading(false);
       return () => { isMounted = false; };
     }
 
-    const fetchRoles = async () => {
+    const fetchRoles = async (attempt = 0) => {
       setLoading(true);
       try {
-        const { data: sessionData } = await supabase.auth.getSession();
-        if (!isMounted) return;
-
-        if (!sessionData.session) {
-          if (sessionRetryCount < MAX_SESSION_RETRIES) {
-            sessionRetryCount += 1;
-            console.warn(`[UserRoleProvider] No session yet, retry ${sessionRetryCount}/${MAX_SESSION_RETRIES}`);
-            retryTimer = setTimeout(() => { if (isMounted) fetchRoles(); }, 500);
-            return;
-          }
-          console.warn("[UserRoleProvider] No session after retries");
-          setRoles([]);
-          setLoading(false);
-          return;
-        }
-
-        sessionRetryCount = 0;
-
         const [rolesResult, rpcResult] = await Promise.all([
           supabase.from("user_roles").select("role").eq("user_id", user.id),
-          supabase.rpc("is_super_admin"),
+          supabase.rpc("has_role", { _user_id: user.id, _role: "super_admin" }),
         ]);
 
         if (!isMounted) return;
@@ -94,37 +75,11 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
         setRoles(normalizedRoles);
         setLoading(false);
 
-        if (normalizedRoles.length === 0) {
-          console.log("[UserRoleProvider] no roles, retrying in 1.5s...");
-          retryTimer = setTimeout(async () => {
-            if (!isMounted) return;
-            try {
-              const [retryRoles, retryRpc] = await Promise.all([
-                supabase.from("user_roles").select("role").eq("user_id", user.id),
-                supabase.rpc("is_super_admin"),
-              ]);
-              if (!isMounted) return;
-              const retryFetched =
-                !retryRoles.error && retryRoles.data
-                  ? retryRoles.data.map((r: { role: string }) => r.role as AppRole)
-                  : [];
-              const retryIsSA = retryRpc.data === true;
-              const retryNormalized = Array.from(
-                new Set<AppRole>([
-                  ...retryFetched,
-                  ...(retryIsSA ? (["super_admin"] as AppRole[]) : []),
-                ])
-              );
-              console.log("[UserRoleProvider] retry roles:", retryNormalized);
-              if (isMounted) {
-                setRoles(retryNormalized);
-                setLoading(false);
-              }
-            } catch (e) {
-              console.error("[UserRoleProvider] retry error:", e);
-              if (isMounted) setLoading(false);
-            }
-          }, 1500);
+        if (normalizedRoles.length === 0 && attempt < MAX_ROLE_RETRIES) {
+          console.log(`[UserRoleProvider] no roles yet, retrying ${attempt + 1}/${MAX_ROLE_RETRIES}...`);
+          retryTimer = setTimeout(() => {
+            if (isMounted) fetchRoles(attempt + 1);
+          }, 800);
         }
       } catch (err) {
         console.error("[UserRoleProvider] error:", err);
@@ -138,7 +93,7 @@ export const UserRoleProvider = ({ children }: { children: ReactNode }) => {
       isMounted = false;
       if (retryTimer) clearTimeout(retryTimer);
     };
-  }, [user?.id, authLoading]);
+  }, [user?.id, session?.access_token, authLoading]);
 
   const isSuperAdmin = roles.includes("super_admin");
   const isAdmin = roles.includes("admin") || isSuperAdmin;
