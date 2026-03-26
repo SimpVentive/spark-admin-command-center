@@ -116,6 +116,7 @@ import SubscriptionBilling from "./pages/super-admin/SubscriptionBilling";
 import LicenseSeatManagement from "./pages/super-admin/LicenseSeatManagement";
 import TenantOnboarding from "./pages/super-admin/TenantOnboarding";
 import AnnouncementsComms from "./pages/super-admin/AnnouncementsComms";
+import GlobalContentLibrary from "./pages/super-admin/GlobalContentLibrary";
 
 // MOOC Integration
 import MOOC from "./pages/MOOC";
@@ -227,6 +228,7 @@ const App = () => (
               <Route path="/super-admin/licenses" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><LicenseSeatManagement /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
               <Route path="/super-admin/onboarding" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><TenantOnboarding /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
               <Route path="/super-admin/announcements" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><AnnouncementsComms /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
+              <Route path="/super-admin/content-library" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><GlobalContentLibrary /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
               {/* User Management - Admin Only */}
               <Route path="/users" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Users /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/users/add" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
