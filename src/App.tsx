@@ -112,6 +112,7 @@ import UserDocumentation from "./pages/UserDocumentation";
 // Super Admin
 import CompanyManagement from "./pages/super-admin/CompanyManagement";
 import AIReportBuilder from "./pages/super-admin/AIReportBuilder";
+import SubscriptionBilling from "./pages/super-admin/SubscriptionBilling";
 
 // MOOC Integration
 import MOOC from "./pages/MOOC";
@@ -219,7 +220,7 @@ const App = () => (
               {/* Super Admin */}
               <Route path="/super-admin/companies" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><CompanyManagement /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
               <Route path="/super-admin/report-builder" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><AIReportBuilder /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
-              
+              <Route path="/super-admin/billing" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><SubscriptionBilling /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
               {/* User Management - Admin Only */}
               <Route path="/users" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Users /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/users/add" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
