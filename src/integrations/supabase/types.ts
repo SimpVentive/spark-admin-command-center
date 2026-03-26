@@ -602,16 +602,29 @@ export type Database = {
           address_line_1: string | null
           address_line_2: string | null
           address_line_3: string | null
+          billing_contact_designation: string | null
+          billing_contact_email: string | null
+          billing_contact_name: string | null
+          billing_contact_phone: string | null
+          city: string | null
+          company_size: string | null
           contact_person_email: string | null
           contact_person_name: string | null
           contact_person_phone: string | null
           created_at: string
           created_by: string | null
+          csm_assigned: string | null
+          gstin: string | null
           id: string
+          industry: string | null
           is_active: boolean
           logo_url: string | null
           name: string
+          pin_code: string | null
+          primary_domain: string | null
           slug: string
+          state: string | null
+          subdomain: string | null
           updated_at: string
           website: string | null
         }
@@ -619,16 +632,29 @@ export type Database = {
           address_line_1?: string | null
           address_line_2?: string | null
           address_line_3?: string | null
+          billing_contact_designation?: string | null
+          billing_contact_email?: string | null
+          billing_contact_name?: string | null
+          billing_contact_phone?: string | null
+          city?: string | null
+          company_size?: string | null
           contact_person_email?: string | null
           contact_person_name?: string | null
           contact_person_phone?: string | null
           created_at?: string
           created_by?: string | null
+          csm_assigned?: string | null
+          gstin?: string | null
           id?: string
+          industry?: string | null
           is_active?: boolean
           logo_url?: string | null
           name: string
+          pin_code?: string | null
+          primary_domain?: string | null
           slug: string
+          state?: string | null
+          subdomain?: string | null
           updated_at?: string
           website?: string | null
         }
@@ -636,20 +662,71 @@ export type Database = {
           address_line_1?: string | null
           address_line_2?: string | null
           address_line_3?: string | null
+          billing_contact_designation?: string | null
+          billing_contact_email?: string | null
+          billing_contact_name?: string | null
+          billing_contact_phone?: string | null
+          city?: string | null
+          company_size?: string | null
           contact_person_email?: string | null
           contact_person_name?: string | null
           contact_person_phone?: string | null
           created_at?: string
           created_by?: string | null
+          csm_assigned?: string | null
+          gstin?: string | null
           id?: string
+          industry?: string | null
           is_active?: boolean
           logo_url?: string | null
           name?: string
+          pin_code?: string | null
+          primary_domain?: string | null
           slug?: string
+          state?: string | null
+          subdomain?: string | null
           updated_at?: string
           website?: string | null
         }
         Relationships: []
+      }
+      company_activity_log: {
+        Row: {
+          action: string
+          actor_email: string | null
+          company_id: string
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          company_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_activity_log_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       company_customizations: {
         Row: {
@@ -728,6 +805,41 @@ export type Database = {
           },
         ]
       }
+      company_features: {
+        Row: {
+          company_id: string
+          feature_key: string
+          id: string
+          is_addon: boolean
+          is_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          feature_key: string
+          id?: string
+          is_addon?: boolean
+          is_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          feature_key?: string
+          id?: string
+          is_addon?: boolean
+          is_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_features_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_notes: {
         Row: {
           author_id: string
@@ -777,6 +889,9 @@ export type Database = {
           amount: number | null
           billing_cycle: string | null
           company_id: string
+          contract_end_date: string | null
+          contract_start_date: string | null
+          contract_value: number | null
           created_at: string
           currency: string | null
           end_date: string | null
@@ -786,6 +901,7 @@ export type Database = {
           payment_method: string | null
           plan_name: string
           plan_status: string
+          po_number: string | null
           renewal_date: string | null
           seats_included: number | null
           start_date: string | null
@@ -795,6 +911,9 @@ export type Database = {
           amount?: number | null
           billing_cycle?: string | null
           company_id: string
+          contract_end_date?: string | null
+          contract_start_date?: string | null
+          contract_value?: number | null
           created_at?: string
           currency?: string | null
           end_date?: string | null
@@ -804,6 +923,7 @@ export type Database = {
           payment_method?: string | null
           plan_name?: string
           plan_status?: string
+          po_number?: string | null
           renewal_date?: string | null
           seats_included?: number | null
           start_date?: string | null
@@ -813,6 +933,9 @@ export type Database = {
           amount?: number | null
           billing_cycle?: string | null
           company_id?: string
+          contract_end_date?: string | null
+          contract_start_date?: string | null
+          contract_value?: number | null
           created_at?: string
           currency?: string | null
           end_date?: string | null
@@ -822,6 +945,7 @@ export type Database = {
           payment_method?: string | null
           plan_name?: string
           plan_status?: string
+          po_number?: string | null
           renewal_date?: string | null
           seats_included?: number | null
           start_date?: string | null
