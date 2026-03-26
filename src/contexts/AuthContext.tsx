@@ -16,13 +16,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const clearAuthState = () => {
+    setSession(null);
+    setUser(null);
+    if (typeof window !== 'undefined') {
+      Object.keys(localStorage)
+        .filter((key) => key.startsWith('sb-'))
+        .forEach((key) => localStorage.removeItem(key));
+      Object.keys(sessionStorage)
+        .filter((key) => key.startsWith('sb-'))
+        .forEach((key) => sessionStorage.removeItem(key));
+    }
+  };
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         // If token refresh failed, sign out to clear stale tokens
         if (event === 'TOKEN_REFRESHED' && !session) {
-          supabase.auth.signOut();
+          clearAuthState();
+          supabase.auth.signOut({ scope: 'global' });
+          return;
         }
         setSession(session);
         setUser(session?.user ?? null);
@@ -34,9 +49,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         // Clear stale/invalid session data
-        supabase.auth.signOut();
-        setSession(null);
-        setUser(null);
+        clearAuthState();
+        supabase.auth.signOut({ scope: 'global' });
       } else {
         setSession(session);
         setUser(session?.user ?? null);
@@ -48,7 +62,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    clearAuthState();
+    await supabase.auth.signOut({ scope: 'global' });
   };
 
   return (
