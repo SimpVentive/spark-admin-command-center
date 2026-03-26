@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Edit, Trash2, Search } from "lucide-react";
@@ -42,6 +43,7 @@ export default function ProgramManagementSection({
   compact = false 
 }: ProgramManagementSectionProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { scopeData } = useCompanyScope();
   const [programs, setPrograms] = useState<TrainingProgram[]>([]);
   const [filteredPrograms, setFilteredPrograms] = useState<TrainingProgram[]>([]);
