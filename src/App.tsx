@@ -112,6 +112,7 @@ import UserDocumentation from "./pages/UserDocumentation";
 // Super Admin
 import CompanyManagement from "./pages/super-admin/CompanyManagement";
 import AIReportBuilder from "./pages/super-admin/AIReportBuilder";
+import SubscriptionBilling from "./pages/super-admin/SubscriptionBilling";
 
 // MOOC Integration
 import MOOC from "./pages/MOOC";
