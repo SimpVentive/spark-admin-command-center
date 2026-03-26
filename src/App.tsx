@@ -222,6 +222,7 @@ const App = () => (
               <Route path="/super-admin/companies" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><CompanyManagement /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
               <Route path="/super-admin/report-builder" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><AIReportBuilder /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
               <Route path="/super-admin/billing" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><SubscriptionBilling /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
+              <Route path="/super-admin/licenses" element={<ProtectedRoute><SuperAdminRoute><AuthenticatedLayout><LicenseSeatManagement /></AuthenticatedLayout></SuperAdminRoute></ProtectedRoute>} />
               {/* User Management - Admin Only */}
               <Route path="/users" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><Users /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
               <Route path="/users/add" element={<ProtectedRoute><AdminRoute><AuthenticatedLayout><AddEmployee /></AuthenticatedLayout></AdminRoute></ProtectedRoute>} />
