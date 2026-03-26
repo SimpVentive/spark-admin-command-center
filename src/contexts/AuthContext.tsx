@@ -62,12 +62,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signOut = async () => {
+    // Clear local state FIRST to ensure UI updates immediately
+    clearAuthState();
+    setLoading(false);
+    
+    // Then try server signout (may fail if session already expired - that's OK)
     try {
-      await supabase.auth.signOut({ scope: 'global' });
-    } finally {
-      clearAuthState();
-      setLoading(false);
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch (e) {
+      console.warn('[Auth] signOut error (ignored):', e);
     }
+    
+    // Force reload to ensure clean state
+    window.location.href = '/auth';
   };
 
   return (
