@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Edit, Trash2, Search } from "lucide-react";
@@ -42,6 +43,7 @@ export default function ProgramManagementSection({
   compact = false 
 }: ProgramManagementSectionProps) {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const { scopeData } = useCompanyScope();
   const [programs, setPrograms] = useState<TrainingProgram[]>([]);
   const [filteredPrograms, setFilteredPrograms] = useState<TrainingProgram[]>([]);
@@ -270,205 +272,203 @@ export default function ProgramManagementSection({
             </p>
           </div>
           {showAddButton && (
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={resetForm}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Program
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>
-                    {editingProgram ? "Edit Program" : "Add New Program"}
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="title">Program Title *</Label>
-                      <Input
-                        id="title"
-                        value={formData.title}
-                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                        placeholder="Enter program title"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category *</Label>
-                      <Select 
-                        value={formData.category} 
-                        onValueChange={(value: any) => setFormData(prev => ({ ...prev, category: value }))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map(cat => (
-                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="objective">Program Objective</Label>
-                    <Textarea
-                      id="objective"
-                      value={formData.objective}
-                      onChange={(e) => setFormData(prev => ({ ...prev, objective: e.target.value }))}
-                      placeholder="Enter program objective and description"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="outline">Program Outline</Label>
-                    <Textarea
-                      id="outline"
-                      value={formData.outline}
-                      onChange={(e) => setFormData(prev => ({ ...prev, outline: e.target.value }))}
-                      placeholder="Enter detailed program outline and topics"
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="duration">Typical Duration (Days)</Label>
-                      <Input
-                        id="duration"
-                        type="number"
-                        value={formData.duration_days}
-                        onChange={(e) => setFormData(prev => ({ ...prev, duration_days: parseInt(e.target.value) || 0 }))}
-                        placeholder="e.g., 3"
-                        min="0"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="level">Level *</Label>
-                      <Select 
-                        value={formData.level} 
-                        onValueChange={(value: any) => setFormData(prev => ({ ...prev, level: value }))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {levels.map(level => (
-                            <SelectItem key={level} value={level}>{level}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="faculty">Faculty</Label>
-                      <Input
-                        id="faculty"
-                        value={formData.faculty}
-                        onChange={(e) => setFormData(prev => ({ ...prev, faculty: e.target.value }))}
-                        placeholder="Instructor name"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="venue">Venue</Label>
-                    <Input
-                      id="venue"
-                      value={formData.venue}
-                      onChange={(e) => setFormData(prev => ({ ...prev, venue: e.target.value }))}
-                      placeholder="Training venue or location"
-                    />
-                  </div>
-
-                  {/* Department, Location, Role Selection */}
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label>Departments</Label>
-                      <div className="max-h-32 overflow-y-auto border rounded p-2 space-y-1">
-                        {departments.map(dept => (
-                          <div key={dept} className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              id={`dept-${dept}`}
-                              checked={formData.departments.includes(dept)}
-                              onChange={(e) => {
-                                const newDepts = e.target.checked 
-                                  ? [...formData.departments, dept]
-                                  : formData.departments.filter(d => d !== dept);
-                                setFormData(prev => ({ ...prev, departments: newDepts }));
-                              }}
-                              className="rounded"
-                            />
-                            <label htmlFor={`dept-${dept}`} className="text-sm">{dept}</label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label>Locations</Label>
-                      <div className="max-h-32 overflow-y-auto border rounded p-2 space-y-1">
-                        {locations.map(location => (
-                          <div key={location} className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              id={`loc-${location}`}
-                              checked={formData.locations.includes(location)}
-                              onChange={(e) => {
-                                const newLocs = e.target.checked 
-                                  ? [...formData.locations, location]
-                                  : formData.locations.filter(l => l !== location);
-                                setFormData(prev => ({ ...prev, locations: newLocs }));
-                              }}
-                              className="rounded"
-                            />
-                            <label htmlFor={`loc-${location}`} className="text-sm">{location}</label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label>Roles</Label>
-                      <div className="max-h-32 overflow-y-auto border rounded p-2 space-y-1">
-                        {roles.map(role => (
-                          <div key={role} className="flex items-center space-x-2">
-                            <input
-                              type="checkbox"
-                              id={`role-${role}`}
-                              checked={formData.roles.includes(role)}
-                              onChange={(e) => {
-                                const newRoles = e.target.checked 
-                                  ? [...formData.roles, role]
-                                  : formData.roles.filter(r => r !== role);
-                                setFormData(prev => ({ ...prev, roles: newRoles }));
-                              }}
-                              className="rounded"
-                            />
-                            <label htmlFor={`role-${role}`} className="text-sm">{role}</label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleSubmit}>
-                      {editingProgram ? "Update" : "Create"} Program
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button onClick={() => navigate('/programs/create')}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Program
+            </Button>
           )}
         </div>
       )}
+
+      {/* Edit Dialog - only used for editing existing programs */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Program</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Program Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Enter program title"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="category">Category *</Label>
+                <Select 
+                  value={formData.category} 
+                  onValueChange={(value: any) => setFormData(prev => ({ ...prev, category: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map(cat => (
+                      <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="objective">Program Objective</Label>
+              <Textarea
+                id="objective"
+                value={formData.objective}
+                onChange={(e) => setFormData(prev => ({ ...prev, objective: e.target.value }))}
+                placeholder="Enter program objective and description"
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="outline">Program Outline</Label>
+              <Textarea
+                id="outline"
+                value={formData.outline}
+                onChange={(e) => setFormData(prev => ({ ...prev, outline: e.target.value }))}
+                placeholder="Enter detailed program outline and topics"
+                rows={4}
+              />
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="duration">Typical Duration (Days)</Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  value={formData.duration_days}
+                  onChange={(e) => setFormData(prev => ({ ...prev, duration_days: parseInt(e.target.value) || 0 }))}
+                  placeholder="e.g., 3"
+                  min="0"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="level">Level *</Label>
+                <Select 
+                  value={formData.level} 
+                  onValueChange={(value: any) => setFormData(prev => ({ ...prev, level: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {levels.map(level => (
+                      <SelectItem key={level} value={level}>{level}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="faculty">Faculty</Label>
+                <Input
+                  id="faculty"
+                  value={formData.faculty}
+                  onChange={(e) => setFormData(prev => ({ ...prev, faculty: e.target.value }))}
+                  placeholder="Instructor name"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="venue">Venue</Label>
+              <Input
+                id="venue"
+                value={formData.venue}
+                onChange={(e) => setFormData(prev => ({ ...prev, venue: e.target.value }))}
+                placeholder="Training venue or location"
+              />
+            </div>
+
+            {/* Department, Location, Role Selection */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Departments</Label>
+                <div className="max-h-32 overflow-y-auto border rounded p-2 space-y-1">
+                  {departments.map(dept => (
+                    <div key={dept} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`dept-${dept}`}
+                        checked={formData.departments.includes(dept)}
+                        onChange={(e) => {
+                          const newDepts = e.target.checked 
+                            ? [...formData.departments, dept]
+                            : formData.departments.filter(d => d !== dept);
+                          setFormData(prev => ({ ...prev, departments: newDepts }));
+                        }}
+                        className="rounded"
+                      />
+                      <label htmlFor={`dept-${dept}`} className="text-sm">{dept}</label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Locations</Label>
+                <div className="max-h-32 overflow-y-auto border rounded p-2 space-y-1">
+                  {locations.map(location => (
+                    <div key={location} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`loc-${location}`}
+                        checked={formData.locations.includes(location)}
+                        onChange={(e) => {
+                          const newLocs = e.target.checked 
+                            ? [...formData.locations, location]
+                            : formData.locations.filter(l => l !== location);
+                          setFormData(prev => ({ ...prev, locations: newLocs }));
+                        }}
+                        className="rounded"
+                      />
+                      <label htmlFor={`loc-${location}`} className="text-sm">{location}</label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Roles</Label>
+                <div className="max-h-32 overflow-y-auto border rounded p-2 space-y-1">
+                  {roles.map(role => (
+                    <div key={role} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`role-${role}`}
+                        checked={formData.roles.includes(role)}
+                        onChange={(e) => {
+                          const newRoles = e.target.checked 
+                            ? [...formData.roles, role]
+                            : formData.roles.filter(r => r !== role);
+                          setFormData(prev => ({ ...prev, roles: newRoles }));
+                        }}
+                        className="rounded"
+                      />
+                      <label htmlFor={`role-${role}`} className="text-sm">{role}</label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSubmit}>
+                Update Program
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Filters */}
       <Card>
