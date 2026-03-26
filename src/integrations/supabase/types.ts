@@ -59,6 +59,60 @@ export type Database = {
         }
         Relationships: []
       }
+      announcements: {
+        Row: {
+          also_email: boolean | null
+          audience: string
+          audience_company_ids: string[] | null
+          body: string
+          created_at: string
+          created_by: string | null
+          id: string
+          priority: string
+          show_from: string | null
+          show_until: string | null
+          status: string
+          title: string
+          type: string
+          updated_at: string
+          views: number
+        }
+        Insert: {
+          also_email?: boolean | null
+          audience?: string
+          audience_company_ids?: string[] | null
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          priority?: string
+          show_from?: string | null
+          show_until?: string | null
+          status?: string
+          title: string
+          type?: string
+          updated_at?: string
+          views?: number
+        }
+        Update: {
+          also_email?: boolean | null
+          audience?: string
+          audience_company_ids?: string[] | null
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          priority?: string
+          show_from?: string | null
+          show_until?: string | null
+          status?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          views?: number
+        }
+        Relationships: []
+      }
       assessment_questions: {
         Row: {
           assessment_id: string
@@ -1449,6 +1503,87 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_campaigns: {
+        Row: {
+          audience: string
+          audience_company_ids: string[] | null
+          body: string
+          created_at: string
+          created_by: string | null
+          id: string
+          open_rate: number | null
+          scheduled_at: string | null
+          sent_at: string | null
+          status: string
+          subject: string
+          template: string | null
+          updated_at: string
+        }
+        Insert: {
+          audience?: string
+          audience_company_ids?: string[] | null
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          open_rate?: number | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string
+          subject: string
+          template?: string | null
+          updated_at?: string
+        }
+        Update: {
+          audience?: string
+          audience_company_ids?: string[] | null
+          body?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          open_rate?: number | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          template?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          created_at: string
+          default_body: string | null
+          default_subject: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          default_body?: string | null
+          default_subject?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          default_body?: string | null
+          default_subject?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+        }
+        Relationships: []
       }
       employee_details: {
         Row: {
