@@ -786,6 +786,8 @@ export type Database = {
           payment_method: string | null
           plan_name: string
           plan_status: string
+          renewal_date: string | null
+          seats_included: number | null
           start_date: string | null
           updated_at: string
         }
@@ -802,6 +804,8 @@ export type Database = {
           payment_method?: string | null
           plan_name?: string
           plan_status?: string
+          renewal_date?: string | null
+          seats_included?: number | null
           start_date?: string | null
           updated_at?: string
         }
@@ -818,6 +822,8 @@ export type Database = {
           payment_method?: string | null
           plan_name?: string
           plan_status?: string
+          renewal_date?: string | null
+          seats_included?: number | null
           start_date?: string | null
           updated_at?: string
         }
@@ -4441,6 +4447,75 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_invoices: {
+        Row: {
+          amount: number
+          company_id: string
+          created_at: string
+          currency: string
+          due_date: string
+          id: string
+          invoice_number: string
+          notes: string | null
+          payment_date: string | null
+          payment_id: string | null
+          plan_name: string
+          status: string
+          tax_amount: number
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          company_id: string
+          created_at?: string
+          currency?: string
+          due_date: string
+          id?: string
+          invoice_number: string
+          notes?: string | null
+          payment_date?: string | null
+          payment_id?: string | null
+          plan_name?: string
+          status?: string
+          tax_amount?: number
+          total_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          company_id?: string
+          created_at?: string
+          currency?: string
+          due_date?: string
+          id?: string
+          invoice_number?: string
+          notes?: string | null
+          payment_date?: string | null
+          payment_id?: string | null
+          plan_name?: string
+          status?: string
+          tax_amount?: number
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_invoices_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_invoices_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "company_payments"
             referencedColumns: ["id"]
           },
         ]
