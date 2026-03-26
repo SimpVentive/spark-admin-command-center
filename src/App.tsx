@@ -113,6 +113,7 @@ import UserDocumentation from "./pages/UserDocumentation";
 import CompanyManagement from "./pages/super-admin/CompanyManagement";
 import AIReportBuilder from "./pages/super-admin/AIReportBuilder";
 import SubscriptionBilling from "./pages/super-admin/SubscriptionBilling";
+import LicenseSeatManagement from "./pages/super-admin/LicenseSeatManagement";
 
 // MOOC Integration
 import MOOC from "./pages/MOOC";
