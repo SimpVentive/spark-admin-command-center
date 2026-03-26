@@ -782,6 +782,107 @@ export type Database = {
           },
         ]
       }
+      company_bandwidth: {
+        Row: {
+          bandwidth_api_gb: number | null
+          bandwidth_docs_gb: number | null
+          bandwidth_img_gb: number | null
+          bandwidth_quota_gb: number | null
+          bandwidth_scorm_gb: number | null
+          bandwidth_used_gb: number | null
+          bandwidth_video_gb: number | null
+          company_id: string
+          created_at: string | null
+          id: string
+          month_year: string
+          updated_at: string | null
+        }
+        Insert: {
+          bandwidth_api_gb?: number | null
+          bandwidth_docs_gb?: number | null
+          bandwidth_img_gb?: number | null
+          bandwidth_quota_gb?: number | null
+          bandwidth_scorm_gb?: number | null
+          bandwidth_used_gb?: number | null
+          bandwidth_video_gb?: number | null
+          company_id: string
+          created_at?: string | null
+          id?: string
+          month_year: string
+          updated_at?: string | null
+        }
+        Update: {
+          bandwidth_api_gb?: number | null
+          bandwidth_docs_gb?: number | null
+          bandwidth_img_gb?: number | null
+          bandwidth_quota_gb?: number | null
+          bandwidth_scorm_gb?: number | null
+          bandwidth_used_gb?: number | null
+          bandwidth_video_gb?: number | null
+          company_id?: string
+          created_at?: string | null
+          id?: string
+          month_year?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_bandwidth_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_content_pool: {
+        Row: {
+          company_id: string
+          completion_pct: number | null
+          content_id: string
+          created_at: string | null
+          id: string
+          pool_type: string
+          pushed_by: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          company_id: string
+          completion_pct?: number | null
+          content_id: string
+          created_at?: string | null
+          id?: string
+          pool_type: string
+          pushed_by?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string
+          completion_pct?: number | null
+          content_id?: string
+          created_at?: string | null
+          id?: string
+          pool_type?: string
+          pushed_by?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_content_pool_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_content_pool_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_customizations: {
         Row: {
           ai_affected_modules: string[] | null
