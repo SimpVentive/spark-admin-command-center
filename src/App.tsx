@@ -115,6 +115,7 @@ import AIReportBuilder from "./pages/super-admin/AIReportBuilder";
 import SubscriptionBilling from "./pages/super-admin/SubscriptionBilling";
 import LicenseSeatManagement from "./pages/super-admin/LicenseSeatManagement";
 import TenantOnboarding from "./pages/super-admin/TenantOnboarding";
+import AnnouncementsComms from "./pages/super-admin/AnnouncementsComms";
 
 // MOOC Integration
 import MOOC from "./pages/MOOC";
