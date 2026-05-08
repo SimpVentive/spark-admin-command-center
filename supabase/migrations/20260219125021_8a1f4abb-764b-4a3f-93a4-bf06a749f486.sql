@@ -11,7 +11,7 @@ ALTER TABLE public.profiles
   ADD COLUMN IF NOT EXISTS work_type text;
 
 -- Create employee_details table for extended/sensitive info
-CREATE TABLE public.employee_details (
+CREATE TABLE IF NOT EXISTS public.employee_details (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   profile_id uuid NOT NULL UNIQUE REFERENCES public.profiles(id) ON DELETE CASCADE,
   date_of_birth date,
@@ -38,21 +38,25 @@ CREATE TABLE public.employee_details (
 ALTER TABLE public.employee_details ENABLE ROW LEVEL SECURITY;
 
 -- Admins can manage all employee details
+DROP POLICY IF EXISTS "Admins can manage employee details" ON public.employee_details;
 CREATE POLICY "Admins can manage employee details"
   ON public.employee_details FOR ALL
   USING (has_role(auth.uid(), 'admin'::app_role));
 
 -- Users can view their own details
+DROP POLICY IF EXISTS "Users can view own employee details" ON public.employee_details;
 CREATE POLICY "Users can view own employee details"
   ON public.employee_details FOR SELECT
   USING (auth.uid() = profile_id);
 
 -- Users can update their own details
+DROP POLICY IF EXISTS "Users can update own employee details" ON public.employee_details;
 CREATE POLICY "Users can update own employee details"
   ON public.employee_details FOR UPDATE
   USING (auth.uid() = profile_id);
 
 -- Trigger for updated_at
+DROP TRIGGER IF EXISTS update_employee_details_updated_at ON public.employee_details;
 CREATE TRIGGER update_employee_details_updated_at
   BEFORE UPDATE ON public.employee_details
   FOR EACH ROW

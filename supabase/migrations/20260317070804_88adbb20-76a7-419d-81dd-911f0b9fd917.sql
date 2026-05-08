@@ -27,6 +27,7 @@ ALTER TABLE public.user_roles ADD COLUMN IF NOT EXISTS company_id uuid REFERENCE
 ALTER TABLE public.companies ENABLE ROW LEVEL SECURITY;
 
 -- 7. Super admins can do everything on companies
+DROP POLICY IF EXISTS "Super admins can manage all companies" ON public.companies;
 CREATE POLICY "Super admins can manage all companies"
   ON public.companies FOR ALL
   TO authenticated
@@ -34,6 +35,7 @@ CREATE POLICY "Super admins can manage all companies"
   WITH CHECK (public.has_role(auth.uid(), 'super_admin'));
 
 -- 8. Company admins can view their own company
+DROP POLICY IF EXISTS "Company admins can view own company" ON public.companies;
 CREATE POLICY "Company admins can view own company"
   ON public.companies FOR SELECT
   TO authenticated
@@ -45,6 +47,7 @@ CREATE POLICY "Company admins can view own company"
   );
 
 -- 9. Updated_at trigger for companies
+DROP TRIGGER IF EXISTS update_companies_updated_at ON public.companies;
 CREATE TRIGGER update_companies_updated_at
   BEFORE UPDATE ON public.companies
   FOR EACH ROW

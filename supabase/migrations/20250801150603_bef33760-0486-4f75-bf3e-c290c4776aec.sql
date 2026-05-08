@@ -1,5 +1,5 @@
 -- Create programs table with categories
-CREATE TABLE public.training_programs (
+CREATE TABLE IF NOT EXISTS public.training_programs (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   title TEXT NOT NULL,
   description TEXT,
@@ -19,12 +19,15 @@ CREATE TABLE public.training_programs (
 -- Enable Row Level Security
 ALTER TABLE public.training_programs ENABLE ROW LEVEL SECURITY;
 
+
 -- Create policies for training programs
+DROP POLICY IF EXISTS "Anyone can view training programs" ON public.training_programs;
 CREATE POLICY "Anyone can view training programs" 
 ON public.training_programs 
 FOR SELECT 
 USING (is_active = true);
 
+DROP POLICY IF EXISTS "Admins can manage training programs" ON public.training_programs;
 CREATE POLICY "Admins can manage training programs" 
 ON public.training_programs 
 FOR ALL 
@@ -40,6 +43,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create trigger for automatic timestamp updates
+DROP TRIGGER IF EXISTS update_training_programs_updated_at ON public.training_programs;
 CREATE TRIGGER update_training_programs_updated_at
 BEFORE UPDATE ON public.training_programs
 FOR EACH ROW

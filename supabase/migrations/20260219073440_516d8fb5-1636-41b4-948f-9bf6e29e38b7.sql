@@ -11,6 +11,7 @@ FROM public.question_bank
 WHERE is_active = true;
 
 -- Re-create SELECT policy for authenticated users only (no answers)
+DROP POLICY IF EXISTS "Authenticated users can view active questions" ON public.question_bank;
 CREATE POLICY "Authenticated users can view active questions"
 ON public.question_bank
 FOR SELECT
@@ -28,6 +29,7 @@ WHERE EXISTS (
   WHERE id = question_options.question_id AND is_active = true
 );
 
+DROP POLICY IF EXISTS "Authenticated users can view question options" ON public.question_options;
 CREATE POLICY "Authenticated users can view question options"
 ON public.question_options
 FOR SELECT
@@ -42,6 +44,7 @@ USING (
 -- 3. Fix trainers: restrict to authenticated users only
 DROP POLICY IF EXISTS "Anyone can view active trainers" ON public.trainers;
 
+DROP POLICY IF EXISTS "Authenticated users can view active trainers" ON public.trainers;
 CREATE POLICY "Authenticated users can view active trainers"
 ON public.trainers
 FOR SELECT
@@ -50,7 +53,7 @@ USING (is_active = true);
 
 -- 4. Fix MOOC providers: restrict to authenticated users, hide credentials
 DROP POLICY IF EXISTS "Users can view active MOOC providers" ON public.mooc_providers;
-
+DROP POLICY IF EXISTS "Anyone can view active MOOC providers" ON public.mooc_providers;
 CREATE POLICY "Authenticated users can view connected MOOC providers"
 ON public.mooc_providers
 FOR SELECT

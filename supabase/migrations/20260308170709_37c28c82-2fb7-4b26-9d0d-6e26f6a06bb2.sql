@@ -6,9 +6,9 @@ INSERT INTO user_roles (user_id, role) VALUES
 ON CONFLICT (user_id, role) DO NOTHING;
 
 -- More program enrollments for test user
-INSERT INTO user_program_enrollments (id, user_id, program_id, session_id, enrollment_type, status, attendance_confirmed) VALUES
-  ('e1000001-0000-4000-8000-000000000005', '838bd8f1-817d-4926-969b-ffa11ddcadcd', '4d939fb4-dab9-40f6-b58f-9045f2577837', 'f85235e6-1c2d-4f96-8d72-e8f680f2f070', 'self-enrolled', 'enrolled', true),
-  ('e1000001-0000-4000-8000-000000000006', '838bd8f1-817d-4926-969b-ffa11ddcadcd', '7b8d4ad4-b787-435d-beee-322896ffcb02', '2861dc99-b1ef-488c-b138-038977a01857', 'assigned', 'completed', true)
+INSERT INTO user_program_enrollments (id, user_id, program_id,  enrollment_type, status, attendance_confirmed) VALUES
+  ('e1000001-0000-4000-8000-000000000005', '838bd8f1-817d-4926-969b-ffa11ddcadcd', '550e8400-e29b-41d4-a716-446655440003', 'self-enrolled', 'enrolled', true),
+  ('e1000001-0000-4000-8000-000000000006', '838bd8f1-817d-4926-969b-ffa11ddcadcd', '550e8400-e29b-41d4-a716-446655440004', 'assigned', 'completed', true)
 ON CONFLICT DO NOTHING;
 
 -- User Learning Path Enrollments

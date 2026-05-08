@@ -10,7 +10,7 @@ ALTER TABLE public.companies
   ADD COLUMN IF NOT EXISTS contact_person_phone text;
 
 -- Company customization change requests
-CREATE TABLE public.company_customizations (
+CREATE TABLE IF NOT EXISTS public.company_customizations (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id uuid REFERENCES public.companies(id) ON DELETE CASCADE NOT NULL,
   title text NOT NULL,
@@ -35,6 +35,7 @@ CREATE TABLE public.company_customizations (
 
 ALTER TABLE public.company_customizations ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Super admins manage customizations" ON public.company_customizations;
 CREATE POLICY "Super admins manage customizations"
   ON public.company_customizations
   FOR ALL
@@ -43,6 +44,7 @@ CREATE POLICY "Super admins manage customizations"
   WITH CHECK (public.is_super_admin());
 
 -- Trigger for updated_at
+DROP TRIGGER IF EXISTS update_company_customizations_updated_at ON public.company_customizations;
 CREATE TRIGGER update_company_customizations_updated_at
   BEFORE UPDATE ON public.company_customizations
   FOR EACH ROW

@@ -7,7 +7,7 @@ CREATE TYPE public.audit_action AS ENUM (
 );
 
 -- Create immutable audit trail table (CFR 21 Part 11 compliant)
-CREATE TABLE public.audit_logs (
+CREATE TABLE IF NOT EXISTS public.audit_logs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Timestamp in UTC (immutable)
@@ -48,16 +48,17 @@ CREATE TABLE public.audit_logs (
 );
 
 -- Create index for efficient querying
-CREATE INDEX idx_audit_logs_created_at ON public.audit_logs(created_at DESC);
-CREATE INDEX idx_audit_logs_user_id ON public.audit_logs(user_id);
-CREATE INDEX idx_audit_logs_table_name ON public.audit_logs(table_name);
-CREATE INDEX idx_audit_logs_action ON public.audit_logs(action);
-CREATE INDEX idx_audit_logs_record_id ON public.audit_logs(record_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON public.audit_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON public.audit_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_table_name ON public.audit_logs(table_name);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON public.audit_logs(action);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_record_id ON public.audit_logs(record_id);
 
 -- Enable RLS
 ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 
 -- Policy: Anyone authenticated can INSERT audit logs
+DROP POLICY IF EXISTS "Authenticated users can insert audit logs" ON public.audit_logs;
 CREATE POLICY "Authenticated users can insert audit logs"
 ON public.audit_logs
 FOR INSERT
@@ -65,6 +66,7 @@ TO authenticated
 WITH CHECK (auth.uid() = user_id);
 
 -- Policy: Only admins can view all audit logs
+DROP POLICY IF EXISTS "Admins can view all audit logs" ON public.audit_logs;
 CREATE POLICY "Admins can view all audit logs"
 ON public.audit_logs
 FOR SELECT
@@ -72,6 +74,7 @@ TO authenticated
 USING (public.has_role(auth.uid(), 'admin'));
 
 -- Policy: Users can view their own audit logs
+DROP POLICY IF EXISTS "Users can view their own audit logs" ON public.audit_logs;
 CREATE POLICY "Users can view their own audit logs"
 ON public.audit_logs
 FOR SELECT
@@ -110,6 +113,7 @@ END;
 $$;
 
 -- Trigger to auto-generate integrity hash on insert
+DROP TRIGGER IF EXISTS audit_logs_generate_hash ON public.audit_logs;
 CREATE TRIGGER audit_logs_generate_hash
 BEFORE INSERT ON public.audit_logs
 FOR EACH ROW
@@ -128,12 +132,14 @@ END;
 $$;
 
 -- Trigger to prevent UPDATE
+DROP TRIGGER IF EXISTS audit_logs_prevent_update ON public.audit_logs;
 CREATE TRIGGER audit_logs_prevent_update
 BEFORE UPDATE ON public.audit_logs
 FOR EACH ROW
 EXECUTE FUNCTION public.prevent_audit_modification();
 
 -- Trigger to prevent DELETE
+DROP TRIGGER IF EXISTS audit_logs_prevent_delete ON public.audit_logs;
 CREATE TRIGGER audit_logs_prevent_delete
 BEFORE DELETE ON public.audit_logs
 FOR EACH ROW

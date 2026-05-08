@@ -1,3 +1,214 @@
+-- =====================================================
+-- SAMPLE ORGANIZATIONAL UNITS
+-- =====================================================
+
+INSERT INTO public.organizational_units (
+  id,
+  name,
+  description,
+  level,
+  parent_id,
+  manager_name,
+  employee_count,
+  position_x,
+  position_y,
+  is_active
+)
+VALUES
+
+-- Organization Root
+(
+  '11111111-1111-1111-1111-111111111111'::uuid,
+  'Simpventive Technologies',
+  'Main organization entity',
+  'organization',
+  NULL,
+  'Chandra Mouli',
+  250,
+  0,
+  0,
+  true
+),
+
+-- Departments
+(
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'Engineering',
+  'Software development and technical operations',
+  'department',
+  '11111111-1111-1111-1111-111111111111'::uuid,
+  'Srikanth Math',
+  80,
+  -200,
+  150,
+  true
+),
+
+(
+  '33333333-3333-3333-3333-333333333333'::uuid,
+  'Marketing',
+  'Branding and customer acquisition',
+  'department',
+  '11111111-1111-1111-1111-111111111111'::uuid,
+  'Jessica Williams',
+  35,
+  0,
+  150,
+  true
+),
+
+(
+  '44444444-4444-4444-4444-444444444444'::uuid,
+  'Sales',
+  'Sales and customer relationships',
+  'department',
+  '11111111-1111-1111-1111-111111111111'::uuid,
+  'David Brown',
+  40,
+  200,
+  150,
+  true
+),
+
+(
+  '55555555-5555-5555-5555-555555555555'::uuid,
+  'Human Resources',
+  'Talent and people operations',
+  'department',
+  '11111111-1111-1111-1111-111111111111'::uuid,
+  'Lisa Davis',
+  20,
+  400,
+  150,
+  true
+),
+
+-- Engineering Teams
+(
+  '66666666-6666-6666-6666-666666666666'::uuid,
+  'Frontend Team',
+  'Frontend web and mobile development',
+  'team',
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'Mike Chen',
+  18,
+  -300,
+  300,
+  true
+),
+
+(
+  '77777777-7777-7777-7777-777777777777'::uuid,
+  'Backend Team',
+  'Backend APIs and database systems',
+  'team',
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'Robert Miller',
+  22,
+  -100,
+  300,
+  true
+),
+
+(
+  '88888888-8888-8888-8888-888888888888'::uuid,
+  'DevOps Team',
+  'Infrastructure and deployment automation',
+  'team',
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'Suresh Reddy',
+  10,
+  -200,
+  450,
+  true
+);
+
+
+
+-- =====================================================
+-- SAMPLE JOB ROLES
+-- =====================================================
+
+INSERT INTO public.job_roles (
+  id,
+  title,
+  description,
+  department_id,
+  level,
+  skill_requirements,
+  is_active
+)
+VALUES
+
+(
+  '3f0400b4-87f1-480f-ae89-5a1a33c0f12e'::uuid,
+  'Senior Software Engineer',
+  'Responsible for backend systems, architecture, and mentoring junior engineers.',
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'senior',
+  '[
+    {"skill":"PostgreSQL","level":"advanced"},
+    {"skill":"Node.js","level":"advanced"},
+    {"skill":"System Design","level":"advanced"}
+  ]'::jsonb,
+  true
+),
+
+(
+  '8fe54d9b-4e37-46ed-a513-9b409093b613'::uuid,
+  'Frontend Developer',
+  'Develops responsive web and mobile applications.',
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'mid',
+  '[
+    {"skill":"React","level":"advanced"},
+    {"skill":"TypeScript","level":"intermediate"},
+    {"skill":"UI/UX","level":"intermediate"}
+  ]'::jsonb,
+  true
+),
+
+(
+  '53441f79-088e-4145-8bb9-98b6635b3aee'::uuid,
+  'Sales Manager',
+  'Leads sales strategy and customer acquisition initiatives.',
+  '44444444-4444-4444-4444-444444444444'::uuid,
+  'manager',
+  '[
+    {"skill":"Negotiation","level":"advanced"},
+    {"skill":"CRM","level":"advanced"},
+    {"skill":"Leadership","level":"advanced"}
+  ]'::jsonb,
+  true
+),
+
+(
+  '99999999-9999-9999-9999-999999999999'::uuid,
+  'HR Business Partner',
+  'Handles recruitment, employee engagement, and HR operations.',
+  '55555555-5555-5555-5555-555555555555'::uuid,
+  'mid',
+  '[
+    {"skill":"Recruitment","level":"advanced"},
+    {"skill":"Employee Relations","level":"intermediate"},
+    {"skill":"Compliance","level":"intermediate"}
+  ]'::jsonb,
+  true
+),
+
+(
+  'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::uuid,
+  'DevOps Engineer',
+  'Manages CI/CD pipelines, cloud infrastructure, and monitoring.',
+  '22222222-2222-2222-2222-222222222222'::uuid,
+  'senior',
+  '[
+    {"skill":"Docker","level":"advanced"},
+    {"skill":"Kubernetes","level":"advanced"},
+    {"skill":"AWS","level":"advanced"}
+  ]'::jsonb,
+  true
+);
 
 -- Seed Departments
 INSERT INTO departments (name, manager_name, location, employee_count, is_active) VALUES
@@ -56,19 +267,19 @@ INSERT INTO laser_cause_interventions (cause_id, intervention_type, micro_interv
 
 -- Performance Signals
 INSERT INTO laser_performance_signals (employee_id, kpi_id, kpi_value, measurement_date, source) VALUES
-('f3584467-1f80-494e-b528-4a3cca9a1130', 'a1b2c3d4-1111-4000-8000-000000000002', 3.5, '2026-02-08', 'github_integration'),
-('f3584467-1f80-494e-b528-4a3cca9a1130', 'a1b2c3d4-1111-4000-8000-000000000002', 4.2, '2026-02-15', 'github_integration'),
-('f3584467-1f80-494e-b528-4a3cca9a1130', 'a1b2c3d4-1111-4000-8000-000000000002', 7.8, '2026-02-22', 'github_integration'),
-('f3584467-1f80-494e-b528-4a3cca9a1130', 'a1b2c3d4-1111-4000-8000-000000000002', 8.5, '2026-03-01', 'github_integration'),
-('cb73e570-7b56-4c5b-ae52-144fff48a868', 'a1b2c3d4-1111-4000-8000-000000000006', 28, '2026-02-08', 'jira_integration'),
-('cb73e570-7b56-4c5b-ae52-144fff48a868', 'a1b2c3d4-1111-4000-8000-000000000006', 22, '2026-02-22', 'jira_integration'),
-('cb73e570-7b56-4c5b-ae52-144fff48a868', 'a1b2c3d4-1111-4000-8000-000000000006', 14, '2026-03-01', 'jira_integration'),
-('75a8f032-2e5e-4a0b-a515-1e0ea93ad900', 'a1b2c3d4-1111-4000-8000-000000000001', 22, '2026-02-08', 'crm_integration'),
-('75a8f032-2e5e-4a0b-a515-1e0ea93ad900', 'a1b2c3d4-1111-4000-8000-000000000001', 18, '2026-02-15', 'crm_integration'),
-('75a8f032-2e5e-4a0b-a515-1e0ea93ad900', 'a1b2c3d4-1111-4000-8000-000000000001', 11, '2026-03-01', 'crm_integration'),
-('00980e80-dd69-437e-8567-c993798ad7eb', 'a1b2c3d4-1111-4000-8000-000000000004', 2.5, '2026-02-08', 'jira_integration'),
-('00980e80-dd69-437e-8567-c993798ad7eb', 'a1b2c3d4-1111-4000-8000-000000000004', 3.0, '2026-02-22', 'jira_integration'),
-('00980e80-dd69-437e-8567-c993798ad7eb', 'a1b2c3d4-1111-4000-8000-000000000004', 6.5, '2026-03-01', 'jira_integration');
+('550e8400-e29b-41d4-a716-446655440010'::uuid, 'a1b2c3d4-1111-4000-8000-000000000002', 3.5, '2026-02-08', 'github_integration'),
+('550e8400-e29b-41d4-a716-446655440010'::uuid, 'a1b2c3d4-1111-4000-8000-000000000002', 4.2, '2026-02-15', 'github_integration'),
+('550e8400-e29b-41d4-a716-446655440010'::uuid, 'a1b2c3d4-1111-4000-8000-000000000002', 7.8, '2026-02-22', 'github_integration'),
+('550e8400-e29b-41d4-a716-446655440010'::uuid, 'a1b2c3d4-1111-4000-8000-000000000002', 8.5, '2026-03-01', 'github_integration'),
+('550e8400-e29b-41d4-a716-446655440011'::uuid, 'a1b2c3d4-1111-4000-8000-000000000006', 28, '2026-02-08', 'jira_integration'),
+('550e8400-e29b-41d4-a716-446655440011'::uuid, 'a1b2c3d4-1111-4000-8000-000000000006', 22, '2026-02-22', 'jira_integration'),
+('550e8400-e29b-41d4-a716-446655440011'::uuid, 'a1b2c3d4-1111-4000-8000-000000000006', 14, '2026-03-01', 'jira_integration'),
+('550e8400-e29b-41d4-a716-446655440012'::uuid, 'a1b2c3d4-1111-4000-8000-000000000001', 22, '2026-02-08', 'crm_integration'),
+('550e8400-e29b-41d4-a716-446655440012'::uuid, 'a1b2c3d4-1111-4000-8000-000000000001', 18, '2026-02-15', 'crm_integration'),
+('550e8400-e29b-41d4-a716-446655440012'::uuid, 'a1b2c3d4-1111-4000-8000-000000000001', 11, '2026-03-01', 'crm_integration'),
+('550e8400-e29b-41d4-a716-446655440014'::uuid, 'a1b2c3d4-1111-4000-8000-000000000004', 2.5, '2026-02-08', 'jira_integration'),
+('550e8400-e29b-41d4-a716-446655440014'::uuid, 'a1b2c3d4-1111-4000-8000-000000000004', 3.0, '2026-02-22', 'jira_integration'),
+('550e8400-e29b-41d4-a716-446655440014'::uuid, 'a1b2c3d4-1111-4000-8000-000000000004', 6.5, '2026-03-01', 'jira_integration');
 
 -- Content Items
 INSERT INTO content_items (title, content_type, description, file_format, duration_seconds, tags, is_active) VALUES
@@ -90,12 +301,12 @@ INSERT INTO content_categories (name, description, color, is_active) VALUES
 ('Sales & Marketing', 'Sales techniques and marketing', '#F59E0B', true);
 
 -- Assessments
-INSERT INTO assessments (title, assessment_type, passing_score, time_limit_minutes, max_attempts) VALUES
-('Agile Methodology Certification', 'E-Learning Test', 80, 60, 3),
-('React Proficiency Test', 'Skills Evaluation', 70, 45, 2),
-('Leadership Skills Assessment', 'Quiz', 60, 30, 1),
-('GxP Compliance Quiz', 'E-Learning Test', 85, 90, 2),
-('Sales Skills Evaluation', 'Practical Assessment', 75, 40, 2);
+INSERT INTO assessments (id, title, assessment_type, passing_score, time_limit_minutes, max_attempts) VALUES
+('2e17d6c3-2512-4d73-80b2-4cf134a9985f'::uuid,'Agile Methodology Certification', 'E-Learning Test', 80, 60, 3),
+('e68decb8-d7bf-46a9-a9f0-ebe73f7a5b9e'::uuid,'React Proficiency Test', 'Skills Evaluation', 70, 45, 2),
+('fc7d309c-88e2-4c0d-9bea-186b28a33395'::uuid,'Leadership Skills Assessment', 'Quiz', 60, 30, 1),
+('fc7d309c-88e2-4c0d-9bea-186b28a33396'::uuid,'GxP Compliance Quiz', 'E-Learning Test', 85, 90, 2),
+('fc7d309c-88e2-4c0d-9bea-186b28a33397'::uuid,'Sales Skills Evaluation', 'Practical Assessment', 75, 40, 2);
 
 -- Question Bank (valid difficulty levels)
 INSERT INTO question_bank (question_text, question_type, difficulty_level, correct_answer, explanation, points) VALUES
@@ -106,15 +317,15 @@ INSERT INTO question_bank (question_text, question_type, difficulty_level, corre
 
 -- Deviations
 INSERT INTO laser_deviations (id, employee_id, kpi_id, role_kpi_mapping_id, actual_value, target_value, deviation_percentage, severity, status) 
-SELECT 'c3d4e5f6-3333-4000-8000-000000000001'::uuid, 'f3584467-1f80-494e-b528-4a3cca9a1130', 'a1b2c3d4-1111-4000-8000-000000000002', rkm.id, 8.5, 4, 112.5, 'critical', 'open'
+SELECT 'c3d4e5f6-3333-4000-8000-000000000001'::uuid, '550e8400-e29b-41d4-a716-446655440010', 'a1b2c3d4-1111-4000-8000-000000000002', rkm.id, 8.5, 4, 112.5, 'critical', 'open'
 FROM laser_role_kpi_mappings rkm WHERE rkm.job_role_id = '3f0400b4-87f1-480f-ae89-5a1a33c0f12e' AND rkm.kpi_id = 'a1b2c3d4-1111-4000-8000-000000000002' LIMIT 1;
 
 INSERT INTO laser_deviations (id, employee_id, kpi_id, role_kpi_mapping_id, actual_value, target_value, deviation_percentage, severity, status) 
-SELECT 'c3d4e5f6-3333-4000-8000-000000000002'::uuid, 'cb73e570-7b56-4c5b-ae52-144fff48a868', 'a1b2c3d4-1111-4000-8000-000000000006', rkm.id, 14, 25, 44, 'warning', 'open'
+SELECT 'c3d4e5f6-3333-4000-8000-000000000002'::uuid, '550e8400-e29b-41d4-a716-446655440011', 'a1b2c3d4-1111-4000-8000-000000000006', rkm.id, 14, 25, 44, 'warning', 'open'
 FROM laser_role_kpi_mappings rkm WHERE rkm.job_role_id = '8fe54d9b-4e37-46ed-a513-9b409093b613' AND rkm.kpi_id = 'a1b2c3d4-1111-4000-8000-000000000006' LIMIT 1;
 
 INSERT INTO laser_deviations (id, employee_id, kpi_id, role_kpi_mapping_id, actual_value, target_value, deviation_percentage, severity, status) 
-SELECT 'c3d4e5f6-3333-4000-8000-000000000003'::uuid, '75a8f032-2e5e-4a0b-a515-1e0ea93ad900', 'a1b2c3d4-1111-4000-8000-000000000001', rkm.id, 11, 25, 56, 'critical', 'open'
+SELECT 'c3d4e5f6-3333-4000-8000-000000000003'::uuid, '550e8400-e29b-41d4-a716-446655440012', 'a1b2c3d4-1111-4000-8000-000000000001', rkm.id, 11, 25, 56, 'critical', 'open'
 FROM laser_role_kpi_mappings rkm WHERE rkm.job_role_id = '53441f79-088e-4145-8bb9-98b6635b3aee' AND rkm.kpi_id = 'a1b2c3d4-1111-4000-8000-000000000001' LIMIT 1;
 
 -- RCA Results
@@ -126,16 +337,16 @@ INSERT INTO laser_rca_results (id, deviation_id, cause_id, probability_score, is
 
 -- Assigned Interventions
 INSERT INTO laser_assigned_interventions (deviation_id, employee_id, rca_result_id, intervention_type, micro_intervention_title, micro_intervention_content, status) VALUES
-('c3d4e5f6-3333-4000-8000-000000000001', 'f3584467-1f80-494e-b528-4a3cca9a1130', 'd4e5f6a7-4444-4000-8000-000000000001', 'micro_learning', 'Code Review Best Practices', 'Guide on efficient code review', 'assigned'),
-('c3d4e5f6-3333-4000-8000-000000000001', 'f3584467-1f80-494e-b528-4a3cca9a1130', 'd4e5f6a7-4444-4000-8000-000000000002', 'micro_learning', 'Time Management', 'Pomodoro for developers', 'assigned'),
-('c3d4e5f6-3333-4000-8000-000000000003', '75a8f032-2e5e-4a0b-a515-1e0ea93ad900', 'd4e5f6a7-4444-4000-8000-000000000003', 'micro_learning', 'Consultative Selling', 'Transform sales approach', 'in_progress'),
-('c3d4e5f6-3333-4000-8000-000000000003', '75a8f032-2e5e-4a0b-a515-1e0ea93ad900', 'd4e5f6a7-4444-4000-8000-000000000004', 'micro_learning', 'Product Deep Dive', 'Product features walkthrough', 'assigned');
+('c3d4e5f6-3333-4000-8000-000000000001', '550e8400-e29b-41d4-a716-446655440010', 'd4e5f6a7-4444-4000-8000-000000000001', 'micro_learning', 'Code Review Best Practices', 'Guide on efficient code review', 'assigned'),
+('c3d4e5f6-3333-4000-8000-000000000001', '550e8400-e29b-41d4-a716-446655440010', 'd4e5f6a7-4444-4000-8000-000000000002', 'micro_learning', 'Time Management', 'Pomodoro for developers', 'assigned'),
+('c3d4e5f6-3333-4000-8000-000000000003', '550e8400-e29b-41d4-a716-446655440012', 'd4e5f6a7-4444-4000-8000-000000000003', 'micro_learning', 'Consultative Selling', 'Transform sales approach', 'in_progress'),
+('c3d4e5f6-3333-4000-8000-000000000003', '550e8400-e29b-41d4-a716-446655440012', 'd4e5f6a7-4444-4000-8000-000000000004', 'micro_learning', 'Product Deep Dive', 'Product features walkthrough', 'assigned');
 
 -- Employee Details
 INSERT INTO employee_details (profile_id, date_of_birth, qualification, experience, skills, nationality, marital_status, blood_group) VALUES
-('f3584467-1f80-494e-b528-4a3cca9a1130', '1992-05-15', 'M.Tech CS', '8 years', 'Java, Python, React, AWS', 'Indian', 'Married', 'B+'),
-('cb73e570-7b56-4c5b-ae52-144fff48a868', '1995-08-22', 'B.Tech IT', '5 years', 'React, TypeScript, Next.js', 'Indian', 'Single', 'O+'),
-('75a8f032-2e5e-4a0b-a515-1e0ea93ad900', '1990-11-03', 'MBA Marketing', '10 years', 'Sales, CRM, Negotiation', 'Indian', 'Married', 'A+'),
-('1e74a929-829b-4b20-8515-51d4bb25eae9', '1993-03-18', 'MBA HR', '7 years', 'Talent Management', 'Indian', 'Married', 'AB+'),
-('00980e80-dd69-437e-8567-c993798ad7eb', '1994-07-10', 'B.Tech CS', '6 years', 'Selenium, Cypress, API Testing', 'Indian', 'Single', 'B-')
+('550e8400-e29b-41d4-a716-446655440010', '1992-05-15', 'M.Tech CS', '8 years', 'Java, Python, React, AWS', 'Indian', 'Married', 'B+'),
+('550e8400-e29b-41d4-a716-446655440011', '1995-08-22', 'B.Tech IT', '5 years', 'React, TypeScript, Next.js', 'Indian', 'Single', 'O+'),
+('550e8400-e29b-41d4-a716-446655440012', '1990-11-03', 'MBA Marketing', '10 years', 'Sales, CRM, Negotiation', 'Indian', 'Married', 'A+'),
+('550e8400-e29b-41d4-a716-446655440013', '1993-03-18', 'MBA HR', '7 years', 'Talent Management', 'Indian', 'Married', 'AB+'),
+('550e8400-e29b-41d4-a716-446655440014', '1994-07-10', 'B.Tech CS', '6 years', 'Selenium, Cypress, API Testing', 'Indian', 'Single', 'B-')
 ON CONFLICT (profile_id) DO NOTHING;

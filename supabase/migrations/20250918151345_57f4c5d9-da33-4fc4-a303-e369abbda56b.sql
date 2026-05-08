@@ -1,7 +1,7 @@
 -- Create content versioning and management tables for admin AI system
 
 -- Content versions table for version control
-CREATE TABLE public.content_versions (
+CREATE TABLE IF NOT EXISTS public.content_versions (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   content_id UUID NOT NULL,
   version_number INTEGER NOT NULL DEFAULT 1,
@@ -19,7 +19,7 @@ CREATE TABLE public.content_versions (
 );
 
 -- Content analytics table
-CREATE TABLE public.content_analytics (
+CREATE TABLE IF NOT EXISTS public.content_analytics (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   content_id UUID NOT NULL,
   user_id UUID REFERENCES auth.users(id),
@@ -33,7 +33,7 @@ CREATE TABLE public.content_analytics (
 );
 
 -- Content tags table for advanced categorization
-CREATE TABLE public.content_tags (
+CREATE TABLE IF NOT EXISTS public.content_tags (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL UNIQUE,
   category TEXT NOT NULL, -- 'skill', 'topic', 'level', 'format', 'industry'
@@ -43,7 +43,7 @@ CREATE TABLE public.content_tags (
 );
 
 -- Junction table for content-tag relationships
-CREATE TABLE public.content_tag_assignments (
+CREATE TABLE IF NOT EXISTS public.content_tag_assignments (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   content_id UUID NOT NULL,
   tag_id UUID NOT NULL REFERENCES public.content_tags(id) ON DELETE CASCADE,
@@ -53,7 +53,7 @@ CREATE TABLE public.content_tag_assignments (
 );
 
 -- Bulk operations table for tracking admin actions
-CREATE TABLE public.bulk_operations (
+CREATE TABLE IF NOT EXISTS public.bulk_operations (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   operation_type TEXT NOT NULL, -- 'content_upload', 'tag_assignment', 'quality_review', 'bulk_edit'
   status TEXT NOT NULL DEFAULT 'pending', -- 'pending', 'processing', 'completed', 'failed'
@@ -68,7 +68,7 @@ CREATE TABLE public.bulk_operations (
 );
 
 -- Learning path recommendations for admins
-CREATE TABLE public.admin_recommendations (
+CREATE TABLE IF NOT EXISTS public.admin_recommendations (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   recommendation_type TEXT NOT NULL, -- 'content_gap', 'trending_topic', 'skill_demand', 'learner_feedback'
   title TEXT NOT NULL,
@@ -92,57 +92,69 @@ ALTER TABLE public.bulk_operations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.admin_recommendations ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for content_versions
+DROP POLICY IF EXISTS "Admins can manage content versions" ON public.content_versions;
 CREATE POLICY "Admins can manage content versions" ON public.content_versions
 FOR ALL USING (has_role(auth.uid(), 'admin'::app_role));
 
+DROP POLICY IF EXISTS "Anyone can view active content versions" ON public.content_versions;
 CREATE POLICY "Anyone can view active content versions" ON public.content_versions
 FOR SELECT USING (is_active = true);
 
 -- RLS Policies for content_analytics
+DROP POLICY IF EXISTS "Users can insert their own content analytics" ON public.content_analytics;
 CREATE POLICY "Users can insert their own content analytics" ON public.content_analytics
 FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admins can view all content analytics" ON public.content_analytics;
 CREATE POLICY "Admins can view all content analytics" ON public.content_analytics
 FOR SELECT USING (has_role(auth.uid(), 'admin'::app_role));
 
+DROP POLICY IF EXISTS "Users can view their own content analytics" ON public.content_analytics;
 CREATE POLICY "Users can view their own content analytics" ON public.content_analytics
 FOR SELECT USING (auth.uid() = user_id);
 
 -- RLS Policies for content_tags
+DROP POLICY IF EXISTS "Admins can manage content tags" ON public.content_tags;
 CREATE POLICY "Admins can manage content tags" ON public.content_tags
 FOR ALL USING (has_role(auth.uid(), 'admin'::app_role));
 
+DROP POLICY IF EXISTS "Users can view active content tags" ON public.content_tags;
 CREATE POLICY "Users can view active content tags" ON public.content_tags
 FOR SELECT USING (is_active = true);
 
 -- RLS Policies for content_tag_assignments
+DROP POLICY IF EXISTS "Admins can manage content tag assignments" ON public.content_tag_assignments;
 CREATE POLICY "Admins can manage content tag assignments" ON public.content_tag_assignments
 FOR ALL USING (has_role(auth.uid(), 'admin'::app_role));
 
+DROP POLICY IF EXISTS "Users can view content tag assignments" ON public.content_tag_assignments;
 CREATE POLICY "Users can view content tag assignments" ON public.content_tag_assignments
 FOR SELECT USING (true);
 
 -- RLS Policies for bulk_operations
+DROP POLICY IF EXISTS "Admins can manage bulk operations" ON public.bulk_operations;
 CREATE POLICY "Admins can manage bulk operations" ON public.bulk_operations
 FOR ALL USING (has_role(auth.uid(), 'admin'::app_role));
 
--- RLS Policies for admin_recommendations  
+-- RLS Policies for admin_recommendations
+DROP POLICY IF EXISTS "Admins can manage admin recommendations" ON public.admin_recommendations;  
 CREATE POLICY "Admins can manage admin recommendations" ON public.admin_recommendations
 FOR ALL USING (has_role(auth.uid(), 'admin'::app_role));
 
 -- Create indexes for performance
-CREATE INDEX idx_content_versions_content_id ON public.content_versions(content_id);
-CREATE INDEX idx_content_versions_active ON public.content_versions(is_active);
-CREATE INDEX idx_content_analytics_content_id ON public.content_analytics(content_id);
-CREATE INDEX idx_content_analytics_user_id ON public.content_analytics(user_id);
-CREATE INDEX idx_content_analytics_action_type ON public.content_analytics(action_type);
-CREATE INDEX idx_content_tag_assignments_content_id ON public.content_tag_assignments(content_id);
-CREATE INDEX idx_content_tag_assignments_tag_id ON public.content_tag_assignments(tag_id);
-CREATE INDEX idx_bulk_operations_status ON public.bulk_operations(status);
-CREATE INDEX idx_admin_recommendations_priority ON public.admin_recommendations(priority);
-CREATE INDEX idx_admin_recommendations_status ON public.admin_recommendations(status);
+CREATE INDEX IF NOT EXISTS idx_content_versions_content_id ON public.content_versions(content_id);
+CREATE INDEX IF NOT EXISTS idx_content_versions_active ON public.content_versions(is_active);
+CREATE INDEX IF NOT EXISTS idx_content_analytics_content_id ON public.content_analytics(content_id);
+CREATE INDEX IF NOT EXISTS idx_content_analytics_user_id ON public.content_analytics(user_id);
+CREATE INDEX IF NOT EXISTS idx_content_analytics_action_type ON public.content_analytics(action_type);
+CREATE INDEX IF NOT EXISTS idx_content_tag_assignments_content_id ON public.content_tag_assignments(content_id);
+CREATE INDEX IF NOT EXISTS idx_content_tag_assignments_tag_id ON public.content_tag_assignments(tag_id);
+CREATE INDEX IF NOT EXISTS idx_bulk_operations_status ON public.bulk_operations(status);
+CREATE INDEX IF NOT EXISTS idx_admin_recommendations_priority ON public.admin_recommendations(priority);
+CREATE INDEX IF NOT EXISTS idx_admin_recommendations_status ON public.admin_recommendations(status);
 
 -- Create triggers for updated_at timestamps
+DROP TRIGGER IF EXISTS update_content_versions_updated_at ON public.content_versions;
 CREATE TRIGGER update_content_versions_updated_at
   BEFORE UPDATE ON public.content_versions
   FOR EACH ROW

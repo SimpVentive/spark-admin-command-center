@@ -1,5 +1,5 @@
 -- Create library books table
-CREATE TABLE public.library_books (
+CREATE TABLE IF NOT EXISTS public.library_books (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   title TEXT NOT NULL,
   author TEXT NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE public.library_books (
 );
 
 -- Create library resources table
-CREATE TABLE public.library_resources (
+CREATE TABLE IF NOT EXISTS public.library_resources (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   title TEXT NOT NULL,
   description TEXT,
@@ -29,7 +29,7 @@ CREATE TABLE public.library_resources (
 );
 
 -- Create library checkout records table
-CREATE TABLE public.library_checkout_records (
+CREATE TABLE IF NOT EXISTS public.library_checkout_records (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   book_id UUID NOT NULL REFERENCES public.library_books(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
@@ -44,7 +44,7 @@ CREATE TABLE public.library_checkout_records (
 );
 
 -- Create library reservations table
-CREATE TABLE public.library_reservations (
+CREATE TABLE IF NOT EXISTS public.library_reservations (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   book_id UUID NOT NULL REFERENCES public.library_books(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
@@ -63,78 +63,90 @@ ALTER TABLE public.library_checkout_records ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.library_reservations ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for library_books
+DROP POLICY IF EXISTS "Anyone can view books" ON public.library_books;
 CREATE POLICY "Anyone can view books" 
 ON public.library_books 
 FOR SELECT 
 USING (true);
 
+DROP POLICY IF EXISTS "Admins can manage books" ON public.library_books;
 CREATE POLICY "Admins can manage books" 
 ON public.library_books 
 FOR ALL 
 USING (has_role(auth.uid(), 'admin'::app_role));
 
 -- RLS Policies for library_resources
+DROP POLICY IF EXISTS "Anyone can view active resources" ON public.library_resources;
 CREATE POLICY "Anyone can view active resources" 
 ON public.library_resources 
 FOR SELECT 
 USING (is_active = true);
 
+DROP POLICY IF EXISTS "Admins can manage resources" ON public.library_resources;
 CREATE POLICY "Admins can manage resources" 
 ON public.library_resources 
 FOR ALL 
 USING (has_role(auth.uid(), 'admin'::app_role));
 
 -- RLS Policies for checkout records
+DROP POLICY IF EXISTS "Users can view their own checkout records" ON public.library_checkout_records;
 CREATE POLICY "Users can view their own checkout records" 
 ON public.library_checkout_records 
 FOR SELECT 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can create their own checkout records" ON public.library_checkout_records;
 CREATE POLICY "Users can create their own checkout records" 
 ON public.library_checkout_records 
 FOR INSERT 
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own checkout records" ON public.library_checkout_records;
 CREATE POLICY "Users can update their own checkout records" 
 ON public.library_checkout_records 
 FOR UPDATE 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admins can manage all checkout records" ON public.library_checkout_records;
 CREATE POLICY "Admins can manage all checkout records" 
 ON public.library_checkout_records 
 FOR ALL 
 USING (has_role(auth.uid(), 'admin'::app_role));
 
 -- RLS Policies for reservations
+DROP POLICY IF EXISTS "Users can view their own reservations" ON public.library_reservations;
 CREATE POLICY "Users can view their own reservations" 
 ON public.library_reservations 
 FOR SELECT 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can create their own reservations" ON public.library_reservations;
 CREATE POLICY "Users can create their own reservations" 
 ON public.library_reservations 
 FOR INSERT 
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own reservations" ON public.library_reservations;
 CREATE POLICY "Users can update their own reservations" 
 ON public.library_reservations 
 FOR UPDATE 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admins can manage all reservations" ON public.library_reservations;
 CREATE POLICY "Admins can manage all reservations" 
 ON public.library_reservations 
 FOR ALL 
 USING (has_role(auth.uid(), 'admin'::app_role));
 
 -- Create indexes for better performance
-CREATE INDEX idx_library_books_availability ON public.library_books(availability);
-CREATE INDEX idx_library_books_category ON public.library_books(category);
-CREATE INDEX idx_library_checkout_records_user_id ON public.library_checkout_records(user_id);
-CREATE INDEX idx_library_checkout_records_book_id ON public.library_checkout_records(book_id);
-CREATE INDEX idx_library_checkout_records_status ON public.library_checkout_records(status);
-CREATE INDEX idx_library_reservations_user_id ON public.library_reservations(user_id);
-CREATE INDEX idx_library_reservations_book_id ON public.library_reservations(book_id);
-CREATE INDEX idx_library_reservations_status ON public.library_reservations(status);
+CREATE INDEX IF NOT EXISTS idx_library_books_availability ON public.library_books(availability);
+CREATE INDEX IF NOT EXISTS idx_library_books_category ON public.library_books(category);
+CREATE INDEX IF NOT EXISTS idx_library_checkout_records_user_id ON public.library_checkout_records(user_id);
+CREATE INDEX IF NOT EXISTS idx_library_checkout_records_book_id ON public.library_checkout_records(book_id);
+CREATE INDEX IF NOT EXISTS idx_library_checkout_records_status ON public.library_checkout_records(status);
+CREATE INDEX IF NOT EXISTS idx_library_reservations_user_id ON public.library_reservations(user_id);
+CREATE INDEX IF NOT EXISTS idx_library_reservations_book_id ON public.library_reservations(book_id);
+CREATE INDEX IF NOT EXISTS idx_library_reservations_status ON public.library_reservations(status);
 
 -- Create function to update timestamps
 CREATE OR REPLACE FUNCTION public.update_library_updated_at()
@@ -146,21 +158,25 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create triggers for automatic timestamp updates
+DROP TRIGGER IF EXISTS update_library_books_updated_at ON public.library_books;
 CREATE TRIGGER update_library_books_updated_at
   BEFORE UPDATE ON public.library_books
   FOR EACH ROW
   EXECUTE FUNCTION public.update_library_updated_at();
 
+DROP TRIGGER IF EXISTS update_library_resources_updated_at ON public.library_resources;
 CREATE TRIGGER update_library_resources_updated_at
   BEFORE UPDATE ON public.library_resources
   FOR EACH ROW
   EXECUTE FUNCTION public.update_library_updated_at();
 
+DROP TRIGGER IF EXISTS update_library_checkout_records_updated_at ON public.library_checkout_records;
 CREATE TRIGGER update_library_checkout_records_updated_at
   BEFORE UPDATE ON public.library_checkout_records
   FOR EACH ROW
   EXECUTE FUNCTION public.update_library_updated_at();
 
+DROP TRIGGER IF EXISTS update_library_reservations_updated_at ON public.library_reservations;
 CREATE TRIGGER update_library_reservations_updated_at
   BEFORE UPDATE ON public.library_reservations
   FOR EACH ROW

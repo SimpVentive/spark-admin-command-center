@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS public.company_features (
 
 ALTER TABLE public.company_features ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Super admins manage company features" ON public.company_features;
 CREATE POLICY "Super admins manage company features"
   ON public.company_features
   FOR ALL
@@ -54,6 +55,7 @@ CREATE TABLE IF NOT EXISTS public.company_activity_log (
 
 ALTER TABLE public.company_activity_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Super admins view company activity" ON public.company_activity_log;
 CREATE POLICY "Super admins view company activity"
   ON public.company_activity_log
   FOR ALL
@@ -62,6 +64,7 @@ CREATE POLICY "Super admins view company activity"
   WITH CHECK (public.is_super_admin());
 
 -- Trigger for company_features updated_at
+DROP TRIGGER IF EXISTS update_company_features_updated_at ON public.company_features;
 CREATE TRIGGER update_company_features_updated_at
   BEFORE UPDATE ON public.company_features
   FOR EACH ROW

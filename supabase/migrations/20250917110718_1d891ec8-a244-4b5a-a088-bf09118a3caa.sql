@@ -1,9 +1,0 @@
--- Create sample user program enrollments with correct program_id values from programs table
-INSERT INTO user_program_enrollments (id, user_id, program_id, enrollment_type, status, enrolled_at) VALUES
--- Enrollments for the first user (ceo@simpventive.com)
-('11111111-1111-1111-1111-111111111111', '0fca4f40-2def-47b9-965b-0b458011b4fb', '4d939fb4-dab9-40f6-b58f-9045f2577837', 'self-enrolled', 'enrolled', '2024-01-15 10:00:00+00'),
-('22222222-2222-2222-2222-222222222222', '0fca4f40-2def-47b9-965b-0b458011b4fb', 'f49e4f45-762b-48d9-9461-0204703ff8d9', 'self-enrolled', 'enrolled', '2024-02-01 10:00:00+00'),
--- Enrollments for the second user (cvissa@gmail.com) 
-('33333333-3333-3333-3333-333333333333', 'ba7f78f7-a976-4a3a-8a61-e65df2b2ee79', '7b8d4ad4-b787-435d-beee-322896ffcb02', 'assigned', 'enrolled', '2024-03-01 10:00:00+00'),
--- Enrollments for the third user (srikanthmath149@gmail.com)
-('44444444-4444-4444-4444-444444444444', 'b2b1ab89-2c56-49f4-8945-076d86f94ebd', '4d939fb4-dab9-40f6-b58f-9045f2577837', 'assigned', 'enrolled', '2024-01-18 10:00:00+00');

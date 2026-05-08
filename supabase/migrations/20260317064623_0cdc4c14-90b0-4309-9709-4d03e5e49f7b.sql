@@ -5,7 +5,7 @@ ALTER TYPE public.app_role ADD VALUE IF NOT EXISTS 'location_admin';
 -- ============================================
 -- VENUES TABLE (Internal & External)
 -- ============================================
-CREATE TABLE public.venues (
+CREATE TABLE IF NOT EXISTS public.venues (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   venue_type TEXT NOT NULL DEFAULT 'internal' CHECK (venue_type IN ('internal', 'external')),
@@ -25,13 +25,15 @@ CREATE TABLE public.venues (
 );
 
 ALTER TABLE public.venues ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can manage venues" ON public.venues;
 CREATE POLICY "Admins can manage venues" ON public.venues FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS "Authenticated users can view venues" ON public.venues;
 CREATE POLICY "Authenticated users can view venues" ON public.venues FOR SELECT TO authenticated USING (is_active = true);
 
 -- ============================================
 -- EVENTS TABLE (Training Events linked to Programs)
 -- ============================================
-CREATE TABLE public.events (
+CREATE TABLE IF NOT EXISTS public.events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   description TEXT,
@@ -55,13 +57,15 @@ CREATE TABLE public.events (
 );
 
 ALTER TABLE public.events ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can manage events" ON public.events;
 CREATE POLICY "Admins can manage events" ON public.events FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS "Authenticated users can view events" ON public.events;
 CREATE POLICY "Authenticated users can view events" ON public.events FOR SELECT TO authenticated USING (is_active = true);
 
 -- ============================================
 -- EVENT SESSIONS (Multiple sessions per event)
 -- ============================================
-CREATE TABLE public.event_sessions (
+CREATE TABLE IF NOT EXISTS public.event_sessions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_id UUID NOT NULL REFERENCES public.events(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
@@ -75,7 +79,9 @@ CREATE TABLE public.event_sessions (
 );
 
 ALTER TABLE public.event_sessions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can manage event_sessions" ON public.event_sessions;
 CREATE POLICY "Admins can manage event_sessions" ON public.event_sessions FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS "Authenticated users can view event_sessions" ON public.event_sessions;
 CREATE POLICY "Authenticated users can view event_sessions" ON public.event_sessions FOR SELECT TO authenticated USING (is_active = true);
 
 -- ============================================
@@ -91,13 +97,15 @@ CREATE TABLE public.event_trainers (
 );
 
 ALTER TABLE public.event_trainers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can manage event_trainers" ON public.event_trainers;
 CREATE POLICY "Admins can manage event_trainers" ON public.event_trainers FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS "Authenticated users can view event_trainers" ON public.event_trainers;
 CREATE POLICY "Authenticated users can view event_trainers" ON public.event_trainers FOR SELECT TO authenticated USING (true);
 
 -- ============================================
 -- EVENT ASSESSMENTS (PRE, POST, Feedback, L3 per event/session)
 -- ============================================
-CREATE TABLE public.event_assessments (
+CREATE TABLE IF NOT EXISTS public.event_assessments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_id UUID NOT NULL REFERENCES public.events(id) ON DELETE CASCADE,
   session_id UUID REFERENCES public.event_sessions(id) ON DELETE SET NULL,
@@ -109,13 +117,15 @@ CREATE TABLE public.event_assessments (
 );
 
 ALTER TABLE public.event_assessments ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can manage event_assessments" ON public.event_assessments;
 CREATE POLICY "Admins can manage event_assessments" ON public.event_assessments FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS "Authenticated users can view event_assessments" ON public.event_assessments;
 CREATE POLICY "Authenticated users can view event_assessments" ON public.event_assessments FOR SELECT TO authenticated USING (true);
 
 -- ============================================
 -- ATTENDANCE TABLE
 -- ============================================
-CREATE TABLE public.attendance (
+CREATE TABLE IF NOT EXISTS public.attendance (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_id UUID NOT NULL REFERENCES public.events(id) ON DELETE CASCADE,
   session_id UUID REFERENCES public.event_sessions(id) ON DELETE SET NULL,
@@ -131,13 +141,15 @@ CREATE TABLE public.attendance (
 );
 
 ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can manage attendance" ON public.attendance;
 CREATE POLICY "Admins can manage attendance" ON public.attendance FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS "Users can view own attendance" ON public.attendance;
 CREATE POLICY "Users can view own attendance" ON public.attendance FOR SELECT TO authenticated USING (employee_id = auth.uid());
 
 -- ============================================
 -- TRAINER FEEDBACK (Trainer → Learner)
 -- ============================================
-CREATE TABLE public.trainer_feedback (
+CREATE TABLE IF NOT EXISTS public.trainer_feedback (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_id UUID NOT NULL REFERENCES public.events(id) ON DELETE CASCADE,
   session_id UUID REFERENCES public.event_sessions(id) ON DELETE SET NULL,
@@ -152,13 +164,15 @@ CREATE TABLE public.trainer_feedback (
 );
 
 ALTER TABLE public.trainer_feedback ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can manage trainer_feedback" ON public.trainer_feedback;
 CREATE POLICY "Admins can manage trainer_feedback" ON public.trainer_feedback FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS "Users can view own feedback" ON public.trainer_feedback;
 CREATE POLICY "Users can view own feedback" ON public.trainer_feedback FOR SELECT TO authenticated USING (employee_id = auth.uid());
 
 -- ============================================
 -- EVENT ENROLLMENTS (Who's enrolled in event)
 -- ============================================
-CREATE TABLE public.event_enrollments (
+CREATE TABLE IF NOT EXISTS public.event_enrollments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   event_id UUID NOT NULL REFERENCES public.events(id) ON DELETE CASCADE,
   employee_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
@@ -170,11 +184,20 @@ CREATE TABLE public.event_enrollments (
 );
 
 ALTER TABLE public.event_enrollments ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can manage event_enrollments" ON public.event_enrollments;
 CREATE POLICY "Admins can manage event_enrollments" ON public.event_enrollments FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS "Users can view own enrollments" ON public.event_enrollments;
 CREATE POLICY "Users can view own enrollments" ON public.event_enrollments FOR SELECT TO authenticated USING (employee_id = auth.uid());
 
 -- Triggers for updated_at
+DROP TRIGGER IF EXISTS update_venues_updated_at ON public.venues;
 CREATE TRIGGER update_venues_updated_at BEFORE UPDATE ON public.venues FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_events_updated_at ON public.events;
 CREATE TRIGGER update_events_updated_at BEFORE UPDATE ON public.events FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_attendance_updated_at ON public.attendance;
 CREATE TRIGGER update_attendance_updated_at BEFORE UPDATE ON public.attendance FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+DROP TRIGGER IF EXISTS update_trainer_feedback_updated_at ON public.trainer_feedback;
 CREATE TRIGGER update_trainer_feedback_updated_at BEFORE UPDATE ON public.trainer_feedback FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

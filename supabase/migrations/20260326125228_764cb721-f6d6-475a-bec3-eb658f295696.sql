@@ -2,7 +2,7 @@
 -- Tenant onboarding pipeline table
 -- Tracks each company's onboarding journey through stages
 -- Links to existing companies table without conflicting
-CREATE TABLE public.tenant_onboarding (
+CREATE TABLE IF NOT EXISTS public.tenant_onboarding (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id uuid REFERENCES public.companies(id) ON DELETE CASCADE NOT NULL,
   stage text NOT NULL DEFAULT 'invited' CHECK (stage IN ('invited','setup','configuring','training','live')),
@@ -32,7 +32,7 @@ CREATE TABLE public.tenant_onboarding (
 );
 
 -- Onboarding checklist items per tenant
-CREATE TABLE public.onboarding_checklist (
+CREATE TABLE IF NOT EXISTS public.onboarding_checklist (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   onboarding_id uuid REFERENCES public.tenant_onboarding(id) ON DELETE CASCADE NOT NULL,
   label text NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE public.onboarding_checklist (
 );
 
 -- Default checklist template table
-CREATE TABLE public.onboarding_checklist_templates (
+CREATE TABLE IF NOT EXISTS public.onboarding_checklist_templates (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   name text NOT NULL,
   description text,
@@ -53,7 +53,7 @@ CREATE TABLE public.onboarding_checklist_templates (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.onboarding_template_items (
+CREATE TABLE IF NOT EXISTS public.onboarding_template_items (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   template_id uuid REFERENCES public.onboarding_checklist_templates(id) ON DELETE CASCADE NOT NULL,
   label text NOT NULL,
@@ -68,19 +68,24 @@ ALTER TABLE public.onboarding_checklist_templates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.onboarding_template_items ENABLE ROW LEVEL SECURITY;
 
 -- Super admin only policies
+DROP POLICY IF EXISTS "Super admins can manage tenant onboarding" ON public.tenant_onboarding;
 CREATE POLICY "Super admins can manage tenant onboarding" ON public.tenant_onboarding
   FOR ALL TO authenticated USING (public.is_super_admin()) WITH CHECK (public.is_super_admin());
 
+DROP POLICY IF EXISTS "Super admins can manage onboarding checklist" ON public.onboarding_checklist;
 CREATE POLICY "Super admins can manage onboarding checklist" ON public.onboarding_checklist
   FOR ALL TO authenticated USING (public.is_super_admin()) WITH CHECK (public.is_super_admin());
 
+DROP POLICY IF EXISTS "Super admins can manage checklist templates" ON public.onboarding_checklist_templates;
 CREATE POLICY "Super admins can manage checklist templates" ON public.onboarding_checklist_templates
   FOR ALL TO authenticated USING (public.is_super_admin()) WITH CHECK (public.is_super_admin());
 
+DROP POLICY IF EXISTS "Super admins can manage template items" ON public.onboarding_template_items;
 CREATE POLICY "Super admins can manage template items" ON public.onboarding_template_items
   FOR ALL TO authenticated USING (public.is_super_admin()) WITH CHECK (public.is_super_admin());
 
 -- Updated_at trigger
+DROP TRIGGER IF EXISTS update_tenant_onboarding_updated_at ON public.tenant_onboarding;
 CREATE TRIGGER update_tenant_onboarding_updated_at
   BEFORE UPDATE ON public.tenant_onboarding
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

@@ -1,5 +1,5 @@
 -- Create MOOC Providers table
-CREATE TABLE public.mooc_providers (
+CREATE TABLE IF NOT EXISTS public.mooc_providers (
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   name text NOT NULL,
   provider_type text NOT NULL, -- 'coursera', 'linkedin_learning', 'udemy_business', 'edx'
@@ -24,7 +24,7 @@ CREATE TABLE public.mooc_providers (
 );
 
 -- Create MOOC Courses table
-CREATE TABLE public.mooc_courses (
+CREATE TABLE IF NOT EXISTS public.mooc_courses (
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   provider_id uuid NOT NULL REFERENCES public.mooc_providers(id) ON DELETE CASCADE,
   external_course_id text NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE public.mooc_courses (
 );
 
 -- Create MOOC Enrollments table
-CREATE TABLE public.mooc_enrollments (
+CREATE TABLE IF NOT EXISTS public.mooc_enrollments (
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id uuid NOT NULL REFERENCES auth.users(id),
   course_id uuid NOT NULL REFERENCES public.mooc_courses(id) ON DELETE CASCADE,
@@ -75,7 +75,7 @@ CREATE TABLE public.mooc_enrollments (
 );
 
 -- Create MOOC Sync Logs table
-CREATE TABLE public.mooc_sync_logs (
+CREATE TABLE IF NOT EXISTS public.mooc_sync_logs (
   id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   provider_id uuid NOT NULL REFERENCES public.mooc_providers(id) ON DELETE CASCADE,
   sync_type text NOT NULL, -- 'courses', 'enrollments', 'progress', 'full'
@@ -96,47 +96,59 @@ ALTER TABLE public.mooc_enrollments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.mooc_sync_logs ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for mooc_providers
+DROP POLICY IF EXISTS "Admins can manage MOOC providers" ON public.mooc_providers;
 CREATE POLICY "Admins can manage MOOC providers" ON public.mooc_providers
   FOR ALL USING (has_role(auth.uid(), 'admin'::app_role));
 
+DROP POLICY IF EXISTS "Users can view active MOOC providers" ON public.mooc_providers;
 CREATE POLICY "Users can view active MOOC providers" ON public.mooc_providers
   FOR SELECT USING (is_connected = true);
 
--- RLS Policies for mooc_courses  
+-- RLS Policies for mooc_courses
+DROP POLICY IF EXISTS "Admins can manage MOOC courses" ON public.mooc_courses;
 CREATE POLICY "Admins can manage MOOC courses" ON public.mooc_courses
   FOR ALL USING (has_role(auth.uid(), 'admin'::app_role));
 
+DROP POLICY IF EXISTS "Users can view catalog courses" ON public.mooc_courses;
 CREATE POLICY "Users can view catalog courses" ON public.mooc_courses
   FOR SELECT USING (in_catalog = true AND is_active = true);
 
 -- RLS Policies for mooc_enrollments
+DROP POLICY IF EXISTS "Admins can manage all MOOC enrollments" ON public.mooc_enrollments;
 CREATE POLICY "Admins can manage all MOOC enrollments" ON public.mooc_enrollments
   FOR ALL USING (has_role(auth.uid(), 'admin'::app_role));
 
+DROP POLICY IF EXISTS "Users can view their own MOOC enrollments" ON public.mooc_enrollments;
 CREATE POLICY "Users can view their own MOOC enrollments" ON public.mooc_enrollments
   FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can create their own MOOC enrollments" ON public.mooc_enrollments;
 CREATE POLICY "Users can create their own MOOC enrollments" ON public.mooc_enrollments
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own MOOC enrollments" ON public.mooc_enrollments;
 CREATE POLICY "Users can update their own MOOC enrollments" ON public.mooc_enrollments
   FOR UPDATE USING (auth.uid() = user_id);
 
 -- RLS Policies for mooc_sync_logs
+DROP POLICY IF EXISTS "Admins can view MOOC sync logs" ON public.mooc_sync_logs;
 CREATE POLICY "Admins can view MOOC sync logs" ON public.mooc_sync_logs
   FOR SELECT USING (has_role(auth.uid(), 'admin'::app_role));
 
 -- Create update timestamp triggers
+DROP TRIGGER IF EXISTS update_mooc_providers_updated_at ON public.mooc_providers;
 CREATE TRIGGER update_mooc_providers_updated_at
   BEFORE UPDATE ON public.mooc_providers
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_mooc_courses_updated_at ON public.mooc_courses;
 CREATE TRIGGER update_mooc_courses_updated_at
   BEFORE UPDATE ON public.mooc_courses
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_mooc_enrollments_updated_at ON public.mooc_enrollments;
 CREATE TRIGGER update_mooc_enrollments_updated_at
   BEFORE UPDATE ON public.mooc_enrollments
   FOR EACH ROW

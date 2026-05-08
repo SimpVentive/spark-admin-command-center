@@ -1,6 +1,6 @@
 
 -- Announcements & Communications tables
-CREATE TABLE public.announcements (
+CREATE TABLE IF NOT EXISTS public.announcements (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   type text NOT NULL DEFAULT 'banner' CHECK (type IN ('banner','email','alert','maintenance')),
   priority text NOT NULL DEFAULT 'info' CHECK (priority IN ('info','warning','critical')),
@@ -18,7 +18,7 @@ CREATE TABLE public.announcements (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.email_campaigns (
+CREATE TABLE IF NOT EXISTS public.email_campaigns (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   template text,
   subject text NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE public.email_campaigns (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.email_templates (
+CREATE TABLE IF NOT EXISTS public.email_templates (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   name text NOT NULL,
   icon text DEFAULT '📋',
@@ -50,18 +50,23 @@ ALTER TABLE public.announcements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.email_campaigns ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.email_templates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Super admins manage announcements" ON public.announcements;
 CREATE POLICY "Super admins manage announcements" ON public.announcements
   FOR ALL TO authenticated USING (public.is_super_admin()) WITH CHECK (public.is_super_admin());
 
+DROP POLICY IF EXISTS "Super admins manage email campaigns" ON public.email_campaigns;
 CREATE POLICY "Super admins manage email campaigns" ON public.email_campaigns
   FOR ALL TO authenticated USING (public.is_super_admin()) WITH CHECK (public.is_super_admin());
 
+DROP POLICY IF EXISTS "Super admins manage email templates" ON public.email_templates;
 CREATE POLICY "Super admins manage email templates" ON public.email_templates
   FOR ALL TO authenticated USING (public.is_super_admin()) WITH CHECK (public.is_super_admin());
 
 -- Triggers
+DROP TRIGGER IF EXISTS update_announcements_updated_at ON public.announcements;
 CREATE TRIGGER update_announcements_updated_at BEFORE UPDATE ON public.announcements
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS update_email_campaigns_updated_at ON public.email_campaigns;
 CREATE TRIGGER update_email_campaigns_updated_at BEFORE UPDATE ON public.email_campaigns
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 

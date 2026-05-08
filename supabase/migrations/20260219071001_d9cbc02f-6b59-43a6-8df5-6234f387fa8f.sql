@@ -1,6 +1,6 @@
 
 -- ROI Cost Entries: tracks budget vs actual per category
-CREATE TABLE public.roi_cost_entries (
+CREATE TABLE IF NOT EXISTS public.roi_cost_entries (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   category TEXT NOT NULL,
   budget NUMERIC NOT NULL DEFAULT 0,
@@ -14,16 +14,18 @@ CREATE TABLE public.roi_cost_entries (
 
 ALTER TABLE public.roi_cost_entries ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Admins can manage ROI cost entries" ON public.roi_cost_entries;
 CREATE POLICY "Admins can manage ROI cost entries"
   ON public.roi_cost_entries FOR ALL
   USING (has_role(auth.uid(), 'admin'::app_role));
 
+DROP POLICY IF EXISTS "Authenticated users can view ROI cost entries" ON public.roi_cost_entries;
 CREATE POLICY "Authenticated users can view ROI cost entries"
   ON public.roi_cost_entries FOR SELECT
   USING (auth.role() = 'authenticated');
 
 -- ROI Impact Metrics: before/after KPI tracking
-CREATE TABLE public.roi_impact_metrics (
+CREATE TABLE IF NOT EXISTS public.roi_impact_metrics (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   metric_name TEXT NOT NULL,
   before_value NUMERIC NOT NULL DEFAULT 0,
@@ -43,19 +45,23 @@ CREATE TABLE public.roi_impact_metrics (
 
 ALTER TABLE public.roi_impact_metrics ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Admins can manage ROI impact metrics" ON public.roi_impact_metrics;
 CREATE POLICY "Admins can manage ROI impact metrics"
   ON public.roi_impact_metrics FOR ALL
   USING (has_role(auth.uid(), 'admin'::app_role));
 
+DROP POLICY IF EXISTS "Authenticated users can view ROI impact metrics" ON public.roi_impact_metrics;
 CREATE POLICY "Authenticated users can view ROI impact metrics"
   ON public.roi_impact_metrics FOR SELECT
   USING (auth.role() = 'authenticated');
 
 -- Triggers for updated_at
+DROP TRIGGER IF EXISTS update_roi_cost_entries_updated_at ON public.roi_cost_entries;
 CREATE TRIGGER update_roi_cost_entries_updated_at
   BEFORE UPDATE ON public.roi_cost_entries
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_roi_impact_metrics_updated_at ON public.roi_impact_metrics;
 CREATE TRIGGER update_roi_impact_metrics_updated_at
   BEFORE UPDATE ON public.roi_impact_metrics
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

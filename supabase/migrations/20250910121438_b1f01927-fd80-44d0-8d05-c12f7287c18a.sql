@@ -1,5 +1,5 @@
 -- Create learning preferences table for AI recommendations
-CREATE TABLE public.learning_preferences (
+CREATE TABLE IF NOT EXISTS public.learning_preferences (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   topics_of_interest TEXT[] DEFAULT '{}',
@@ -19,28 +19,32 @@ CREATE TABLE public.learning_preferences (
 ALTER TABLE public.learning_preferences ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
+DROP POLICY IF EXISTS "Users can view their own learning preferences" ON public.learning_preferences;
 CREATE POLICY "Users can view their own learning preferences" 
 ON public.learning_preferences 
 FOR SELECT 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own learning preferences" ON public.learning_preferences;
 CREATE POLICY "Users can insert their own learning preferences" 
 ON public.learning_preferences 
 FOR INSERT 
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own learning preferences" ON public.learning_preferences;
 CREATE POLICY "Users can update their own learning preferences" 
 ON public.learning_preferences 
 FOR UPDATE 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Admins can manage all learning preferences" ON public.learning_preferences;
 CREATE POLICY "Admins can manage all learning preferences"
 ON public.learning_preferences
 FOR ALL
 USING (has_role(auth.uid(), 'admin'::app_role));
 
 -- Create recommendation feedback table
-CREATE TABLE public.recommendation_feedback (
+CREATE TABLE IF NOT EXISTS public.recommendation_feedback (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   recommendation_id UUID NOT NULL REFERENCES public.path_recommendations(id) ON DELETE CASCADE,
@@ -54,23 +58,26 @@ CREATE TABLE public.recommendation_feedback (
 ALTER TABLE public.recommendation_feedback ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for feedback
+DROP POLICY IF EXISTS "Users can view their own feedback" ON public.recommendation_feedback;
 CREATE POLICY "Users can view their own feedback"
 ON public.recommendation_feedback
 FOR SELECT
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own feedback" ON public.recommendation_feedback;
 CREATE POLICY "Users can insert their own feedback"
 ON public.recommendation_feedback
 FOR INSERT
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "System can insert feedback" ON public.recommendation_feedback;
 CREATE POLICY "System can insert feedback"
 ON public.recommendation_feedback
 FOR INSERT
 WITH CHECK (true);
 
 -- Create skill templates table for admin use
-CREATE TABLE public.skill_templates (
+CREATE TABLE IF NOT EXISTS public.skill_templates (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   description TEXT,
@@ -87,11 +94,13 @@ CREATE TABLE public.skill_templates (
 ALTER TABLE public.skill_templates ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for skill templates
+DROP POLICY IF EXISTS "Anyone can view active skill templates" ON public.skill_templates;
 CREATE POLICY "Anyone can view active skill templates"
 ON public.skill_templates
 FOR SELECT
 USING (is_active = true);
 
+DROP POLICY IF EXISTS "Admins can manage skill templates" ON public.skill_templates;
 CREATE POLICY "Admins can manage skill templates"
 ON public.skill_templates
 FOR ALL
@@ -107,11 +116,13 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Create triggers for updated_at
+DROP TRIGGER IF EXISTS update_learning_preferences_updated_at ON public.learning_preferences;
 CREATE TRIGGER update_learning_preferences_updated_at
   BEFORE UPDATE ON public.learning_preferences
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_skill_templates_updated_at ON public.skill_templates;
 CREATE TRIGGER update_skill_templates_updated_at
   BEFORE UPDATE ON public.skill_templates
   FOR EACH ROW  

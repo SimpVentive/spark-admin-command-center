@@ -1,6 +1,6 @@
 
 -- Company payment/subscription tracking (manual)
-CREATE TABLE public.company_payments (
+CREATE TABLE IF NOT EXISTS public.company_payments (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   company_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
   plan_name TEXT NOT NULL DEFAULT 'Free',
@@ -19,6 +19,7 @@ CREATE TABLE public.company_payments (
 
 ALTER TABLE public.company_payments ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Super admins can manage company payments" ON public.company_payments;
 CREATE POLICY "Super admins can manage company payments"
   ON public.company_payments FOR ALL
   TO authenticated
@@ -26,7 +27,7 @@ CREATE POLICY "Super admins can manage company payments"
   WITH CHECK (public.is_super_admin());
 
 -- CRM notes/communication log for companies
-CREATE TABLE public.company_notes (
+CREATE TABLE IF NOT EXISTS public.company_notes (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   company_id UUID NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
   author_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -40,6 +41,7 @@ CREATE TABLE public.company_notes (
 
 ALTER TABLE public.company_notes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Super admins can manage company notes" ON public.company_notes;
 CREATE POLICY "Super admins can manage company notes"
   ON public.company_notes FOR ALL
   TO authenticated
@@ -47,10 +49,12 @@ CREATE POLICY "Super admins can manage company notes"
   WITH CHECK (public.is_super_admin());
 
 -- Timestamps triggers
+DROP TRIGGER IF EXISTS update_company_payments_updated_at ON public.company_payments;
 CREATE TRIGGER update_company_payments_updated_at
   BEFORE UPDATE ON public.company_payments
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_company_notes_updated_at ON public.company_notes;
 CREATE TRIGGER update_company_notes_updated_at
   BEFORE UPDATE ON public.company_notes
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

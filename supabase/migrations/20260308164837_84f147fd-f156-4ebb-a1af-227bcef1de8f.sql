@@ -58,13 +58,13 @@ ON CONFLICT DO NOTHING;
 
 -- ROI IMPACT METRICS
 INSERT INTO roi_impact_metrics (id, metric_name, before_value, after_value, unit, program_id, report_title, report_status, impact_level, employee_count, measurement_date, notes) VALUES
-('f6a7b8c9-1111-4000-8000-000000000001', 'Defect Rate', 4.2, 1.8, 'percentage', '7252fbb0-6921-42fb-996c-1f06e6c74390', 'GxP Impact Q1', 'published', 'high', 45, '2026-02-28', 'Post-GMP improvement'),
-('f6a7b8c9-1111-4000-8000-000000000002', 'Engagement Score', 3.2, 4.1, 'score', 'b7a1c62c-a32d-4e18-a258-645493dfc770', 'Leadership ROI', 'published', 'high', 30, '2026-02-15', 'EI training impact'),
-('f6a7b8c9-1111-4000-8000-000000000003', 'Time to Market', 180, 145, 'days', '6e76e8e4-a643-45de-8fd4-992d1128219d', 'Strategy Impact', 'draft', 'medium', 20, '2026-03-01', 'Faster decisions'),
-('f6a7b8c9-1111-4000-8000-000000000004', 'Audit Score', 72, 91, 'percentage', '77ae7762-98fe-4b6c-9ddd-f204913a4352', 'Regulatory Outcomes', 'published', 'high', 55, '2026-01-30', 'All depts improved'),
-('f6a7b8c9-1111-4000-8000-000000000005', 'NPS', 35, 52, 'score', 'ec3c75d0-0474-4c59-a385-5e10eff4e52b', 'Communication Impact', 'under_review', 'medium', 40, '2026-02-20', 'Better interactions'),
-('f6a7b8c9-1111-4000-8000-000000000006', 'Analysis Accuracy', 78, 94, 'percentage', 'c8da972c-b120-4076-84bd-f37ab2fcd4b9', 'Biostatistics Report', 'published', 'high', 15, '2026-03-05', 'Fewer errors'),
-('f6a7b8c9-1111-4000-8000-000000000007', 'Retention Rate', 82, 91, 'percentage', '48b122c0-d565-4a37-b88f-3cd5cfc36ff0', 'Team Building ROI', 'published', 'medium', 60, '2026-01-15', 'Higher retention')
+('f6a7b8c9-1111-4000-8000-000000000001', 'Defect Rate', 4.2, 1.8, 'percentage', '550e8400-e29b-41d4-a716-446655440001'::uuid, 'GxP Impact Q1', 'published', 'high', 45, '2026-02-28', 'Post-GMP improvement'),
+('f6a7b8c9-1111-4000-8000-000000000002', 'Engagement Score', 3.2, 4.1, 'score', '550e8400-e29b-41d4-a716-446655440002'::uuid, 'Leadership ROI', 'published', 'high', 30, '2026-02-15', 'EI training impact'),
+('f6a7b8c9-1111-4000-8000-000000000003', 'Time to Market', 180, 145, 'days', '550e8400-e29b-41d4-a716-446655440003'::uuid, 'Strategy Impact', 'draft', 'medium', 20, '2026-03-01', 'Faster decisions'),
+('f6a7b8c9-1111-4000-8000-000000000004', 'Audit Score', 72, 91, 'percentage', '550e8400-e29b-41d4-a716-446655440004'::uuid, 'Regulatory Outcomes', 'published', 'high', 55, '2026-01-30', 'All depts improved'),
+('f6a7b8c9-1111-4000-8000-000000000005', 'NPS', 35, 52, 'score', '550e8400-e29b-41d4-a716-446655440004'::uuid, 'Communication Impact', 'under_review', 'medium', 40, '2026-02-20', 'Better interactions'),
+('f6a7b8c9-1111-4000-8000-000000000006', 'Analysis Accuracy', 78, 94, 'percentage', '550e8400-e29b-41d4-a716-446655440003'::uuid, 'Biostatistics Report', 'published', 'high', 15, '2026-03-05', 'Fewer errors'),
+('f6a7b8c9-1111-4000-8000-000000000007', 'Retention Rate', 82, 91, 'percentage', '550e8400-e29b-41d4-a716-446655440002'::uuid, 'Team Building ROI', 'published', 'medium', 60, '2026-01-15', 'Higher retention')
 ON CONFLICT DO NOTHING;
 
 -- ADMIN RECOMMENDATIONS

@@ -1,6 +1,6 @@
 
 -- Seat block definitions (configurable pricing tiers)
-CREATE TABLE public.seat_blocks (
+CREATE TABLE IF NOT EXISTS public.seat_blocks (
   id text PRIMARY KEY,
   label text NOT NULL,
   name text NOT NULL,
@@ -16,6 +16,7 @@ CREATE TABLE public.seat_blocks (
 
 ALTER TABLE public.seat_blocks ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Super admins can manage seat_blocks" ON public.seat_blocks;
 CREATE POLICY "Super admins can manage seat_blocks"
   ON public.seat_blocks FOR ALL TO authenticated
   USING (public.is_super_admin())
@@ -30,7 +31,7 @@ INSERT INTO public.seat_blocks (id, label, name, seat_from, seat_to, rate_per_se
   ('B5', 'Block 5', 'Large Ent.', 1001, 999999, 299, 399);
 
 -- Company-specific discounts
-CREATE TABLE public.company_discounts (
+CREATE TABLE IF NOT EXISTS public.company_discounts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id uuid NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
   discount_target text NOT NULL DEFAULT 'block', -- 'block', 'incremental', 'both'
@@ -45,13 +46,14 @@ CREATE TABLE public.company_discounts (
 
 ALTER TABLE public.company_discounts ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Super admins can manage company_discounts" ON public.company_discounts;
 CREATE POLICY "Super admins can manage company_discounts"
   ON public.company_discounts FOR ALL TO authenticated
   USING (public.is_super_admin())
   WITH CHECK (public.is_super_admin());
 
 -- Seat change audit log
-CREATE TABLE public.seat_change_log (
+CREATE TABLE IF NOT EXISTS public.seat_change_log (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   company_id uuid NOT NULL REFERENCES public.companies(id) ON DELETE CASCADE,
   change_type text NOT NULL, -- 'add_incremental', 'upgrade_block', 'discount_add', 'discount_remove', 'block_change'
@@ -62,6 +64,7 @@ CREATE TABLE public.seat_change_log (
 
 ALTER TABLE public.seat_change_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Super admins can manage seat_change_log" ON public.seat_change_log;
 CREATE POLICY "Super admins can manage seat_change_log"
   ON public.seat_change_log FOR ALL TO authenticated
   USING (public.is_super_admin())

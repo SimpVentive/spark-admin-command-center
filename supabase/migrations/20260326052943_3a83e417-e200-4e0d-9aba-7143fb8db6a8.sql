@@ -1,6 +1,6 @@
 
 -- Create subscription_invoices table for invoice tracking
-CREATE TABLE public.subscription_invoices (
+CREATE TABLE IF NOT EXISTS public.subscription_invoices (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   invoice_number text NOT NULL,
   company_id uuid REFERENCES public.companies(id) ON DELETE CASCADE NOT NULL,
@@ -22,6 +22,7 @@ CREATE TABLE public.subscription_invoices (
 ALTER TABLE public.subscription_invoices ENABLE ROW LEVEL SECURITY;
 
 -- Super admin can do everything
+DROP POLICY IF EXISTS "Super admins can manage invoices" ON public.subscription_invoices;
 CREATE POLICY "Super admins can manage invoices"
 ON public.subscription_invoices
 FOR ALL
@@ -35,6 +36,7 @@ ALTER TABLE public.company_payments
   ADD COLUMN IF NOT EXISTS renewal_date date;
 
 -- Trigger for updated_at
+DROP TRIGGER IF EXISTS update_subscription_invoices_updated_at ON public.subscription_invoices;
 CREATE TRIGGER update_subscription_invoices_updated_at
   BEFORE UPDATE ON public.subscription_invoices
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
