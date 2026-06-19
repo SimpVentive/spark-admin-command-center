@@ -209,15 +209,17 @@ const EventsList = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Program</Label>
-                <Select value={form.program_id} onValueChange={v => setForm(p => ({ ...p, program_id: v }))}>
-                  <SelectTrigger><SelectValue placeholder="Select program" /></SelectTrigger>
-                  <SelectContent>
-                    {programs.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
+              {(form.event_type === 'elearning' || form.event_type === 'blended') && (
+                <div className="space-y-2">
+                  <Label>Program</Label>
+                  <Select value={form.program_id} onValueChange={v => setForm(p => ({ ...p, program_id: v }))}>
+                    <SelectTrigger><SelectValue placeholder="Select program" /></SelectTrigger>
+                    <SelectContent>
+                      {programs.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2"><Label>Start Date *</Label><Input type="date" value={form.start_date} onChange={e => setForm(p => ({ ...p, start_date: e.target.value }))} /></div>

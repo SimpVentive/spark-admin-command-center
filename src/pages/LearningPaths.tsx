@@ -1,14 +1,34 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, BookOpen, Users, Clock, Award, TrendingUp, Filter } from "lucide-react";
+import { Search, Plus, BookOpen, Users, Clock, Award, TrendingUp, Filter, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const LearningPaths = () => {
   const navigate = useNavigate();
-  
-  const learningPaths = [
+  const [learningPaths, setLearningPaths] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchLearningPaths();
+  }, []);
+
+  const fetchLearningPaths = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('learning_paths')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setLearningPaths(data || []);
+    } catch (error: any) {
+      console.error('Error fetching learning paths:', error);
+      // Fallback to mock data if database fails
+      setLearningPaths([
     {
       id: 1,
       title: "Digital Marketing Mastery",
@@ -61,7 +81,11 @@ const LearningPaths = () => {
       completionRate: 0,
       status: "Draft"
     }
-  ];
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -77,6 +101,10 @@ const LearningPaths = () => {
       ? <Badge variant="default" className="bg-green-100 text-green-800">Active</Badge>
       : <Badge variant="secondary">Draft</Badge>;
   };
+
+  if (loading) {
+    return <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+  }
 
   return (
     <div className="space-y-6">

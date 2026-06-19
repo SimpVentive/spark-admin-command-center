@@ -29,10 +29,11 @@ const ProgramSessions = () => {
       const { data, error } = await supabase
         .from('program_sessions')
         .select('*, program:training_programs(title, venue, faculty)')
+        .eq('is_active', true)
         .order('start_date', { ascending: false });
       if (error) throw error;
       setSessions((data as any) || []);
-    } catch (error: any) { console.error(error); } finally { setLoading(false); }
+    } catch (error: any) { console.error('Error fetching sessions:', error); } finally { setLoading(false); }
   };
 
   const getStatusColor = (status: string | null) => {

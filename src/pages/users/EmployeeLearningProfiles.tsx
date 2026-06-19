@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Users, 
-  Search, 
+import {
+  Users,
+  Search,
   Settings,
   Plus,
   Upload,
@@ -15,7 +16,9 @@ import {
   Brain,
   Target,
   BookOpen,
-  Loader2
+  Loader2,
+  ArrowLeft,
+  X
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -42,17 +45,66 @@ import { useToast } from "@/components/ui/use-toast";
 
 // Remove the old mock data
 const EmployeeLearningProfiles = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [employees, setEmployees] = useState([]);
   const [skillTemplates, setSkillTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [individualEmployee, setIndividualEmployee] = useState(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    fetchEmployees();
+    if (id) {
+      fetchIndividualEmployee(id);
+    } else {
+      fetchEmployees();
+    }
     fetchSkillTemplates();
-  }, []);
+  }, [id]);
+
+  const fetchIndividualEmployee = async (employeeId: string) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          user_skills (*)
+        `)
+        .eq('id', employeeId)
+        .single();
+
+      if (error) throw error;
+
+      const { data: preferences } = await supabase
+        .from('learning_preferences')
+        .select('*')
+        .eq('user_id', employeeId)
+        .single()
+        .catch(() => ({ data: null }));
+
+      setIndividualEmployee({
+        id: profile.id,
+        name: profile.full_name || profile.email,
+        email: profile.email,
+        department: profile.department || 'Unassigned',
+        role: profile.position || 'Not specified',
+        fullProfile: profile,
+        preferences: preferences,
+        skills: profile.user_skills || []
+      });
+    } catch (error) {
+      console.error('Error fetching employee data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load employee data",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchEmployees = async () => {
     try {
@@ -68,10 +120,11 @@ const EmployeeLearningProfiles = () => {
       // Get learning preferences separately to handle the relationship properly
       const { data: preferences } = await supabase
         .from('learning_preferences')
-        .select('*');
+        .select('*')
+        .catch(() => ({ data: [] }));
 
       const employeesWithStats = profiles.map((profile: any) => {
-        const userPrefs = preferences?.find(pref => pref.user_id === profile.id);
+        const userPrefs = preferences?.find((pref: any) => pref.user_id === profile.id);
         return {
           id: profile.id,
           name: profile.full_name || profile.email,
@@ -80,7 +133,7 @@ const EmployeeLearningProfiles = () => {
           role: profile.position || 'Not specified',
           profileStatus: userPrefs ? 'Complete' : 'Not Started',
           skillsCount: profile.user_skills?.length || 0,
-          learningGoals: userPrefs?.career_goals?.length || 0,
+          learningGoals: userPrefs?.goals_count || 0,
           lastUpdated: userPrefs?.updated_at || null
         };
       });
@@ -131,6 +184,30 @@ const EmployeeLearningProfiles = () => {
       <div className="container mx-auto py-6 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
         <span className="ml-2">Loading employee data...</span>
+      </div>
+    );
+  }
+
+  if (id && individualEmployee) {
+    return (
+      <div className="container mx-auto py-6 space-y-6">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/users/learning-profiles')}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">{individualEmployee.name}</h1>
+            <p className="text-muted-foreground">{individualEmployee.email}</p>
+          </div>
+        </div>
+
+        <EmployeeDetailProfile employee={individualEmployee} />
       </div>
     );
   }
@@ -279,19 +356,52 @@ const EmployeeLearningProfiles = () => {
 
         <TabsContent value="templates" className="space-y-4">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5" />
                 Skill Templates by Role
               </CardTitle>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    New Template
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Create Skill Template</DialogTitle>
+                  </DialogHeader>
+                  <SkillTemplateForm skillTemplates={skillTemplates} setSkillTemplates={setSkillTemplates} />
+                </DialogContent>
+              </Dialog>
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {skillTemplates.map((template) => (
                 <Card key={template.id} className="p-4">
-                  <h3 className="font-semibold mb-3">{template.name}</h3>
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="font-semibold">{template.name}</h3>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button size="sm" variant="ghost">
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>Edit Skill Template</DialogTitle>
+                        </DialogHeader>
+                        <SkillTemplateForm
+                          skillTemplates={skillTemplates}
+                          setSkillTemplates={setSkillTemplates}
+                          initialTemplate={template}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </div>
                   <p className="text-sm text-muted-foreground mb-3">{template.description}</p>
                   <div className="space-y-2">
-                    {(Array.isArray(template.skills) ? template.skills : JSON.parse(template.skills || '[]')).map((skill) => (
+                    {(Array.isArray(template.skills) ? template.skills : JSON.parse(template.skills || '[]')).map((skill: any) => (
                       <Badge key={skill.name} variant="secondary" className="mr-2 mb-2">
                         {skill.name} ({skill.level})
                       </Badge>
@@ -393,31 +503,48 @@ const BulkSetupForm = () => {
 
     setLoading(true);
     try {
-      const template = skillTemplates.find(t => t.id === selectedTemplate);
+      const template = skillTemplates.find((t: any) => t.id === selectedTemplate);
+      if (!template) throw new Error('Template not found');
+
       const skills = Array.isArray(template.skills) ? template.skills : JSON.parse(template.skills || '[]');
 
       // Apply skills to selected employees
       const skillInserts = [];
-      selectedEmployees.forEach(empId => {
-        skills.forEach(skill => {
+      selectedEmployees.forEach((empId: string) => {
+        skills.forEach((skill: any) => {
           skillInserts.push({
             user_id: empId,
             skill_name: skill.name,
             proficiency_level: skill.level,
-            confidence_score: 70, // Default confidence
+            confidence_score: 70,
             source: 'admin_assigned'
           });
         });
       });
 
+      // Insert skills, handling conflicts gracefully
       const { error } = await supabase
         .from('user_skills')
-        .upsert(skillInserts, { 
-          onConflict: 'user_id,skill_name',
-          ignoreDuplicates: false 
-        });
+        .insert(skillInserts);
 
-      if (error) throw error;
+      if (error) {
+        // If conflict, try to update existing skills
+        if (error.code === '23505') {
+          for (const skillInsert of skillInserts) {
+            await supabase
+              .from('user_skills')
+              .update({
+                proficiency_level: skillInsert.proficiency_level,
+                confidence_score: skillInsert.confidence_score,
+                source: skillInsert.source
+              })
+              .eq('user_id', skillInsert.user_id)
+              .eq('skill_name', skillInsert.skill_name);
+          }
+        } else {
+          throw error;
+        }
+      }
 
       toast({
         title: "Success",
@@ -426,11 +553,11 @@ const BulkSetupForm = () => {
 
       setSelectedEmployees([]);
       setSelectedTemplate("");
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error applying template:', error);
       toast({
-        title: "Error", 
-        description: "Failed to apply template",
+        title: "Error",
+        description: error.message || "Failed to apply template",
         variant: "destructive"
       });
     } finally {
@@ -468,8 +595,8 @@ const BulkSetupForm = () => {
             <SelectValue placeholder="Select a skill template" />
           </SelectTrigger>
           <SelectContent>
-            {skillTemplates.map((template) => (
-              <SelectItem key={template.id} value={template.id}>
+            {skillTemplates.map((template: any) => (
+              <SelectItem key={template.id} value={String(template.id)}>
                 {template.name}
               </SelectItem>
             ))}
@@ -491,8 +618,257 @@ const BulkSetupForm = () => {
   );
 };
 
+// Skill Template Form Component
+const SkillTemplateForm = ({ skillTemplates, setSkillTemplates, initialTemplate = null }: any) => {
+  const [formData, setFormData] = useState({
+    name: initialTemplate?.name || "",
+    description: initialTemplate?.description || "",
+    skills: initialTemplate?.skills ? (Array.isArray(initialTemplate.skills) ? initialTemplate.skills : JSON.parse(initialTemplate.skills || '[]')) : []
+  });
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleSave = async () => {
+    if (!formData.name.trim()) {
+      toast({ title: "Error", description: "Template name is required", variant: "destructive" });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const templateData = {
+        name: formData.name.trim(),
+        description: formData.description,
+        skills: JSON.stringify(formData.skills),
+        is_active: true
+      };
+
+      if (initialTemplate) {
+        // Update existing template
+        const { error } = await supabase
+          .from('skill_templates')
+          .update(templateData)
+          .eq('id', initialTemplate.id);
+
+        if (error) throw error;
+        toast({ title: "Success", description: "Skill template updated" });
+      } else {
+        // Create new template
+        const { data, error } = await supabase
+          .from('skill_templates')
+          .insert([templateData])
+          .select();
+
+        if (error) throw error;
+        toast({ title: "Success", description: "Skill template created" });
+      }
+
+      // Refresh templates
+      const { data } = await supabase
+        .from('skill_templates')
+        .select('*')
+        .eq('is_active', true);
+      setSkillTemplates(data || []);
+    } catch (error: any) {
+      console.error('Error saving template:', error);
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label>Template Name</Label>
+        <Input
+          value={formData.name}
+          onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
+          placeholder="e.g., Senior Developer Skills"
+        />
+      </div>
+
+      <div>
+        <Label>Description</Label>
+        <Textarea
+          value={formData.description}
+          onChange={(e) => setFormData(p => ({ ...p, description: e.target.value }))}
+          placeholder="Describe this skill template..."
+          rows={3}
+        />
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <Button variant="outline">Cancel</Button>
+        <Button onClick={handleSave} disabled={loading}>
+          {loading ? "Saving..." : "Save Template"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+// Individual Employee Detail Profile Component
+const EmployeeDetailProfile = ({ employee }: any) => {
+  const { toast } = useToast();
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Department</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-lg font-bold">{employee.department}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Role</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-lg font-bold">{employee.role}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Skills</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-lg font-bold">{employee.skills?.length || 0}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Profile Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Badge variant={employee.preferences ? "default" : "secondary"}>
+              {employee.preferences ? "Complete" : "Incomplete"}
+            </Badge>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="skills" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="skills">Skills</TabsTrigger>
+          <TabsTrigger value="preferences">Preferences</TabsTrigger>
+          <TabsTrigger value="goals">Learning Goals</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="skills" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Current Skills</CardTitle>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button size="sm">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Skill
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add Skill</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label>Skill Name</Label>
+                        <Input placeholder="e.g., React" />
+                      </div>
+                      <div>
+                        <Label>Proficiency Level</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select level" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="beginner">Beginner</SelectItem>
+                            <SelectItem value="intermediate">Intermediate</SelectItem>
+                            <SelectItem value="advanced">Advanced</SelectItem>
+                            <SelectItem value="expert">Expert</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex justify-end gap-2">
+                        <Button variant="outline">Cancel</Button>
+                        <Button>Add Skill</Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {employee.skills && employee.skills.length > 0 ? (
+                <div className="space-y-3">
+                  {employee.skills.map((skill: any) => (
+                    <Card key={skill.id} className="p-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium">{skill.skill_name}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Level: {skill.proficiency_level} • Confidence: {skill.confidence_score}%
+                          </p>
+                        </div>
+                        <Button size="sm" variant="ghost">
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No skills recorded yet</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="preferences" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Learning Preferences</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {employee.preferences ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label>Preferred Learning Format</Label>
+                    <p className="text-sm">{employee.preferences.preferred_format || "Not set"}</p>
+                  </div>
+                  <div>
+                    <Label>Learning Goals</Label>
+                    <p className="text-sm">{employee.preferences.career_goals || "Not set"}</p>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No learning preferences configured yet</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="goals" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Learning Goals</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">Learning goals setup...</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
+
 // Individual Employee Profile Form
-const EmployeeProfileForm = ({ employee }) => {
+const EmployeeProfileForm = ({ employee }: any) => {
   return (
     <div className="space-y-6">
       <Tabs defaultValue="skills" className="w-full">

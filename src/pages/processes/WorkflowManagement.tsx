@@ -125,6 +125,14 @@ const WorkflowManagement = () => {
   };
 
   const handleWorkflowAction = (action: string, workflowId: number) => {
+    setActiveWorkflows(prev => prev.map(w =>
+      w.id === workflowId
+        ? {
+            ...w,
+            status: action === "paused" ? "paused" : action === "resumed" ? "running" : "stopped"
+          }
+        : w
+    ));
     toast(`Workflow ${action} successfully`, {
       description: `Workflow ID: ${workflowId}`,
     });
@@ -373,33 +381,34 @@ const WorkflowManagement = () => {
                               <MoreHorizontal className="w-4 h-4" />
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="bg-white/95 backdrop-blur-sm border-white/20">
+                          <DialogContent className="bg-white/95 backdrop-blur-sm border-white/20 w-96">
                             <DialogHeader>
                               <DialogTitle>Workflow Actions</DialogTitle>
                               <DialogDescription>
                                 Choose an action for {workflow.name}
                               </DialogDescription>
                             </DialogHeader>
-                            <div className="flex gap-2 mt-4">
-                              <Button 
-                                variant="outline" 
+                            <div className="flex flex-col gap-3 mt-4">
+                              <Button
+                                variant="outline"
                                 onClick={() => handleWorkflowAction("paused", workflow.id)}
-                                className="hover:bg-yellow-50"
+                                className="hover:bg-yellow-50 w-full justify-start"
                               >
                                 <Pause className="w-4 h-4 mr-2" />
                                 Pause
                               </Button>
-                              <Button 
-                                variant="outline" 
+                              <Button
+                                variant="outline"
                                 onClick={() => handleWorkflowAction("resumed", workflow.id)}
-                                className="hover:bg-green-50"
+                                className="hover:bg-green-50 w-full justify-start"
                               >
                                 <Play className="w-4 h-4 mr-2" />
                                 Resume
                               </Button>
-                              <Button 
-                                variant="destructive" 
+                              <Button
+                                variant="destructive"
                                 onClick={() => handleWorkflowAction("stopped", workflow.id)}
+                                className="w-full justify-start"
                               >
                                 <Square className="w-4 h-4 mr-2" />
                                 Stop

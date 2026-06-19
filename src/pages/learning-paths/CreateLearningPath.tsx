@@ -11,11 +11,17 @@ import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Check, ChevronDown, ChevronUp, GripVertical, Plus, X, Upload, Calendar, Users, Award, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useCompanyScope } from "@/hooks/useCompanyScope";
 
 const CreateLearningPath = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const { scopeData } = useCompanyScope();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 6;
+  const [isSaving, setIsSaving] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -87,10 +93,53 @@ const CreateLearningPath = () => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Learning Path Data:", formData);
-    // Handle form submission
-    navigate('/learning-paths');
+  const handleSubmit = async () => {
+    if (!formData.title.trim()) {
+      toast({ title: "Error", description: "Learning path title is required", variant: "destructive" });
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const payload = {
+        title: formData.title.trim(),
+        description: formData.description,
+        category: formData.category,
+        difficulty_level: formData.difficulty,
+        estimated_duration_hours: formData.estimatedDuration ? parseInt(formData.estimatedDuration) : null,
+        experience_level: formData.experienceLevel,
+        skill_requirements: formData.prerequisites,
+        courses: formData.selectedCourses,
+        assessment_config: {
+          knowledgeChecks: formData.knowledgeChecks,
+          projects: formData.projects,
+          passingCriteria: formData.passingCriteria,
+          retakePolicies: formData.retakePolicies
+        },
+        certificate_template: formData.certificateTemplate,
+        certification_requirements: formData.requirements,
+        validity_months: formData.validity,
+        industry_recognition: formData.industryRecognition,
+        visibility: formData.visibility,
+        enrollment_rules: formData.enrollmentRules,
+        launch_date: formData.launchDate,
+        status: 'draft'
+      };
+
+      const { data, error } = await supabase
+        .from('learning_paths')
+        .insert([scopeData(payload)])
+        .select();
+
+      if (error) throw error;
+
+      toast({ title: "Success", description: "Learning path created successfully" });
+      navigate('/learning-paths');
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const progress = (currentStep / totalSteps) * 100;
@@ -177,9 +226,8 @@ const CreateLearningPath = () => {
         </Button>
         
         {currentStep === totalSteps ? (
-          <Button onClick={handleSubmit} className="gap-2">
-            <Check className="h-4 w-4" />
-            Create Learning Path
+          <Button onClick={handleSubmit} disabled={isSaving} className="gap-2">
+            {isSaving ? <>Saving...</> : <><Check className="h-4 w-4" />Create Learning Path</>}
           </Button>
         ) : (
           <Button onClick={handleNext}>

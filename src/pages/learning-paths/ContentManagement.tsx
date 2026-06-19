@@ -1,19 +1,36 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Search, 
-  Plus, 
-  BookOpen, 
-  Video, 
-  FileText, 
-  Link, 
-  Clock, 
-  Edit, 
-  Trash2, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Search,
+  Plus,
+  BookOpen,
+  Video,
+  FileText,
+  Link,
+  Clock,
+  Edit,
+  Trash2,
   Eye,
   ChevronDown,
   ChevronRight,
@@ -25,8 +42,13 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const ContentManagement = () => {
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  const [selectedLesson, setSelectedLesson] = useState<any>(null);
   
   const learningPaths = [
     {
@@ -60,11 +82,129 @@ const ContentManagement = () => {
   ];
 
   const toggleModule = (moduleId: string) => {
-    setExpandedModules(prev => 
-      prev.includes(moduleId) 
+    setExpandedModules(prev =>
+      prev.includes(moduleId)
         ? prev.filter(id => id !== moduleId)
         : [...prev, moduleId]
     );
+  };
+
+  const handleAddContent = () => {
+    toast({
+      title: "Add Content",
+      description: "Navigate to the upload tab or use bulk upload"
+    });
+  };
+
+  const handleBulkUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      toast({
+        title: "Success",
+        description: `${files.length} file(s) uploaded successfully`
+      });
+    }
+  };
+
+  const handleFilterStatus = (status: string) => {
+    setStatusFilter(statusFilter === status ? null : status);
+  };
+
+  const handleFilterType = (type: string) => {
+    setTypeFilter(typeFilter === type ? null : type);
+  };
+
+  const handleAddModule = () => {
+    toast({
+      title: "Add Module",
+      description: "Dialog for creating new module would open here"
+    });
+  };
+
+  const handlePreviewPath = () => {
+    toast({
+      title: "Preview",
+      description: "Preview mode for learning path"
+    });
+  };
+
+  const handleEditModule = (moduleId: string) => {
+    toast({
+      title: "Edit Module",
+      description: `Editing module ${moduleId}`
+    });
+  };
+
+  const handleDeleteModule = (moduleId: string) => {
+    toast({
+      title: "Delete Module",
+      description: "Module deleted successfully",
+      variant: "destructive"
+    });
+  };
+
+  const handleAddLesson = (moduleId: string) => {
+    toast({
+      title: "Add Lesson",
+      description: `Adding lesson to module ${moduleId}`
+    });
+  };
+
+  const handlePreviewLesson = (lessonId: string) => {
+    const lesson = learningPaths[0].modules.flatMap(m => m.lessons).find(l => l.id === lessonId);
+    setSelectedLesson(lesson);
+    toast({
+      title: "Preview",
+      description: `Previewing lesson: ${lesson?.title}`
+    });
+  };
+
+  const handleEditLesson = (lessonId: string) => {
+    const lesson = learningPaths[0].modules.flatMap(m => m.lessons).find(l => l.id === lessonId);
+    toast({
+      title: "Edit Lesson",
+      description: `Editing: ${lesson?.title}`
+    });
+  };
+
+  const handleDeleteLesson = (lessonId: string) => {
+    const lesson = learningPaths[0].modules.flatMap(m => m.lessons).find(l => l.id === lessonId);
+    toast({
+      title: "Delete Lesson",
+      description: `Deleted: ${lesson?.title}`,
+      variant: "destructive"
+    });
+  };
+
+  const handlePlayLesson = (lessonId: string) => {
+    const lesson = learningPaths[0].modules.flatMap(m => m.lessons).find(l => l.id === lessonId);
+    setSelectedLesson(lesson);
+    toast({
+      title: "Playing",
+      description: `Now playing: ${lesson?.title}`
+    });
+  };
+
+  const handleDownloadLesson = (lessonId: string) => {
+    const lesson = learningPaths[0].modules.flatMap(m => m.lessons).find(l => l.id === lessonId);
+    toast({
+      title: "Download",
+      description: `Downloading: ${lesson?.title}`
+    });
+  };
+
+  // Filter lessons based on search and filters
+  const filterLessons = (lessons: any[]) => {
+    return lessons.filter(lesson => {
+      const matchesSearch = !searchTerm || lesson.title.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = !statusFilter || lesson.status === statusFilter;
+      const matchesType = !typeFilter || lesson.type === typeFilter;
+      return matchesSearch && matchesStatus && matchesType;
+    });
   };
 
   const getTypeIcon = (type: string) => {
@@ -91,20 +231,19 @@ const ContentManagement = () => {
           <p className="text-muted-foreground">Manage modules, lessons, and resources for learning paths</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2" onClick={() => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.multiple = true;
-            input.accept = '.mp4,.pdf,.docx,.pptx,.zip';
-            input.click();
-          }}>
+          <Button variant="outline" className="gap-2" onClick={handleBulkUpload}>
             <Upload className="h-4 w-4" />
             Bulk Upload
           </Button>
-          <Button className="gap-2" onClick={() => {
-            const tabs = document.querySelector('[value="upload"]');
-            if (tabs) (tabs as HTMLElement).click();
-          }}>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept=".mp4,.avi,.mov,.pdf,.docx,.pptx,.zip,.jpg,.png,.gif"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <Button className="gap-2" onClick={handleAddContent}>
             <Plus className="h-4 w-4" />
             Add Content
           </Button>
@@ -112,18 +251,42 @@ const ContentManagement = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-wrap">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search content..." 
+          <Input
+            placeholder="Search content..."
             className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Button variant="outline" onClick={() => setSearchTerm(searchTerm === "published" ? "" : "published")}>Filter by Status</Button>
-        <Button variant="outline" onClick={() => setSearchTerm(searchTerm === "video" ? "" : "video")}>Filter by Type</Button>
+        <Button
+          variant={statusFilter ? "default" : "outline"}
+          onClick={() => handleFilterStatus("published")}
+          className="gap-2"
+        >
+          Filter by Status {statusFilter && `(${statusFilter})`}
+        </Button>
+        <Button
+          variant={typeFilter ? "default" : "outline"}
+          onClick={() => handleFilterType("video")}
+          className="gap-2"
+        >
+          Filter by Type {typeFilter && `(${typeFilter})`}
+        </Button>
+        {(searchTerm || statusFilter || typeFilter) && (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setSearchTerm("");
+              setStatusFilter(null);
+              setTypeFilter(null);
+            }}
+          >
+            Clear Filters
+          </Button>
+        )}
       </div>
 
       <Tabs defaultValue="tree" className="space-y-4">
@@ -141,11 +304,34 @@ const ContentManagement = () => {
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{path.title}</CardTitle>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Module
-                    </Button>
-                    <Button variant="outline" size="sm">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" onClick={handleAddModule}>
+                          <Plus className="h-4 w-4 mr-2" />
+                          Add Module
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Add New Module</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label>Module Title</Label>
+                            <Input placeholder="Enter module title" />
+                          </div>
+                          <div>
+                            <Label>Duration</Label>
+                            <Input placeholder="e.g., 2 weeks" />
+                          </div>
+                          <div className="flex justify-end gap-2">
+                            <Button variant="outline">Cancel</Button>
+                            <Button onClick={() => handleAddModule()}>Add Module</Button>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                    <Button variant="outline" size="sm" onClick={handlePreviewPath}>
                       <Eye className="h-4 w-4 mr-2" />
                       Preview
                     </Button>
@@ -177,10 +363,18 @@ const ContentManagement = () => {
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Button variant="ghost" size="sm">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditModule(module.id)}
+                              >
                                 <Edit className="h-4 w-4" />
                               </Button>
-                              <Button variant="ghost" size="sm">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteModule(module.id)}
+                              >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
                             </div>
@@ -190,7 +384,7 @@ const ContentManagement = () => {
                         <CollapsibleContent>
                           <div className="border-t bg-muted/20">
                             <div className="p-4 space-y-2">
-                              {module.lessons.map((lesson) => (
+                              {filterLessons(module.lessons).map((lesson) => (
                                 <div key={lesson.id} className="flex items-center justify-between p-3 bg-background rounded border">
                                   <div className="flex items-center gap-3">
                                     <GripVertical className="h-4 w-4 text-muted-foreground" />
@@ -208,22 +402,76 @@ const ContentManagement = () => {
                                   </div>
                                   <div className="flex items-center gap-2">
                                     {getStatusBadge(lesson.status)}
-                                    <Button variant="ghost" size="sm">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handlePreviewLesson(lesson.id)}
+                                    >
                                       <Eye className="h-4 w-4" />
                                     </Button>
-                                    <Button variant="ghost" size="sm">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleEditLesson(lesson.id)}
+                                    >
                                       <Edit className="h-4 w-4" />
                                     </Button>
-                                    <Button variant="ghost" size="sm">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleDeleteLesson(lesson.id)}
+                                    >
                                       <Trash2 className="h-4 w-4" />
                                     </Button>
                                   </div>
                                 </div>
                               ))}
-                              <Button variant="outline" size="sm" className="w-full mt-2">
-                                <Plus className="h-4 w-4 mr-2" />
-                                Add Lesson
-                              </Button>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="w-full mt-2"
+                                    onClick={() => handleAddLesson(module.id)}
+                                  >
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Add Lesson
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Add New Lesson</DialogTitle>
+                                  </DialogHeader>
+                                  <div className="space-y-4">
+                                    <div>
+                                      <Label>Lesson Title</Label>
+                                      <Input placeholder="Enter lesson title" />
+                                    </div>
+                                    <div>
+                                      <Label>Content Type</Label>
+                                      <Select>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Select type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="video">Video</SelectItem>
+                                          <SelectItem value="document">Document</SelectItem>
+                                          <SelectItem value="link">Link</SelectItem>
+                                          <SelectItem value="assessment">Assessment</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                    <div>
+                                      <Label>Duration</Label>
+                                      <Input placeholder="e.g., 15 min" />
+                                    </div>
+                                    <div className="flex justify-end gap-2">
+                                      <Button variant="outline">Cancel</Button>
+                                      <Button onClick={() => handleAddLesson(module.id)}>Add Lesson</Button>
+                                    </div>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
                             </div>
                           </div>
                         </CollapsibleContent>
@@ -243,9 +491,9 @@ const ContentManagement = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {learningPaths.flatMap(path => 
+                {learningPaths.flatMap(path =>
                   path.modules.flatMap(module =>
-                    module.lessons.map(lesson => (
+                    filterLessons(module.lessons).map(lesson => (
                       <div key={lesson.id} className="flex items-center justify-between p-3 border rounded-lg">
                         <div className="flex items-center gap-3">
                           {getTypeIcon(lesson.type)}
@@ -258,13 +506,25 @@ const ContentManagement = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           {getStatusBadge(lesson.status)}
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handlePlayLesson(lesson.id)}
+                          >
                             <Play className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditLesson(lesson.id)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDownloadLesson(lesson.id)}
+                          >
                             <Download className="h-4 w-4" />
                           </Button>
                         </div>
@@ -289,13 +549,7 @@ const ContentManagement = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   Drag and drop files or click to browse. Supports videos, documents, and SCORM packages.
                 </p>
-                <Button onClick={() => {
-                  const input = document.createElement('input');
-                  input.type = 'file';
-                  input.multiple = true;
-                  input.accept = '.mp4,.avi,.mov,.pdf,.docx,.pptx,.zip,.jpg,.png,.gif';
-                  input.click();
-                }}>Choose Files</Button>
+                <Button onClick={handleBulkUpload}>Choose Files</Button>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

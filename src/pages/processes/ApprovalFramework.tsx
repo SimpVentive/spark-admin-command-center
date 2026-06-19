@@ -238,7 +238,26 @@ export default function ApprovalFramework() {
   };
 
   const handleBulkApprove = () => {
-    // Handle bulk approval logic
+    // Update selected requests status to approved
+    const updatedRequests = mockApprovalRequests.map(req =>
+      selectedRequests.includes(req.id)
+        ? { ...req, status: 'approved' }
+        : req
+    );
+    // In a real implementation, this would update the database
+    toast({ title: "Success", description: `${selectedRequests.length} request(s) approved successfully` });
+    setSelectedRequests([]);
+  };
+
+  const handleBulkReject = (requestIds: string[]) => {
+    // Update selected requests status to rejected
+    const updatedRequests = mockApprovalRequests.map(req =>
+      requestIds.includes(req.id)
+        ? { ...req, status: 'rejected' }
+        : req
+    );
+    // In a real implementation, this would update the database
+    toast({ title: "Success", description: `${requestIds.length} request(s) rejected successfully` });
     setSelectedRequests([]);
   };
 
@@ -349,7 +368,7 @@ export default function ApprovalFramework() {
                   <MessageSquare className="w-4 h-4 mr-1" />
                   Request Info
                 </Button>
-                <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700" onClick={() => { toast({ title: "Rejected", description: `${selectedRequests.length} request(s) rejected.` }); setSelectedRequests([]); }}>
+                <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700" onClick={() => handleBulkReject(selectedRequests)}>
                   <X className="w-4 h-4 mr-1" />
                   Reject
                 </Button>
@@ -442,9 +461,19 @@ export default function ApprovalFramework() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => { toast({ title: "Approved", description: `${request.title} has been approved.` }); }}>
+                                <DropdownMenuItem onClick={() => {
+                                  handleBulkApprove();
+                                  setSelectedRequests([request.id]);
+                                  handleBulkApprove();
+                                }}>
                                   <CheckCircle className="w-4 h-4 mr-2" />
                                   Approve
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => {
+                                  handleBulkReject([request.id]);
+                                }}>
+                                  <X className="w-4 h-4 mr-2" />
+                                  Reject
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => toast({ title: "Info Requested", description: `Additional information requested for ${request.title}.` })}>
                                   <MessageSquare className="w-4 h-4 mr-2" />

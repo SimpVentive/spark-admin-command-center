@@ -70,14 +70,14 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
 
   // Fetch data
   const { data: orgUnits, isLoading } = useQuery({
-    queryKey: ['organizational-units', structureType],
+    queryKey: ['departments', structureType],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('organizational_units')
+        .from('departments')
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: true });
-      
+
       if (error) throw error;
       return data as OrgUnit[];
     }
@@ -97,16 +97,20 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
   const createUnitMutation = useMutation({
     mutationFn: async (unitData: { name: string; description?: string; level: string; parent_id?: string; manager_name?: string }) => {
       const { data, error } = await supabase
-        .from('organizational_units')
-        .insert([scopeData(unitData)])
+        .from('departments')
+        .insert([scopeData({
+          name: unitData.name,
+          manager_name: unitData.manager_name,
+          location: unitData.description,
+        })])
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['organizational-units'] });
+      queryClient.invalidateQueries({ queryKey: ['departments'] });
       toast({ title: "Success", description: "Unit created successfully" });
       setIsModalOpen(false);
     },
@@ -130,21 +134,14 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
   });
 
   // Transform data into departments
-  const departments: Department[] = orgUnits?.filter(unit => unit.level === 'department' && !unit.parent_id).map(dept => ({
+  const departments: Department[] = orgUnits?.map(dept => ({
     id: dept.id,
     name: dept.name,
     description: dept.description,
     manager_name: dept.manager_name,
     employee_count: dept.employee_count,
     jobRoles: jobRoles?.filter(role => role.department_id === dept.id) || [],
-    subDepartments: orgUnits.filter(unit => unit.parent_id === dept.id).map(sub => ({
-      id: sub.id,
-      name: sub.name,
-      description: sub.description,
-      manager_name: sub.manager_name,
-      employee_count: sub.employee_count,
-      jobRoles: jobRoles?.filter(role => role.department_id === sub.id) || []
-    }))
+    subDepartments: []
   })) || [];
 
   const handleSwitchToPlant = () => {
@@ -295,10 +292,6 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
                         )}
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={() => handleAddSubDepartment(dept.id)}>
-                          <Plus className="h-4 w-4 mr-1" />
-                          Add Sub-Department
-                        </Button>
                         <Button variant="outline" size="sm" onClick={() => handleAddPeople(dept.id)}>
                           <Users className="h-4 w-4 mr-1" />
                           Add People
@@ -323,48 +316,6 @@ const OrgStructureBuilder: React.FC<OrgStructureBuilderProps> = ({ onAddPeople }
                       </div>
                     )}
 
-                    {/* Sub-departments */}
-                    {dept.subDepartments.length > 0 && (
-                      <div className="mt-4 space-y-2">
-                        <h4 className="font-medium text-sm text-muted-foreground">Sub-Departments:</h4>
-                        {dept.subDepartments.map((subDept) => (
-                          <div key={subDept.id} className="p-3 bg-muted/50 rounded-lg">
-                            <div className="flex justify-between items-center mb-2">
-                              <div>
-                                <h5 className="font-medium">{subDept.name}</h5>
-                                {subDept.description && (
-                                  <p className="text-xs text-muted-foreground">{subDept.description}</p>
-                                )}
-                                {subDept.manager_name && (
-                                  <p className="text-xs">Manager: {subDept.manager_name}</p>
-                                )}
-                              </div>
-                              <Button variant="outline" size="sm" onClick={() => handleAddPeople(subDept.id)}>
-                                <Users className="h-3 w-3 mr-1" />
-                                Add People
-                              </Button>
-                            </div>
-                            
-                            {/* Job Roles for Sub-Department */}
-                            {subDept.jobRoles.length > 0 && (
-                              <div className="mt-2 space-y-1">
-                                <h6 className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                                  <Briefcase className="h-3 w-3" />
-                                  Roles:
-                                </h6>
-                                <div className="flex flex-wrap gap-1">
-                                  {subDept.jobRoles.map((role) => (
-                                    <Badge key={role.id} variant="outline" className="text-xs">
-                                      {role.title}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
               ))}
